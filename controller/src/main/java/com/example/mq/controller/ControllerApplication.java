@@ -13,7 +13,7 @@ import javax.annotation.PostConstruct;
 
 
 @SpringBootApplication
-@PropertySource(value = "classpath:application-dev.properties")
+@PropertySource(value = "classpath:application.properties")
 //@ImportResource({"classpath:dubbo/dubbo-server.xml", "classpath:dubbo/dubbo-client.xml"})
 @ComponentScan(basePackages = { "com.example.mq"})
 @MapperScan("com.example.mq.service.dao")
