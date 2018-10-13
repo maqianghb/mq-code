@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd
+	   http://code.alibabatech.com/schema/dubbo
+	   http://code.alibabatech.com/schema/dubbo/dubbo.xsd">
+
+    <dubbo:application name="mq-code"/>
+
+    <dubbo:registry protocol="${customer.dubbo.registry.protocol}" address="${customer.dubbo.registry.address}"/>
+
+    <dubbo:protocol name="dubbo" id="dubbo" serialization="java" server="netty" client="netty"
+                    port="${customer.dubbo.protocol.port}"/>
+
+    <dubbo:provider timeout="8000" group="${customer.dubbo.provider.group}"
+                    version="${customer.dubbo.provider.version}" validation="false"/>
+
+    <!-- dubbo service provider -->
+    <dubbo:service interface="com.example.mq.api.CustomerApiService"
+                   ref="customerApiService" />
+
+</beans>
