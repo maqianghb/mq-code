@@ -11,10 +11,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import javax.annotation.PostConstruct;
 
-/**
- * @author xiehejun
- * @date 2018/5/7 下午4:06
- **/
+
 @SpringBootApplication
 @PropertySource(value = "classpath:application-dev.properties")
 //@ImportResource({"classpath:dubbo/dubbo-server.xml", "classpath:dubbo/dubbo-client.xml"})
