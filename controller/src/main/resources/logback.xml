@@ -18,7 +18,6 @@
     <!--业务滚动日志文件保存路径,可以与当天日志目录不同-->
     <property name="LOG_BUSI_ROLL_HOME" value="${LOG_HOME}/mq-code-logback-busi.log.%d{yyyy-MM-dd}"/>
 
-
     <!-- 定义输出日志的格式
        %d{yyyy-MM-dd  HH:mm:ss.SSS} 定义日期格式兼容java.text.SimpleDateFormat语法 2014-03-25 14:06:49.812
        %thread 输出产生日志的线程名

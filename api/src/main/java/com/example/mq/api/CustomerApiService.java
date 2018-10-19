@@ -12,4 +12,6 @@ import com.example.mq.api.vo.CustomerReqVO;
 public interface CustomerApiService {
 
     Response queryCustomer(CustomerReqVO reqVO);
+
+//    Response addCustomer
 }

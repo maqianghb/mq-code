@@ -1,6 +1,7 @@
 package com.example.mq.controller.customer;
 
 import com.example.mq.api.common.Response;
+import com.example.mq.api.vo.CustomerVO;
 import com.example.mq.controller.ControllerApplication;
 import com.example.mq.controller.api.CustomerController;
 import com.example.mq.service.bean.Customer;
@@ -38,8 +39,8 @@ public class CustomerControllerTest {
             LOG.error("query customer err!", e);
         }
         Assert.assertTrue(!Objects.isNull(resp) && !Objects.isNull(resp.getData()));
-        Customer customer =(Customer) resp.getData();
-        Assert.assertTrue(!Objects.isNull(customer) && customer.getCustomerId().equals("111"));
+        CustomerVO vo =(CustomerVO) resp.getData();
+        Assert.assertTrue(!Objects.isNull(vo) && vo.getCustomerId().equals("111"));
     }
 
     @Test

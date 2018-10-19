@@ -29,7 +29,7 @@
 
 
     <build>
-        <finalName>mq-code-datasource</finalName>
+        <finalName>mq-code-datasource-${project.version}</finalName>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>

@@ -53,7 +53,7 @@
     </dependencies>
 
     <build>
-        <finalName>mq-code-api</finalName>
+        <finalName>mq-code-api-${project.version}</finalName>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>

@@ -39,7 +39,7 @@
     </dependencies>
 
     <build>
-        <finalName>mq-code-controller</finalName>
+        <finalName>mq-code-controller-${project.version}</finalName>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>

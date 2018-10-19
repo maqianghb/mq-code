@@ -53,11 +53,10 @@
             <scope>compile</scope>
         </dependency>
 
-
     </dependencies>
 
     <build>
-        <finalName>mq-code-service</finalName>
+        <finalName>mq-code-service-${project.version}</finalName>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
