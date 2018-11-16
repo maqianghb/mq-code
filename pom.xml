@@ -5,16 +5,15 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.example.mq</groupId>
-    <artifactId>code</artifactId>
-    <packaging>pom</packaging>
+    <artifactId>mq-code</artifactId>
     <version>1.0.1</version>
-
     <modules>
+		<module>api</module>
         <module>controller</module>
+		<module>datasource</module>
         <module>service</module>
-        <module>datasource</module>
-        <module>api</module>
     </modules>
+	<packaging>pom</packaging>
 
     <name>mq-code</name>
     <description>root of mq-code</description>
@@ -32,18 +31,23 @@
         <java.version>1.8</java.version>
         <java.encoding>UTF-8</java.encoding>
 
-        <projectlombok.version>1.16.16</projectlombok.version>
+        <lombok.version>1.16.20</lombok.version>
         <fastjson.version>1.2.47</fastjson.version>
         <commons-lang3.version>3.3.1</commons-lang3.version>
-        <pagehelper.version>5.1.7</pagehelper.version>
-        <commons-io.version>2.5</commons-io.version>
-        <jackson-annotations.version>2.9.5</jackson-annotations.version>
+		<commons-io.version>2.5</commons-io.version>
+		<commons-jexl3.version>3.1</commons-jexl3.version>
+		<mongo.java.driver.version>3.6.4</mongo.java.driver.version>
+		<codis-proxy.version>1.0.5</codis-proxy.version>
+		<kafka-clients.version>2.0.0</kafka-clients.version>
+		<hbase-client.version>1.2.3</hbase-client.version>
+		<mybatis.spring.version>1.3.2</mybatis.spring.version>
+        <pagehelper.version>5.1.2</pagehelper.version>
+		<mysql-connector-java.version>5.1.31</mysql-connector-java.version>
+		<druid.version>1.1.10</druid.version>
+        <jackson-annotations.version>2.9.0</jackson-annotations.version>
         <dubbo.version>2.5.8</dubbo.version>
-        <zookeeper.version>3.4.12</zookeeper.version>
-        <druid.version>1.1.10</druid.version>
-        <mongo.java.driver.version>3.6.4</mongo.java.driver.version>
-        <mysql-connector-java.version>5.1.31</mysql-connector-java.version>
-        <mybatis.spring.version>1.3.2</mybatis.spring.version>
+        <zookeeper.version>3.4.9</zookeeper.version>
+
     </properties>
 
 
@@ -57,26 +61,14 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-aop</artifactId>
         </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-data-redis</artifactId>
-        </dependency>
-
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-autoconfigure</artifactId>
+		</dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.mybatis.spring.boot</groupId>
-            <artifactId>mybatis-spring-boot-starter</artifactId>
-            <version>${mybatis.spring.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-autoconfigure</artifactId>
         </dependency>
 
         <!-- lombok -->
@@ -100,19 +92,12 @@
             <version>${commons-lang3.version}</version>
         </dependency>
 
-        <!-- mysql -->
-        <dependency>
-            <groupId>mysql</groupId>
-            <artifactId>mysql-connector-java</artifactId>
-            <version>${mysql-connector-java.version}</version>
-        </dependency>
-
-        <!-- druid -->
-        <dependency>
-            <groupId>com.alibaba</groupId>
-            <artifactId>druid</artifactId>
-            <version>${druid.version}</version>
-        </dependency>
+		<!-- commons io -->
+		<dependency>
+			<groupId>commons-io</groupId>
+			<artifactId>commons-io</artifactId>
+			<version>${commons-io.version}</version>
+		</dependency>
 
     </dependencies>
 

@@ -3,7 +3,7 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
-        <artifactId>code</artifactId>
+        <artifactId>mq-code</artifactId>
         <groupId>com.example.mq</groupId>
         <version>1.0.1</version>
     </parent>
@@ -12,7 +12,6 @@
     <groupId>com.example.mq</groupId>
     <artifactId>datasource</artifactId>
     <packaging>jar</packaging>
-    <version>${project.version}</version>
 
     <name>datasource</name>
     <description>datasource of mq-code</description>
@@ -24,6 +23,20 @@
             <artifactId>mongo-java-driver</artifactId>
             <version>${mongo.java.driver.version}</version>
         </dependency>
+
+		<!--jexl -->
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-jexl3</artifactId>
+			<version>${commons-jexl3.version}</version>
+		</dependency>
+
+		<!-- zookeeper -->
+		<dependency>
+			<groupId>org.apache.zookeeper</groupId>
+			<artifactId>zookeeper</artifactId>
+			<version>${zookeeper.version}</version>
+		</dependency>
 
     </dependencies>
 

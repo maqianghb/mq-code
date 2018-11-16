@@ -8,15 +8,16 @@
     <!-- 定义变量LOG_HOME用于配置log日志生成的项目主目录 本地用相对路径，部署到服务器用绝对路径/logs/ -->
     <property name="LOG_HOME" value="/logs/mq-code"/>
     <!--日志文件保留天数-->
-    <property name="LOG_MAX_HISTORY" value="30"/>
+    <property name="LOG_MAX_HISTORY" value="15"/>
     <!--系统当天日志文件保存路径-->
     <property name="LOG_SYS_HOME" value="${LOG_HOME}/mq-code-logback-sys.log"/>
     <!--系统滚动日志文件保存路径,可以与当天日志目录不同-->
-    <property name="LOG_SYS_ROLL_HOME" value="${LOG_HOME}/mq-code-logback-sys.log.%d{yyyy-MM-dd}"/>
+    <property name="LOG_SYS_ROLL_HOME" value="${LOG_HOME}/mq-code-logback-sys-%d{yyyy-MM-dd}.log"/>
     <!--业务当天日志文件保存路径-->
     <property name="LOG_BUSI_HOME" value="${LOG_HOME}/mq-code-logback-busi.log"/>
     <!--业务滚动日志文件保存路径,可以与当天日志目录不同-->
-    <property name="LOG_BUSI_ROLL_HOME" value="${LOG_HOME}/mq-code-logback-busi.log.%d{yyyy-MM-dd}"/>
+    <property name="LOG_BUSI_ROLL_HOME" value="${LOG_HOME}/mq-code-logback-busi-%d{yyyy-MM-dd}.log"/>
+
 
     <!-- 定义输出日志的格式
        %d{yyyy-MM-dd  HH:mm:ss.SSS} 定义日期格式兼容java.text.SimpleDateFormat语法 2014-03-25 14:06:49.812
@@ -73,6 +74,7 @@
         </encoder>
     </appender>
 
+	<!-- 业务日志 -->
     <logger name="com.example.mq" level="info" additivity="false">
         <appender-ref ref="file-business"/>
         <!--是否输出到控制台，本地可开启-->
