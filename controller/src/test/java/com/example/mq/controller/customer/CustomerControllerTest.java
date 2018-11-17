@@ -1,10 +1,9 @@
 package com.example.mq.controller.customer;
 
-import com.example.mq.api.common.Response;
-import com.example.mq.api.vo.CustomerVO;
 import com.example.mq.controller.ControllerApplication;
 import com.example.mq.controller.api.CustomerController;
-import com.example.mq.service.bean.Customer;
+import com.example.mq.controller.bean.CustomerDTO;
+import com.example.mq.data.common.Response;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -34,13 +33,13 @@ public class CustomerControllerTest {
     public void queryByCustomerId() {
         Response resp =null;
         try {
-            resp =customerController.queryByCustomerId("111");
+            resp =customerController.queryByCustomerId(123456L);
         } catch (Exception e) {
             LOG.error("query customer err!", e);
         }
         Assert.assertTrue(!Objects.isNull(resp) && !Objects.isNull(resp.getData()));
-        CustomerVO vo =(CustomerVO) resp.getData();
-        Assert.assertTrue(!Objects.isNull(vo) && vo.getCustomerId().equals("111"));
+        CustomerDTO dto =(CustomerDTO) resp.getData();
+        Assert.assertTrue(!Objects.isNull(dto) && dto.getCustomerId().equals("111"));
     }
 
     @Test

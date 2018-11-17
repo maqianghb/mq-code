@@ -1,4 +1,4 @@
-package com.example.mq.service.schedules;
+package com.example.mq.service.schedule;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,14 +29,16 @@ public class CountNumTask {
 		} catch (Exception e) {
 			LOG.error("定时任务执行出错！", e);
 		}
-		LOG.info("定时任务执行结束，costTime:{}ms", (System.currentTimeMillis()-startTime));
+		LOG.debug("------debug, 定时任务执行结束，costTime:{}ms", (System.currentTimeMillis()-startTime));
+		LOG.info("------info, 定时任务执行结束，costTime:{}ms", (System.currentTimeMillis()-startTime));
+		LOG.error("------error, 定时任务执行结束，costTime:{}ms", (System.currentTimeMillis()-startTime));
 	}
 
 	private void doExecute() throws Exception{
 		int sum =0;
-		for(int i=0;i<10000; i++){
+		for(int i=0;i<100000; i++){
 			sum +=i;
 		}
-		System.out.println("calculate sum:" +sum);
+		LOG.info("定时任务计算结果:{}", sum);
 	}
 }

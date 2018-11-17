@@ -1,10 +1,10 @@
-package com.example.mq.service.bean;
+package com.example.mq.data.common;
 
 import lombok.Data;
 
 /**
  * @program: mq-code
- * @description: ${description}
+ * @description: 自定义异常
  * @author: maqiang
  * @create: 2018-10-12 23:12
  */
@@ -17,6 +17,11 @@ public class MyException extends RuntimeException {
     public MyException(Integer code) {
         this.code = code;
     }
+
+	public MyException(String desc) {
+		this.code = -1;
+		this.desc =desc;
+	}
 
     public MyException(Integer code, String desc) {
         this.code = code;

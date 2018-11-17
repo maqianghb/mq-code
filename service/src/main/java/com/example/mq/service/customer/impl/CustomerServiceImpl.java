@@ -1,8 +1,9 @@
-package com.example.mq.service.customer;
+package com.example.mq.service.customer.impl;
 
+import com.example.mq.data.common.PageResult;
 import com.example.mq.service.bean.Customer;
-import com.example.mq.service.bean.MyException;
-import com.example.mq.service.common.PageResult;
+import com.example.mq.data.common.MyException;
+import com.example.mq.service.customer.CustomerService;
 import com.example.mq.service.dao.PlatformCustomerMapper;
 import com.github.pagehelper.PageHelper;
 import org.slf4j.Logger;
@@ -30,7 +31,7 @@ public class CustomerServiceImpl implements CustomerService {
     private PlatformCustomerMapper platformCustomerMapper;
 
     @Override
-    public Customer queryByCustomerId(String customerId) throws Exception {
+    public Customer queryByCustomerId(Long customerId) throws Exception {
         if(StringUtils.isEmpty(customerId)){
             throw new MyException(-1, "参数为空！");
         }
@@ -88,7 +89,7 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = { Exception.class})
     @Override
-    public Integer deleteByCustomerId(String CustomerId) throws Exception {
+    public Integer deleteByCustomerId(Long CustomerId) throws Exception {
         if(StringUtils.isEmpty(CustomerId)){
             throw new MyException(-1, "参数为空！");
         }

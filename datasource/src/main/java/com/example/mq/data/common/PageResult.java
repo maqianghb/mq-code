@@ -1,9 +1,9 @@
-package com.example.mq.service.common;
-
-import lombok.Data;
+package com.example.mq.data.common;
 
 import java.io.Serializable;
 import java.util.List;
+
+import lombok.Data;
 
 /**
  * @program: mq-code

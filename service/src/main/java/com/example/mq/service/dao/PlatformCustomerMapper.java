@@ -13,13 +13,13 @@ import java.util.List;
  */
 public interface PlatformCustomerMapper {
 
-	int insert(Customer feature);
+	int insert(Customer customer);
 
-	int update(Customer feature);
+	int update(Customer customer);
 
-	Customer selectByCustomerId(String customerId);
+	Customer selectByCustomerId(Long customerId);
 
 	List<Customer> selectAll();
 
-	int deleteByCustomerId(String customerId);
+	int deleteByCustomerId(Long customerId);
 }

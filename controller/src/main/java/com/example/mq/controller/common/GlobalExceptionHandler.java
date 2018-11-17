@@ -1,12 +1,12 @@
 package com.example.mq.controller.common;
 
 import com.alibaba.fastjson.JSON;
-import com.example.mq.api.common.Response;
-import com.example.mq.service.bean.MyException;
+import com.example.mq.data.common.MyException;
+
+import com.example.mq.data.common.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -17,7 +17,7 @@ import javax.servlet.http.HttpServletRequest;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
-    private static Logger logger = LoggerFactory.getLogger(GlobalExceptionHandler.class);
+    private static Logger LOG = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
     @Autowired
     private Environment environment;
@@ -25,9 +25,9 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(Exception.class)
     public Response handlerException(HttpServletRequest request, Exception ex) {
         int respCode = -1;
-        String respMsg = StringUtils.isEmpty(ex.getMessage()) ? "系统发生未知错误，请重试.":ex.getMessage();
+        String respMsg = StringUtils.isEmpty(ex.getMessage()) ? "系统发生未知错误!":ex.getMessage();
         try {
-            logger.error("request failed, url:{}|params:{}, exception:", JSON.toJSONString(request.getRequestURL()),
+            LOG.error("request failed, url:{}|params:{}, exception:", JSON.toJSONString(request.getRequestURL()),
                     JSON.toJSONString(request.getParameterMap()), ex);
 
             if(ex instanceof MyException){
@@ -36,9 +36,9 @@ public class GlobalExceptionHandler {
                 respCode = myException.getCode();
                 respMsg = myException.getDesc();
             }
-           return Response.createByFailMsg(respCode, respMsg);
+           return Response.createByFail(respCode, respMsg);
         } catch (Exception e) {
-            logger.error("未知错误:"+ e.getMessage(), e);
+            LOG.error("未知错误:"+ e.getMessage(), e);
             e.printStackTrace();
         }
         return null;

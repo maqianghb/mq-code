@@ -1,7 +1,7 @@
 package com.example.mq.service.customer;
 
+import com.example.mq.data.common.PageResult;
 import com.example.mq.service.bean.Customer;
-import com.example.mq.service.common.PageResult;
 
 import java.util.List;
 
@@ -13,7 +13,7 @@ import java.util.List;
  */
 public interface CustomerService {
 
-    Customer queryByCustomerId(String customerId) throws Exception;
+    Customer queryByCustomerId(Long customerId) throws Exception;
 
     PageResult<Customer> pageQuery(Integer pageNum, Integer pageSize) throws Exception;
 
@@ -23,6 +23,6 @@ public interface CustomerService {
 
     Integer updateByCustomerId(Customer customerId) throws Exception;
 
-    Integer deleteByCustomerId(String CustomerId) throws Exception;
+    Integer deleteByCustomerId(Long CustomerId) throws Exception;
 
 }

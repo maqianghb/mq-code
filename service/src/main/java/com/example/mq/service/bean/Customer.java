@@ -1,11 +1,7 @@
 package com.example.mq.service.bean;
 
-import com.alibaba.fastjson.annotation.JSONField;
-import com.fasterxml.jackson.annotation.JsonFormat;
-import lombok.Data;
 
-import javax.validation.constraints.NotNull;
-import java.util.Date;
+import lombok.Data;
 
 /**
  * @program: mq-code
@@ -16,35 +12,46 @@ import java.util.Date;
 @Data
 public class Customer {
 
-    private Integer id;
+	/**
+	 * id
+	 */
+	private Long customerId;
 
-    @NotNull
-    private String customerId;
+	/**
+	 * 姓名
+	 */
+	private String name;
 
-    @NotNull
-    private String name;
+	/**
+	 * 城市
+	 */
+	private String city;
 
-    private String city;
+	/**
+	 * 地址
+	 */
+	private String address;
 
-    private String address;
+	/**
+	 * 注册时间
+	 */
+	private Long registerTime;
 
-    private String description;
+	/**
+	 * 消费总金额
+	 * 单位：分
+	 */
+	private Integer totalCostAmount;
 
-    private Short vipLevel;
+	/**
+	 * 记录创建时间
+	 */
+	private Long createTime;
 
-    private Boolean delFlag;
-
-    private String createUser;
-
-    private String updateUser;
-
-    @JSONField(format = "yyyy-MM-dd HH:mm:ss")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    private Date createTime;
-
-    @JSONField(format = "yyyy-MM-dd HH:mm:ss")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    private Date updateTime;
+	/**
+	 * 记录更新时间
+	 */
+	private Long updateTime;
 
 }
 

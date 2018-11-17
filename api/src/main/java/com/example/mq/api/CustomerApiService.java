@@ -1,7 +1,7 @@
 package com.example.mq.api;
 
-import com.example.mq.api.common.Response;
 import com.example.mq.api.vo.CustomerReqVO;
+import com.example.mq.data.common.Response;
 
 /**
  * @program: mq-code
@@ -13,5 +13,4 @@ public interface CustomerApiService {
 
     Response queryCustomer(CustomerReqVO reqVO);
 
-//    Response addCustomer
 }
