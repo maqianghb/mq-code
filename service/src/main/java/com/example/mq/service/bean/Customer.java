@@ -13,6 +13,11 @@ import lombok.Data;
 public class Customer {
 
 	/**
+	 * 主键id
+	 */
+	private Long id;
+
+	/**
 	 * id
 	 */
 	private Long customerId;

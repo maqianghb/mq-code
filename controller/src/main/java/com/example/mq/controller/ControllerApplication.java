@@ -14,7 +14,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 import javax.annotation.PostConstruct;
 
 
-@SpringBootApplication(exclude = {DataSourceAutoConfiguration.class, MongoAutoConfiguration.class})
+@SpringBootApplication(exclude = {MongoAutoConfiguration.class})
 @PropertySource(value = "classpath:application.properties")
 //@ImportResource({"classpath:dubbo/dubbo-server.xml", "classpath:dubbo/dubbo-client.xml"})
 @ComponentScan(basePackages = { "com.example.mq"})

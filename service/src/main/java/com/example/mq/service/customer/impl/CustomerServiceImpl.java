@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -27,8 +28,8 @@ import java.util.Objects;
 public class CustomerServiceImpl implements CustomerService {
     private static final Logger LOG = LoggerFactory.getLogger(CustomerServiceImpl.class);
 
-    @Autowired
-    private PlatformCustomerMapper platformCustomerMapper;
+//    @Autowired
+//    private PlatformCustomerMapper platformCustomerMapper;
 
     @Override
     public Customer queryByCustomerId(Long customerId) throws Exception {
@@ -51,13 +52,16 @@ public class CustomerServiceImpl implements CustomerService {
             throw new MyException(-1, "参数不合法！");
         }
         PageHelper.startPage(pageNum, pageSize);
-        List<Customer> customers =platformCustomerMapper.selectAll();
+//        List<Customer> customers =platformCustomerMapper.selectAll();
+		List<Customer> customers =new ArrayList<>();
         return new PageResult<>(pageNum, pageSize, customers.size(), customers);
     }
 
     @Override
     public List<Customer> queryAll() throws Exception {
-        return platformCustomerMapper.selectAll();
+//        return platformCustomerMapper.selectAll();
+		List<Customer> customers =new ArrayList<>();
+		return customers;
     }
 
     @Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = { Exception.class})
@@ -66,9 +70,10 @@ public class CustomerServiceImpl implements CustomerService {
         if(Objects.isNull(customer)){
             throw new MyException(-1, "参数为空！");
         }
-        int saveValue =platformCustomerMapper.insert(customer);
+//        int saveValue =platformCustomerMapper.insert(customer);
+		int value =1;
         //TODO 保存至操作明细
-        return saveValue;
+        return value;
     }
 
 
@@ -82,9 +87,10 @@ public class CustomerServiceImpl implements CustomerService {
         if(Objects.isNull(oldCustomer)){
             throw new MyException(-1, "未找到对应customerId的数据！");
         }
-        int saveValue =platformCustomerMapper.update(customer);
+//        int saveValue =platformCustomerMapper.update(customer);
+		int value =1;
         //TODO 保存至操作明细
-        return saveValue;
+        return value;
     }
 
     @Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = { Exception.class})
@@ -93,8 +99,9 @@ public class CustomerServiceImpl implements CustomerService {
         if(StringUtils.isEmpty(CustomerId)){
             throw new MyException(-1, "参数为空！");
         }
-        int saveValue =platformCustomerMapper.deleteByCustomerId(CustomerId);
+//        int saveValue =platformCustomerMapper.deleteByCustomerId(CustomerId);
+		int value =1;
         //TODO 保存至操作明细
-        return saveValue;
+        return value;
     }
 }

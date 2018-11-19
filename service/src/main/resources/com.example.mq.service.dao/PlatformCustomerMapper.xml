@@ -8,34 +8,30 @@
 		<result column="name" jdbcType="VARCHAR" property="name" />
 		<result column="city" jdbcType="VARCHAR" property="city" />
 		<result column="address" jdbcType="VARCHAR" property="address" />
-		<result column="description" jdbcType="VARCHAR" property="registerTime" />
-		<result column="vip_level" jdbcType="INTEGER" property="totalCostAmount" />
-		<result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
-		<result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+		<result column="register_time" jdbcType="BIGINT" property="registerTime" />
+		<result column="total_cost_amount" jdbcType="INTEGER" property="totalCostAmount" />
+		<result column="create_time" jdbcType="BIGINT" property="createTime" />
+		<result column="update_time" jdbcType="BIGINT" property="updateTime" />
 	</resultMap>
 
 
 	<sql id="baseColumnList">
-		id, customer_id, name, city, address, description, vip_level, del_flag
+		id, customer_id, name, city, address, register_time, total_cost_amount
 	</sql>
 
 	<insert id="insert" parameterType="com.example.mq.service.bean.Customer">
 		insert ignore into platform_customer (
-			customer_id, name, city, address, description, vip_level, del_flag,
-			create_user, update_user, create_time, update_time
+			customer_id, name, city, address, register_time, total_cost_amount, create_time, update_time
 		)
 		values (
-			#{customerId,jdbcType=VARCHAR},
+			#{customerId,jdbcType=BIGINT},
 			#{name,jdbcType=VARCHAR},
 			#{city,jdbcType=VARCHAR},
 			#{address,jdbcType=VARCHAR},
-			#{description,jdbcType=VARCHAR},
-			#{vipLevel,jdbcType=INTEGER},
-			#{delFlag,jdbcType=BIT},
-			#{createUser,jdbcType=VARCHAR},
-			#{updateUser,jdbcType=VARCHAR},
-			#{createTime,jdbcType=TIMESTAMP},
-			#{updateTime,jdbcType=TIMESTAMP}
+			#{registerTime,jdbcType=BIGINT},
+			#{totalCostAmount,jdbcType=INTEGER},
+			#{createTime,jdbcType=BIGINT},
+			#{updateTime,jdbcType=BIGINT}
 		)
 	</insert>
 
@@ -45,26 +41,21 @@
       		name = #{name,jdbcType=VARCHAR},
      		city = #{city,jdbcType=VARCHAR},
      		address = #{address,jdbcType=VARCHAR},
-     		description = #{description,jdbcType=VARCHAR},
-     		vip_level = #{vipLevel,jdbcType=INTEGER},
-     		del_flag = #{delFlag,jdbcType=BIT},
-			create_user = #{createUser,jdbcType=VARCHAR},
-			update_user = #{updateUser,jdbcType=VARCHAR},
-			create_time = #{createTime,jdbcType=TIMESTAMP},
-			update_time = #{updateTime,jdbcType=TIMESTAMP}
+     		register_time = #{registerTime,jdbcType=BIGINT},
+     		total_cost_amount = #{totalCostAmount,jdbcType=INTEGER},
+			create_time = #{createTime,jdbcType=BIGINT},
+			update_time = #{updateTime,jdbcType=BIGINT}
 		where id = #{id,jdbcType=INTEGER}
 	</update>
 
 	<select id="selectByCustomerId" parameterType="java.lang.Long" resultMap="BaseResultMap">
-		select <include refid="baseColumnList" />,
-		create_user, update_user, create_time, update_time
+		select <include refid="baseColumnList" />, create_time, update_time
 		from platform_customer
-		where customer_id = #{customerId,jdbcType=VARCHAR} and del_flag !=1
+		where customer_id = #{customerId,jdbcType=BIGINT} and del_flag !=1
 	</select>
 
 	<select id="selectAll" resultMap="BaseResultMap">
-		select <include refid="baseColumnList" />,
-		create_user, update_user, create_time, update_time
+		select <include refid="baseColumnList" />, create_time, update_time
 		from platform_customer
 		where del_flag !=1
 	</select>
@@ -72,7 +63,7 @@
 	<delete id="deleteByCustomerId" parameterType="java.lang.Long">
 		update platform_customer
 		set del_flag = 1
-		where customer_id = #{customerId,jdbcType=VARCHAR}
+		where customer_id = #{customerId,jdbcType=BIGINT}
 	</delete>
 
 

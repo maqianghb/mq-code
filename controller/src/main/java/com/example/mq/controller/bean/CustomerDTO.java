@@ -21,6 +21,10 @@ import org.apache.commons.lang3.StringUtils;
 public class CustomerDTO {
 
 	/**
+	 * 主键id
+	 */
+	private Long id;
+	/**
 	 * id
 	 */
 	private String customerId;
@@ -75,6 +79,7 @@ public class CustomerDTO {
 			return new CustomerDTO();
 		}
 		CustomerDTO dto =new CustomerDTO();
+		dto.setId(customer.getId());
 		if(!Objects.isNull(customer.getCustomerId())){
 			dto.setCustomerId(String.valueOf(customer.getCustomerId()));
 		}
@@ -105,6 +110,7 @@ public class CustomerDTO {
 			return new Customer();
 		}
 		Customer customer =new Customer();
+		customer.setId(dto.getId());
 		if(StringUtils.isNotEmpty(dto.getCustomerId())){
 			customer.setCustomerId(Long.parseLong(dto.getCustomerId()));
 		}
