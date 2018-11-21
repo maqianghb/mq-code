@@ -10,6 +10,8 @@ import com.mongodb.client.model.FindOneAndUpdateOptions;
 import com.mongodb.client.result.DeleteResult;
 import com.mongodb.client.result.UpdateResult;
 import org.bson.Document;
+import org.bson.types.ObjectId;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
@@ -18,7 +20,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-
+/**
+ * @program: mq-code
+ * @description: mongoService
+ * @author: maqiang
+ * @create: 2018/11/15
+ *
+ */
 @Component
 public class MongoService {
 
@@ -167,10 +175,24 @@ public class MongoService {
      */
     public long deleteById(Long id,String collection){
         MongoCollection<Document> col = dbClient.getCollection(collection);
-        DeleteResult result=col.deleteOne(Filters.eq("_d",id));
+        DeleteResult result=col.deleteOne(Filters.eq("_id",id));
         long count=result.getDeletedCount();
         return count;
     }
+
+	/**
+	 * 根据主键id删除document
+	 * @param id
+	 * @param collection
+	 * @return
+	 */
+    public long deleteById(String id, String collection){
+		MongoCollection<Document> col = dbClient.getCollection(collection);
+		DeleteResult result = col.deleteOne(Filters.eq("_id", new ObjectId(id)));
+		long count = result.getDeletedCount();
+		return count;
+	}
+
     /**
      * 对某个集合根据id查询document
      * @param id

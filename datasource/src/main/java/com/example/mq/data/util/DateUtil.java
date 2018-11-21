@@ -23,7 +23,7 @@ import org.springframework.util.StringUtils;
 public class DateUtil {
 	private static final Logger LOG = LoggerFactory.getLogger(DateUtil.class);
 
-	public static final long ONE_DAY = 24 * 60 * 60 * 1000L;
+	public static final long ONE_DAY_MILLIS = 24 * 60 * 60 * 1000L;
 
 	/**
 	 * 获取date当天的凌晨时间，yyyy-MM-dd 00:00:00
@@ -45,12 +45,12 @@ public class DateUtil {
 
 	/**
 	 * 获取当天凌晨的时间
+	 * ps：不建议使用，凌晨时刻调用可能会出现前后天的问题
 	 * @return
 	 */
 	public static Date getCurrentDateInMidnight() {
 		return getDateInMidnigth(new Date());
 	}
-
 
 
 	/**
