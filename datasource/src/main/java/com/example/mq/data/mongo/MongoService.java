@@ -30,6 +30,11 @@ import java.util.Map;
 @Component
 public class MongoService {
 
+	/**
+	 * mongo默认id的key
+	 */
+	private final String DEF_ID_KEY ="_id";
+
     @Autowired
     @Qualifier("mongoDatabase")
     private MongoDatabase dbClient;
@@ -93,7 +98,7 @@ public class MongoService {
     public void insert(Long id, String json, String collection) {
         MongoCollection<Document> col = dbClient.getCollection(collection);
         Document doc = Document.parse(json);
-        Document document = doc.append("_id", id);
+        Document document = doc.append(DEF_ID_KEY, id);
         col.insertOne(document);
     }
 
@@ -106,7 +111,7 @@ public class MongoService {
     public void insert(String id, String json, String collection) {
         MongoCollection<Document> col = dbClient.getCollection(collection);
         Document doc = Document.parse(json);
-        Document document = doc.append("_id", id);
+        Document document = doc.append(DEF_ID_KEY, id);
         col.insertOne(document);
     }
 
@@ -140,7 +145,7 @@ public class MongoService {
      * @return
      */
     public long upsert(Object id, String json, String collection) {
-        return upsert("_id",id,json,collection);
+        return upsert(DEF_ID_KEY,id,json,collection);
     }
 
     /**
@@ -175,7 +180,7 @@ public class MongoService {
      */
     public long deleteById(Long id,String collection){
         MongoCollection<Document> col = dbClient.getCollection(collection);
-        DeleteResult result=col.deleteOne(Filters.eq("_id",id));
+        DeleteResult result=col.deleteOne(Filters.eq(DEF_ID_KEY,id));
         long count=result.getDeletedCount();
         return count;
     }
@@ -188,7 +193,7 @@ public class MongoService {
 	 */
     public long deleteById(String id, String collection){
 		MongoCollection<Document> col = dbClient.getCollection(collection);
-		DeleteResult result = col.deleteOne(Filters.eq("_id", new ObjectId(id)));
+		DeleteResult result = col.deleteOne(Filters.eq(DEF_ID_KEY, new ObjectId(id)));
 		long count = result.getDeletedCount();
 		return count;
 	}
@@ -203,7 +208,7 @@ public class MongoService {
         Document doc=null;
         try{
             MongoCollection<Document> col=dbClient.getCollection(connection);
-            MongoCursor<Document> cursor=col.find(Filters.eq("_id",id)).iterator();
+            MongoCursor<Document> cursor=col.find(Filters.eq(DEF_ID_KEY,id)).iterator();
 
             if(cursor.hasNext()){
                 doc=cursor.next();
@@ -350,7 +355,7 @@ public class MongoService {
     public  Document getCollectionById(long key, String collectionName) {
         MongoCollection<Document> order = this.getCollection(collectionName);
         BasicDBObject condition = new BasicDBObject();
-        condition.append("_id", key);
+        condition.append(DEF_ID_KEY, key);
         List<Document> documents = new ArrayList<Document>();
         FindIterable<Document> findIterable = order.find(condition);
         MongoCursor<Document> mongoCursor = findIterable.iterator();
