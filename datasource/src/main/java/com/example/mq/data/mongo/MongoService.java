@@ -193,7 +193,7 @@ public class MongoService {
 	 */
     public long deleteById(String id, String collection){
 		MongoCollection<Document> col = dbClient.getCollection(collection);
-		DeleteResult result = col.deleteOne(Filters.eq(DEF_ID_KEY, new ObjectId(id)));
+		DeleteResult result = col.deleteOne(Filters.eq(DEF_ID_KEY, id));
 		long count = result.getDeletedCount();
 		return count;
 	}
