@@ -17,6 +17,48 @@
 //
 //	ConcurrentHashMap<String, MyException> testMap =new ConcurrentHashMap<>();
 //
+//	//最大容量
+//	private static final int MAXIMUM_CAPACITY = 1 << 30;
+//	//初始容量
+//	private static final int DEFAULT_CAPACITY = 16;
+//	//数组最大容量
+//	static final int MAX_ARRAY_SIZE = Integer.MAX_VALUE - 8;
+//	//默认并发度，兼容1.7及之前版本
+//	private static final int DEFAULT_CONCURRENCY_LEVEL = 16;
+//	//加载/扩容因子，实际使用n - (n >>> 2)
+//	private static final float LOAD_FACTOR = 0.75f;
+//	//链表转红黑树的节点数阀值
+//	static final int TREEIFY_THRESHOLD = 8;
+//	//红黑树转链表的节点数阀值
+//	static final int UNTREEIFY_THRESHOLD = 6;
+//	//当数组长度还未超过64,优先数组的扩容,否则将链表转为红黑树
+//	static final int MIN_TREEIFY_CAPACITY = 64;
+//	//扩容时任务的最小转移节点数
+//	private static final int MIN_TRANSFER_STRIDE = 16;
+//	//sizeCtl中记录stamp的位数
+//	private static int RESIZE_STAMP_BITS = 16;
+//	//帮助扩容的最大线程数
+//	private static final int MAX_RESIZERS = (1 << (32 - RESIZE_STAMP_BITS)) - 1;
+//	//size在sizeCtl中的偏移量
+//	private static final int RESIZE_STAMP_SHIFT = 32 - RESIZE_STAMP_BITS;
+//
+//	//存放Node元素的数组,在第一次插入数据时初始化
+//	transient volatile Node<K,V>[] table;
+//	//一个过渡的table表,只有在扩容的时候才会使用
+//	private transient volatile Node<K,V>[] nextTable;
+//	//基础计数器值(size = baseCount + CounterCell[i].value)
+//	private transient volatile long baseCount;
+//	//控制table初始化和扩容操作
+//	private transient volatile int sizeCtl;
+//	//节点转移时下一个需要转移的table索引
+//	private transient volatile int transferIndex;
+//	//元素变化时用于控制自旋
+//	private transient volatile int cellsBusy;
+//	// 保存table中的每个节点的元素个数 2的幂次方
+//	// size = baseCount + CounterCell[i].value
+//	private transient volatile CounterCell[] counterCells;
+//
+//
 //
 //	/**
 //	 * put操作类
