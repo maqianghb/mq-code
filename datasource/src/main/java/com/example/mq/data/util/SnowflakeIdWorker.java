@@ -8,7 +8,7 @@ package com.example.mq.data.util;
  *
  */
 
-public class SnowflakeIdGenerator {
+public class SnowflakeIdWorker {
 	// ==============================Fields===========================================
 	/** 开始时间截 (2018-01-01 00:00:00) */
 	private final long twepoch = 1514736000000L;
@@ -58,7 +58,7 @@ public class SnowflakeIdGenerator {
 	 * @param workerId 工作ID (0~31)
 	 * @param datacenterId 数据中心ID (0~31)
 	 */
-	public SnowflakeIdGenerator(long workerId, long datacenterId) {
+	public SnowflakeIdWorker(long workerId, long datacenterId) {
 		if (workerId > maxWorkerId || workerId < 0) {
 			throw new IllegalArgumentException(String.format("worker Id can't be greater than %d or less than 0", maxWorkerId));
 		}
@@ -133,7 +133,7 @@ public class SnowflakeIdGenerator {
 	//==============================Test=============================================
 	/** 测试 */
 	public static void main(String[] args) {
-		SnowflakeIdGenerator idWorker = new SnowflakeIdGenerator(0, 0);
+		SnowflakeIdWorker idWorker = new SnowflakeIdWorker(0, 0);
 		for (int i = 0; i < 1000; i++) {
 			long id = idWorker.nextId();
 			System.out.println(id);

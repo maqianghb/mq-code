@@ -140,7 +140,7 @@ public class MongoService {
 	 * @param collection
 	 * @return
 	 */
-	public long updateById(String collection, Object id, String json) {
+	public long updateById(Object id, String json, String collection) {
 		return update(DEF_ID_KEY, id, json, collection);
 	}
 
