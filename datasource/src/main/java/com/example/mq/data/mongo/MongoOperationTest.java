@@ -25,7 +25,7 @@ public class MongoOperationTest {
 	private final Logger LOG = LoggerFactory.getLogger(MongoOperationTest.class);
 
 	private final String TEST_COLLECTION ="mq_test";
-	private final int TEST_NUMBER =3000;
+	private final int TEST_NUMBER =1000;
 
 	@Autowired
 	private MongoService mongoService;
@@ -38,7 +38,8 @@ public class MongoOperationTest {
 		for(int i=0; i<TEST_NUMBER; i++){
 			ids.add(MongoConstant.createId());
 		}
-		LOG.info("id插入测试, totalTestNum:{}", TEST_NUMBER);
+
+		//插入测试
 		Long startTime = System.currentTimeMillis();
 		for(Long id : ids){
 			Map<String, Object> testMap =new HashMap<>();
@@ -47,9 +48,10 @@ public class MongoOperationTest {
 			mongoService.insertById(id, JSONObject.toJSONString(testMap), TEST_COLLECTION);
 		}
 		int insertCount =mongoService.countByOptions(TEST_COLLECTION, new HashMap<>());
-		LOG.info("id插入测试结果, recordNum:{}|costTime:{}", insertCount, System.currentTimeMillis()-startTime);
+		LOG.info("------id插入测试结果, totalTestNum:{}|insertCount:{}|costTime:{}",
+				TEST_NUMBER, insertCount, System.currentTimeMillis()-startTime);
 
-		LOG.info("id更新测试, totalTestNum:{}", TEST_NUMBER);
+		//更新测试
 		startTime =System.currentTimeMillis();
 		for(Long id : ids){
 			Map<String, Object> testMap =new HashMap<>();
@@ -62,9 +64,10 @@ public class MongoOperationTest {
 		Map<String, Object> options =new HashMap<>(2);
 		options.put("03_updateFlag", 1);
 		int updateCount =mongoService.countByOptions(TEST_COLLECTION, options);
-		LOG.info("id更新测试结果, recordNum:{}|costTime:{}", updateCount, System.currentTimeMillis()-startTime);
+		LOG.info("------id更新测试结果, totalTestNum:{}|updateCount:{}|costTime:{}",
+				TEST_NUMBER, updateCount, System.currentTimeMillis()-startTime);
 
-		LOG.info("id查询测试, totalTestNum:{}", TEST_NUMBER);
+		//查询测试
 		startTime =System.currentTimeMillis();
 		for(Long id : ids){
 			if(Objects.isNull(mongoService.getById(id, TEST_COLLECTION))){
@@ -72,9 +75,10 @@ public class MongoOperationTest {
 				LOG.info("id查询失败，collection:{}|id:{}|id_Type:{}", TEST_COLLECTION, id, id.getClass().getTypeName());
 			}
 		}
-		LOG.info("id查询测试结果, costTime:{}", System.currentTimeMillis()-startTime);
+		LOG.info("------id查询测试结果, totalTestNum:{}|costTime:{}",
+				TEST_NUMBER, System.currentTimeMillis()-startTime);
 
-		LOG.info("id删除测试, totalTestNum:{}", TEST_NUMBER);
+		//删除测试
 		startTime =System.currentTimeMillis();
 		for(Long id : ids){
 			if(mongoService.deleteById(id, TEST_COLLECTION) <=0){
@@ -83,7 +87,9 @@ public class MongoOperationTest {
 			}
 		}
 		int recordNum =mongoService.countByOptions(TEST_COLLECTION, new HashMap<>());
-		LOG.info("id删除测试结果, recordNum:{}|costTime:{}", recordNum, System.currentTimeMillis()-startTime);
+		LOG.info("------id删除测试结果, totalTestNum:{}|deleteNum:{}|costTime:{}",
+				TEST_NUMBER, TEST_NUMBER -recordNum, System.currentTimeMillis()-startTime);
+
 		LOG.info("------id测试结果统计, testNum:{}|queryErrNum:{}|updateErrNum:{}|delErrNum:{}",
 				TEST_NUMBER, queryErrNum, updateErrNum, delErrNum);
 	}
@@ -96,7 +102,8 @@ public class MongoOperationTest {
 		for(int i=0; i<TEST_NUMBER; i++){
 			strIds.add(String.valueOf(MongoConstant.createStrId()));
 		}
-		LOG.info("strId插入测试, totalTestNum:{}", TEST_NUMBER);
+
+		//插入测试
 		Long startTime = System.currentTimeMillis();
 		for(String strId : strIds){
 			Map<String, Object> testMap =new HashMap<>();
@@ -105,9 +112,10 @@ public class MongoOperationTest {
 			mongoService.insertById(strId, JSONObject.toJSONString(testMap), TEST_COLLECTION);
 		}
 		int insertCount =mongoService.countByOptions(TEST_COLLECTION, new HashMap<>());
-		LOG.info("strId插入测试结果, recordNum:{}|costTime:{}", insertCount, System.currentTimeMillis()-startTime);
+		LOG.info("------strId插入测试结果, totalTestNum:{}|insertCount:{}|costTime:{}",
+				TEST_NUMBER, insertCount, System.currentTimeMillis()-startTime);
 
-		LOG.info("strId更新测试, totalTestNum:{}", TEST_NUMBER);
+		//更新测试
 		startTime =System.currentTimeMillis();
 		for(String id : strIds){
 			Map<String, Object> testMap =new HashMap<>();
@@ -120,9 +128,10 @@ public class MongoOperationTest {
 		Map<String, Object> options =new HashMap<>(2);
 		options.put("03_updateFlag", 1);
 		int updateCount =mongoService.countByOptions(TEST_COLLECTION, options);
-		LOG.info("strId更新测试结果, recordNum:{}|costTime:{}", updateCount, System.currentTimeMillis()-startTime);
+		LOG.info("------strId更新测试结果, totalTestNum:{}|updateCount:{}|costTime:{}",
+				TEST_NUMBER, updateCount, System.currentTimeMillis()-startTime);
 
-		LOG.info("strId查询测试, totalTestNum:{}", TEST_NUMBER);
+		//查询测试
 		startTime =System.currentTimeMillis();
 		for(String id : strIds){
 			if(Objects.isNull(mongoService.getById(id, TEST_COLLECTION))){
@@ -130,9 +139,10 @@ public class MongoOperationTest {
 				LOG.info("strId查询失败，collection:{}|id:{}|id_Type:{}", TEST_COLLECTION, id, id.getClass().getTypeName());
 			}
 		}
-		LOG.info("strId查询测试结果, costTime:{}", System.currentTimeMillis()-startTime);
+		LOG.info("------strId查询测试结果, totalTestNum:{}|costTime:{}",
+				TEST_NUMBER, System.currentTimeMillis()-startTime);
 
-		LOG.info("strId删除测试, totalTestNum:{}", TEST_NUMBER);
+		//删除测试
 		startTime =System.currentTimeMillis();
 		for(String id : strIds){
 			if(mongoService.deleteById(id, TEST_COLLECTION) <=0){
@@ -141,7 +151,10 @@ public class MongoOperationTest {
 			}
 		}
 		int recordNum =mongoService.countByOptions(TEST_COLLECTION, new HashMap<>());
-		LOG.info("strId删除测试结果, recordNum:{}|costTime:{}", recordNum, System.currentTimeMillis()-startTime);
+		LOG.info("------strId删除测试结果, totalTestNum:{}|deleteNum:{}|costTime:{}",
+				TEST_COLLECTION, TEST_NUMBER -recordNum, System.currentTimeMillis()-startTime);
+
+
 		LOG.info("------strId测试结果统计, testNum:{}|queryErrNum:{}|updateErrNum:{}|delErrNum:{}",
 				TEST_NUMBER, queryErrNum, updateErrNum, delErrNum);
 	}
