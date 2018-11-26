@@ -40,7 +40,7 @@ public class MyClassLoader extends ClassLoader {
 	private final String FILE_SUFFIX =".class";
 
 	public MyClassLoader(String classLoaderName, String basePath){
-		super();
+		super(ClassLoader.getSystemClassLoader());
 		this.classLoaderName =classLoaderName;
 		this.basePath =basePath;
 	}
@@ -74,21 +74,8 @@ public class MyClassLoader extends ClassLoader {
 	}
 
 	private static void testClassLoader(String basePath, String className) throws Exception{
-		//系统加载类
-		Class<?> clazz = Class.forName(className);
-		if(!Objects.isNull(clazz)){
-			System.out.println("------success，系统加载类1, className:"+ className);
-			List<Field> fields = Arrays.asList(clazz.getDeclaredFields());
-			if(!CollectionUtils.isEmpty(fields)){
-				fields.forEach(field -> {
-					System.out.println("------field:"+field.getName());
-				});
-			}
-		}else{
-			System.out.println("------failed，系统加载类1, className:"+ className);
-		}
 		//自定义加载类
-		clazz =null;
+		Class<?> clazz =null;
 		MyClassLoader loader =new MyClassLoader("mqTestClassLoader", basePath);
 		try {
 			clazz = loader.loadClass(className);
@@ -100,32 +87,32 @@ public class MyClassLoader extends ClassLoader {
 			List<Field> fields = Arrays.asList(clazz.getDeclaredFields());
 			if(!CollectionUtils.isEmpty(fields)){
 				fields.forEach(field -> {
-					System.out.println("------field:"+field.getName());
+					System.out.println("field:"+field.getName());
 				});
 			}
 		}else{
 			System.out.println("------failed, 自定义类, className:"+ className);
-		}
-		//再次获取系统加载类
-		clazz =null;
-		clazz = Class.forName(className);
-		if(!Objects.isNull(clazz)){
-			System.out.println("------success, 系统加载类2, className:"+ className);
-			List<Field> fields = Arrays.asList(clazz.getDeclaredFields());
-			if(!CollectionUtils.isEmpty(fields)){
-				fields.forEach(field -> {
-					System.out.println("------field:"+field.getName());
-				});
-			}
-		}else{
-			System.out.println("------failed, 系统加载类2, className:"+ className);
 		}
 	}
 
 	public static void main(String[] args) throws Exception{
 //		String basePath ="D:/myTestProject/mq-demo/controller/target/classes";
 		String basePath ="D:/testFile";
-		String className ="com.example.mq.service.schedule.ScheduleService";
+		String className ="com.example.mq.service.bean.Customer";
 		MyClassLoader.testClassLoader(basePath, className);
+
+		//系统加载类
+		Class<?> clazz = Class.forName(className);
+		if(!Objects.isNull(clazz)){
+			System.out.println("------success，系统加载类, className:"+ className);
+			List<Field> fields = Arrays.asList(clazz.getDeclaredFields());
+			if(!CollectionUtils.isEmpty(fields)){
+				fields.forEach(field -> {
+					System.out.println("field:"+field.getName());
+				});
+			}
+		}else{
+			System.out.println("------failed，系统加载类, className:"+ className);
+		}
 	}
 }

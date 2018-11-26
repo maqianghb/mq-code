@@ -30,6 +30,10 @@ public class MongoOperationTest {
 	@Autowired
 	private MongoService mongoService;
 
+	public void testIndexQuery(){
+
+	}
+
 	public void testIdOperation(){
 		int queryErrNum =0;
 		int updateErrNum =0;
