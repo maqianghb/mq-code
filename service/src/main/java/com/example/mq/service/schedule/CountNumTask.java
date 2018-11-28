@@ -25,7 +25,7 @@ public class CountNumTask {
 		Long startTime = System.currentTimeMillis();
 		LOG.info("开始执行定时任务，startTime:{}", DateUtil.formatDateTime(new Date(startTime)));
 		try {
-			this.doExecute();
+			this.doExecute(1, 100 * 10000);
 		} catch (Exception e) {
 			LOG.error("定时任务执行出错！", e);
 		}
@@ -34,13 +34,23 @@ public class CountNumTask {
 		LOG.error("------error, 定时任务执行结束，costTime:{}ms", (System.currentTimeMillis() - startTime));
 	}
 
-	private void doExecute() throws Exception {
-		int intSum = 0;
+	private void doExecute(int startNum, int endNum) throws Exception {
+		if(endNum <=startNum){
+			throw  new IllegalAccessException("参数不正确");
+		}
+		int intSum =0;
 		long longSum = 0;
-		for (int i = 1; i <= 100 * 10000; i++) {
+		for (int i = startNum; i <= endNum; i++) {
 			intSum += i;
 			longSum += i;
 		}
-		LOG.info("定时任务计算结果, intSum:{}|longSum:{}", intSum, longSum);
+		LOG.info("定时任务计算结果, section:[{}, {}]|intSum:{}|longSum:{}",startNum, endNum, intSum, longSum);
+	}
+
+	public void manulExecuteCountNum(int startNum, int endNum) throws Exception{
+		Long startTime =System.currentTimeMillis();
+		this.doExecute(startNum, endNum);
+		LOG.info("手工执行定时任务，countNumSection:[{}, {}]|costTime:{}", startNum, endNum,
+				System.currentTimeMillis() -startTime);
 	}
 }
