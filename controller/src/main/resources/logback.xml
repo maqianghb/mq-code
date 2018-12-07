@@ -27,7 +27,7 @@
        %msg 输出应用程序提供的信息
        %n输出平台相关的分行符“\n”或者“\r\n”
      -->
-    <property name="ENCODER_PATTERN" value="[%d{HH:mm:ss.SSS}][%-5level][%thread] %logger{36}-%line : %msg%n"/>
+    <property name="ENCODER_PATTERN" value="[%d{HH:mm:ss.SSS}][%-5level][%thread] %class{36}-%line : %msg%n"/>
 
     <appender name="console" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
