@@ -1,11 +1,12 @@
 package com.example.mq.controller.common;
 
 import com.example.mq.data.common.Response;
+import com.example.mq.data.util.SpringContextUtil;
 import com.example.mq.service.schedule.CountNumTask;
+import com.example.mq.service.zk.CuratorTest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -23,9 +24,6 @@ import org.springframework.web.bind.annotation.RestController;
 public class ManualScheduleController {
 	private static final Logger LOG = LoggerFactory.getLogger(ManualScheduleController.class);
 
-	@Autowired
-	private CountNumTask countNumTask;
-
 	@RequestMapping(value = "/countNumTask", method = {RequestMethod.GET})
 	public Response executeCountNumTask(
 			@RequestParam(value = "startNum" ) Integer startNum,
@@ -33,11 +31,22 @@ public class ManualScheduleController {
 	){
 		LOG.info("定时任务执行，startNum:{}|endNum:{}", startNum, endNum);
 		try {
-			countNumTask.manulExecuteCountNum(startNum, endNum);
+			CountNumTask countNumTask = SpringContextUtil.getBean(CountNumTask.class);
 		} catch (Exception e) {
 			LOG.error("手动触发定时任务执行失败，exception:{}", e);
 			return Response.createByFailMsg("手动触发定时任务执行失败");
 		}
+		return Response.createBySuccessMsg("手动触发定时任务执行成功");
+	}
+
+	@RequestMapping(value = "/test", method = {RequestMethod.GET})
+	public Response test(
+			@RequestParam(value = "startNum", required = false, defaultValue = "1") Integer startNum,
+			@RequestParam(value = "endNum", required = false, defaultValue = "10000") Integer endNum
+	) throws Exception{
+		LOG.info("手动测试执行，startNum:{}|endNum:{}", startNum, endNum);
+		CuratorTest curatorTest = SpringContextUtil.getBean(CuratorTest.class);
+		curatorTest.test();
 		return Response.createBySuccessMsg("手动触发定时任务执行成功");
 	}
 }

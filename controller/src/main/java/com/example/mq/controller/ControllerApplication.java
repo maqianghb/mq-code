@@ -35,4 +35,8 @@ public class ControllerApplication {
     void initZk(){
        //初始化zk服务
     }
+
+    private void printBeanNames(){
+
+	}
 }

@@ -3,22 +3,23 @@ package com.example.mq.data.util;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.stereotype.Component;
 
 /**
  * @program: mq-code
- * @description: spring操作工具
+ * @description: springContext操作类
  * @author: maqiang
  * @create: 2018/11/5
  *
  */
-
-public class SpringUtil implements ApplicationContextAware {
+@Component
+public class SpringContextUtil implements ApplicationContextAware {
 
 	private static ApplicationContext applicationContext;
 
 	@Override
 	public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-		SpringUtil.applicationContext =applicationContext;
+		SpringContextUtil.applicationContext =applicationContext;
 	}
 
 	public static ApplicationContext getApplicationContext() {
