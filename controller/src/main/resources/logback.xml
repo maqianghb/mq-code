@@ -21,13 +21,13 @@
 
     <!-- 定义输出日志的格式
        %d{yyyy-MM-dd  HH:mm:ss.SSS} 定义日期格式兼容java.text.SimpleDateFormat语法 2014-03-25 14:06:49.812
-       %thread 输出产生日志的线程名
        %-5level 输出日志级别
+       %thread 输出产生日志的线程名
        %logger{80}设置为80表示只输入logger最右边点符号之后的字符串，从最后一个标点符号往前数
        %msg 输出应用程序提供的信息
        %n输出平台相关的分行符“\n”或者“\r\n”
      -->
-    <property name="ENCODER_PATTERN" value="[%d{yyyy-MM-dd HH:mm:ss.SSS}][%-5level][%thread][%logger{36}] : %msg%n"/>
+    <property name="ENCODER_PATTERN" value="[%d{HH:mm:ss.SSS}][%-5level][%thread] %logger{36}-%line : %msg%n"/>
 
     <appender name="console" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
