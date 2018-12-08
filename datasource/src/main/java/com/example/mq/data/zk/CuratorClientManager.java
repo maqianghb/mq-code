@@ -7,6 +7,10 @@ import com.example.mq.data.common.MyException;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.CuratorFrameworkFactory;
+import org.apache.curator.framework.recipes.cache.NodeCache;
+import org.apache.curator.framework.recipes.cache.NodeCacheListener;
+import org.apache.curator.framework.recipes.cache.PathChildrenCache;
+import org.apache.curator.framework.recipes.cache.PathChildrenCacheListener;
 import org.apache.curator.retry.ExponentialBackoffRetry;
 import org.apache.zookeeper.CreateMode;
 import org.apache.zookeeper.data.Stat;
@@ -114,5 +118,32 @@ public class CuratorClientManager {
 			throw new IllegalArgumentException("参数为空！");
 		}
 		return this.getZkClient().getChildren().forPath(zkPath);
+	}
+
+	public void watchNode(String zkPath, NodeCacheListener listener) throws Exception{
+		if(StringUtils.isEmpty(zkPath) || Objects.isNull(listener)){
+			throw new IllegalAccessException("参数为空！");
+		}
+		if(!this.isNodeExist(zkPath)){
+			throw new MyException(String.format("zk节点不存在，zkPath:%s", zkPath));
+		}
+		//监听本节点的创建及数据变化的事件
+		NodeCache nodeCache =new NodeCache(this.getZkClient(), zkPath);
+		nodeCache.getListenable().addListener(listener);
+		//初始化时获取node值并缓存
+		nodeCache.start(true);
+	}
+
+	public void watchChildrens(String zkPath, PathChildrenCacheListener listener) throws Exception{
+		if(StringUtils.isEmpty(zkPath) || Objects.isNull(listener)){
+			throw new IllegalAccessException("参数为空！");
+		}
+		if(!this.isNodeExist(zkPath)){
+			throw new MyException(String.format("zk节点不存在，zkPath:%s", zkPath));
+		}
+		//监听子节点事件，包括创建、删除、数据更新
+		PathChildrenCache childrenCache =new PathChildrenCache(this.getZkClient(), zkPath, true);
+		childrenCache.getListenable().addListener(listener);
+		childrenCache.start(true);
 	}
 }
