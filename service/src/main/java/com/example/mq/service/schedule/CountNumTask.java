@@ -31,6 +31,7 @@ public class CountNumTask {
 		}
 		LOG.debug("------debug, 定时任务执行结束，costTime:{}ms", (System.currentTimeMillis() - startTime));
 		LOG.info("------info, 定时任务执行结束，costTime:{}ms", (System.currentTimeMillis() - startTime));
+		LOG.warn("------warn, 定时任务执行结束，costTime:{}ms", (System.currentTimeMillis() - startTime));
 		LOG.error("------error, 定时任务执行结束，costTime:{}ms", (System.currentTimeMillis() - startTime));
 	}
 

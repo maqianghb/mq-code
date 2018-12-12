@@ -5,18 +5,14 @@
     debug:当此属性设置为true时，将打印出logback内部日志信息，实时查看logback运行状态。默认值为false。
  -->
 <configuration scan="true" scanPeriod="60 seconds" debug="true">
-    <!-- 定义变量LOG_HOME用于配置log日志生成的项目主目录 本地用相对路径，部署到服务器用绝对路径/logs/ -->
+
+	<!-- 定义变量LOG_HOME用于配置log日志生成的项目主目录 本地用相对路径，部署到服务器用绝对路径/logs/ -->
     <property name="LOG_HOME" value="/logs/mq-code"/>
-    <!--日志文件保留天数-->
     <property name="LOG_MAX_HISTORY" value="15"/>
-    <!--系统当天日志文件保存路径-->
-    <property name="LOG_SYS_HOME" value="${LOG_HOME}/mq-code-logback-sys.log"/>
-    <!--系统滚动日志文件保存路径,可以与当天日志目录不同-->
-    <property name="LOG_SYS_ROLL_HOME" value="${LOG_HOME}/mq-code-logback-sys-%d{yyyy-MM-dd}.log"/>
-    <!--业务当天日志文件保存路径-->
-    <property name="LOG_BUSI_HOME" value="${LOG_HOME}/mq-code-logback-busi.log"/>
-    <!--业务滚动日志文件保存路径,可以与当天日志目录不同-->
-    <property name="LOG_BUSI_ROLL_HOME" value="${LOG_HOME}/mq-code-logback-busi-%d{yyyy-MM-dd}.log"/>
+    <property name="INFO_LOG_HOME" value="${LOG_HOME}/mq-code-info.log"/>
+    <property name="INFO_LOG_ROLL_HOME" value="${LOG_HOME}/mq-code-info-%d{yyyy-MM-dd}.log"/>
+    <property name="ERROR_LOG_HOME" value="${LOG_HOME}/mq-code-error.log"/>
+    <property name="ERROR_LOG_ROLL_HOME" value="${LOG_HOME}/mq-code-error-%d{yyyy-MM-dd}.log"/>
 
 
     <!-- 定义输出日志的格式
@@ -32,28 +28,29 @@
     <appender name="console" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
 			<pattern>${ENCODER_PATTERN}</pattern>
+			<charset>UTF-8</charset>
         </encoder>
     </appender>
 
-    <appender name="file-business" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
-            <level>INFO</level>
-        </filter>
-        <File>${LOG_BUSI_HOME}</File>
+    <appender name="info" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <File>${INFO_LOG_HOME}</File>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>${LOG_BUSI_ROLL_HOME}</fileNamePattern>
+            <fileNamePattern>${INFO_LOG_ROLL_HOME}</fileNamePattern>
             <maxHistory>${LOG_MAX_HISTORY}</maxHistory>
         </rollingPolicy>
         <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
             <pattern>${ENCODER_PATTERN}</pattern>
+			<charset>UTF-8</charset>
         </encoder>
+		<filter class="ch.qos.logback.classic.filter.LevelFilter">
+			<level>ERROR</level>
+			<onMatch>DENY</onMatch>
+			<onMismatch>ACCEPT</onMismatch>
+		</filter>
     </appender>
 
-    <appender name="file-sys" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
-            <level>INFO</level>
-        </filter>
-        <File>${LOG_SYS_HOME}</File>
+    <appender name="error" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <File>${ERROR_LOG_HOME}</File>
         <!-- rollingPolicy滚动策略
            TimeBasedRollingPolicy： 最常用的滚动策略，它根据时间来制定滚动策略，既负责滚动也负责出发滚动。有以下子节点：
               <fileNamePattern>:必要节点，包含文件名及“%d”转换符， “%d”可以包含一个 java.text.SimpleDateFormat指定的时间格式，如：%d{yyyy-MM}。如果直接使用 %d，默认格式是 yyyy-MM-dd。
@@ -66,32 +63,31 @@
               <fileNamePattern >:必须包含“%i”例如，假设最小值和最大值分别为1和2，命名模式为 mylog%i.log,会产生归档文件mylog1.log和mylog2.log。还可以指定文件压缩选项，例如，mylog%i.log.gz 或者 没有log%i.log.zip
          -->
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>${LOG_SYS_ROLL_HOME}</fileNamePattern>
+            <fileNamePattern>${ERROR_LOG_ROLL_HOME}</fileNamePattern>
             <maxHistory>${LOG_MAX_HISTORY}</maxHistory>
         </rollingPolicy>
         <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
             <pattern>${ENCODER_PATTERN}</pattern>
+			<charset>UTF-8</charset>
         </encoder>
+		<filter class="ch.qos.logback.classic.filter.LevelFilter"><!-- 只打印错误日志 -->
+			<level>ERROR</level>
+			<onMatch>ACCEPT</onMatch>
+			<onMismatch>DENY</onMismatch>
+		</filter>
     </appender>
-
-	<!-- 业务日志 -->
-    <logger name="com.example.mq" level="info" additivity="false">
-		<!--是否输出到控制台，本地可开启-->
-		<appender-ref ref="console"/>
-		<appender-ref ref="file-business"/>
-    </logger>
 
 	<!-- 过滤某些包不必要的日志 -->
 	<!-- additivity为false表示不向上级(即root传递日志)，加入改为true，则本级日志处理后，再将日志向上级传递-->
-	<logger name="com.alibaba.jstorm"  level="ERROR" additivity="false">
-		<appender-ref ref="console"/>
-		<appender-ref ref="file-business"/>
+	<logger name="com.alibaba.jstorm"  level="WARN" additivity="false">
+		<appender-ref ref="console" />
+		<appender-ref ref="info" />
+		<appender-ref ref="error" />
 	</logger>
 
     <root level="info">
-        <!--开发环境配置 start -->
-        <appender-ref ref="console"/>
-        <!--开发环境配置 end -->
-        <appender-ref ref="file-sys"/>
+		<appender-ref ref="console" />
+		<appender-ref ref="info" />
+		<appender-ref ref="error" />
     </root>
 </configuration>
