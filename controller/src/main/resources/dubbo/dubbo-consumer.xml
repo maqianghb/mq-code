@@ -19,7 +19,5 @@
 					 <!--version="${seller.dubbo.reference.version}"/>-->
 
 	<!-- for test -->
-	<!--<dubbo:reference id="bwListQueryApi" interface="com.caocao.basics.api.service.BwListQueryApi"-->
-					 <!--url="dubbo://101.37.69.81:18081"/>-->
 
 </beans>
