@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+           http://code.alibabatech.com/schema/dubbo
+           http://code.alibabatech.com/schema/dubbo/dubbo.xsd">
+
+    <dubbo:application name="mq-code" />
+
+    <!--<dubbo:registry id="sellerRegistry" protocol="${seller.dubbo.registry.protocol}" address="${seller.dubbo.registry.address}"-->
+					<!--check="seller.dubbo.registry.check" default="false"/>-->
+
+    <!-- seller消费接口实例 -->
+    <!--<dubbo:reference id="sellerQueryApi" protocol="dubbo" interface="com.example.mq.api.SellerQueryApi" -->
+					 <!--registry="sellerRegistry"  timeout="${seller.dubbo.registry.timeout}"-->
+					 <!--check="${seller.dubbo.registry.check}" retries="${config.dubbo.registry.retries}"-->
+					 <!--version="${seller.dubbo.reference.version}"/>-->
+
+	<!-- for test -->
+	<!--<dubbo:reference id="bwListQueryApi" interface="com.caocao.basics.api.service.BwListQueryApi"-->
+					 <!--url="dubbo://101.37.69.81:18081"/>-->
+
+</beans>

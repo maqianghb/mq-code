@@ -1,4 +1,4 @@
-package com.example.mq.service.classLoader;
+package com.example.mq.service.classloader;
 
 /**
  * @program: mq-code

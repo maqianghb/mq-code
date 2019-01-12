@@ -1,4 +1,4 @@
-package com.example.mq.service.classLoader;
+package com.example.mq.service.classloader;
 
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;

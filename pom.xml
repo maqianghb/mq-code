@@ -33,8 +33,9 @@
 
         <lombok.version>1.16.20</lombok.version>
         <fastjson.version>1.2.47</fastjson.version>
-        <commons-lang3.version>3.3.1</commons-lang3.version>
 		<commons-io.version>2.5</commons-io.version>
+		<commons-lang3.version>3.3.1</commons-lang3.version>
+		<commons-collections4.version>4.1</commons-collections4.version>
 		<commons-jexl3.version>3.1</commons-jexl3.version>
 		<mongo.java.driver.version>3.6.4</mongo.java.driver.version>
 		<codis-proxy.version>1.0.5</codis-proxy.version>
@@ -47,6 +48,8 @@
         <jackson-annotations.version>2.9.0</jackson-annotations.version>
         <dubbo.version>2.5.8</dubbo.version>
         <zookeeper.version>3.4.9</zookeeper.version>
+		<hystrix-core.version>1.5.18</hystrix-core.version>
+		<elastic-job.version>2.1.2</elastic-job.version>
 
     </properties>
 
@@ -85,6 +88,13 @@
             <version>${fastjson.version}</version>
         </dependency>
 
+		<!-- commons io -->
+		<dependency>
+			<groupId>commons-io</groupId>
+			<artifactId>commons-io</artifactId>
+			<version>${commons-io.version}</version>
+		</dependency>
+
         <!-- commons-lang3 -->
         <dependency>
             <groupId>org.apache.commons</groupId>
@@ -92,12 +102,13 @@
             <version>${commons-lang3.version}</version>
         </dependency>
 
-		<!-- commons io -->
+		<!-- commons-collections4 -->
 		<dependency>
-			<groupId>commons-io</groupId>
-			<artifactId>commons-io</artifactId>
-			<version>${commons-io.version}</version>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-collections4</artifactId>
+			<version>${commons-collections4.version}</version>
 		</dependency>
+
 
     </dependencies>
 

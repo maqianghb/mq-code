@@ -27,7 +27,7 @@ import org.springframework.util.CollectionUtils;
  * @create: 2018/12/7
  *
  */
-@Component
+//@Component
 public class CuratorTest {
 	private static final Logger LOG = LoggerFactory.getLogger(CuratorTest.class);
 
