@@ -1,4 +1,4 @@
-package com.example.mq.data.mySqlConf;
+package com.example.mq.data.mysql;
 
 
 import org.slf4j.Logger;

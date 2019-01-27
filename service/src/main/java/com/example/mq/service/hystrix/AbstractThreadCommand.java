@@ -15,12 +15,16 @@ import com.netflix.hystrix.HystrixThreadPoolProperties;
  * @create: 2019/1/8
  *
  */
-public abstract class AbstractThreadPool<T> extends HystrixCommand<T> {
+public abstract class AbstractThreadCommand<T> extends HystrixCommand<T> {
 
-	public AbstractThreadPool(String name, HystrixThreadPoolConfig config){
-		super(Setter.withGroupKey(HystrixCommandGroupKey.Factory.asKey(name))
-				.andCommandKey(HystrixCommandKey.Factory.asKey(name))
-				.andThreadPoolKey(HystrixThreadPoolKey.Factory.asKey(name))
+	private final static String  SUFFIX_GROUP_KEY= "_group";
+	private final static String SUFFIX_COMMAND_KEY = "_commandKey";
+	private final static String SUFFIX_THREAD_POOL_KEY = "_threadPool";
+
+	public AbstractThreadCommand(String name, HystrixConfig config){
+		super(Setter.withGroupKey(HystrixCommandGroupKey.Factory.asKey(name + SUFFIX_GROUP_KEY))
+				.andCommandKey(HystrixCommandKey.Factory.asKey(name + SUFFIX_COMMAND_KEY))
+				.andThreadPoolKey(HystrixThreadPoolKey.Factory.asKey(name + SUFFIX_THREAD_POOL_KEY))
 				.andCommandPropertiesDefaults(HystrixCommandProperties.Setter()
 						.withExecutionTimeoutInMilliseconds(config.getExecuteTimeOutInMillis())
 						//熔断配置

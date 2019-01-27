@@ -1,4 +1,4 @@
-package com.example.mq.service.dao;
+package com.example.mq.service.dao.customer;
 
 import com.example.mq.service.bean.Customer;
 

@@ -10,7 +10,7 @@ import lombok.Data;
  *
  */
 @Data
-public class HystrixThreadPoolConfig {
+public class HystrixConfig {
 
 	/**
 	 * 执行超时时间

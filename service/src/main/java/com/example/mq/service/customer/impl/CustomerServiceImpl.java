@@ -4,11 +4,10 @@ import com.example.mq.data.common.PageResult;
 import com.example.mq.service.bean.Customer;
 import com.example.mq.data.common.MyException;
 import com.example.mq.service.customer.CustomerService;
-import com.example.mq.service.dao.PlatformCustomerMapper;
 import com.github.pagehelper.PageHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,7 +28,7 @@ public class CustomerServiceImpl implements CustomerService {
     private static final Logger LOG = LoggerFactory.getLogger(CustomerServiceImpl.class);
 
 //    @Autowired
-//    private PlatformCustomerMapper platformCustomerMapper;
+//    private PlatformSellerMapper platformCustomerMapper;
 
     @Override
     public Customer queryByCustomerId(Long customerId) throws Exception {

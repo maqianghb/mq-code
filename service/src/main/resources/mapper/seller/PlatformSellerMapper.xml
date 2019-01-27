@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.mq.service.dao.seller.PlatformSellerMapper">
+
+	<resultMap id="BaseResultMap" type="com.example.mq.service.bean.Seller">
+		<id column="id" jdbcType="INTEGER" property="id" />
+		<result column="seller_id" jdbcType="BIGINT" property="sellerId" />
+		<result column="seller_name" jdbcType="VARCHAR" property="name" />
+	</resultMap>
+
+	<sql id="baseColumnList">
+		id, customer_id, seller_name
+	</sql>
+
+	<select id="selectBySellerId" parameterType="java.lang.Long" resultMap="BaseResultMap">
+		select <include refid="baseColumnList" />
+		from platform_seller
+		where seller_id = #{sellerId,jdbcType=BIGINT} and del_flag !=1
+	</select>
+
+
+</mapper>

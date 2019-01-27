@@ -6,7 +6,6 @@ import com.netflix.hystrix.HystrixCommandKey;
 import com.netflix.hystrix.HystrixCommandProperties;
 import com.netflix.hystrix.HystrixThreadPoolKey;
 import com.netflix.hystrix.HystrixThreadPoolProperties;
-import org.apache.commons.lang3.StringUtils;
 
 /**
  * @program: mq-code
@@ -16,12 +15,16 @@ import org.apache.commons.lang3.StringUtils;
  *
  */
 
-public abstract class AbstractSemaphore<T> extends HystrixCommand<T> {
+public abstract class AbstractSemaphoreCommand<T> extends HystrixCommand<T> {
 
-	public AbstractSemaphore(String name, HystrixThreadPoolConfig config){
-		super(Setter.withGroupKey(HystrixCommandGroupKey.Factory.asKey(name))
-				.andCommandKey(HystrixCommandKey.Factory.asKey(name))
-				.andThreadPoolKey(HystrixThreadPoolKey.Factory.asKey(name))
+	private final static String  SUFFIX_GROUP_KEY= "_group";
+	private final static String SUFFIX_COMMAND_KEY = "_commandKey";
+	private final static String SUFFIX_SEMAPHORE_KEY = "_threadPool";
+
+	public AbstractSemaphoreCommand(String name, HystrixConfig config){
+		super(Setter.withGroupKey(HystrixCommandGroupKey.Factory.asKey(name + SUFFIX_GROUP_KEY))
+				.andCommandKey(HystrixCommandKey.Factory.asKey(name + SUFFIX_COMMAND_KEY))
+				.andThreadPoolKey(HystrixThreadPoolKey.Factory.asKey(name + SUFFIX_SEMAPHORE_KEY))
 				.andCommandPropertiesDefaults(HystrixCommandProperties.Setter()
 						.withExecutionTimeoutInMilliseconds(config.getCbSleepWindowInMillis())
 						//熔断配置

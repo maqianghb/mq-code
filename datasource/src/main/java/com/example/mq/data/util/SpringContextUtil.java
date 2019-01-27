@@ -1,5 +1,11 @@
 package com.example.mq.data.util;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.commons.lang3.StringUtils;
+
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -36,5 +42,20 @@ public class SpringContextUtil implements ApplicationContextAware {
 
 	public static <T> T getBean(String name, Class<T> clazz){
 		return applicationContext.getBean(name, clazz);
+	}
+
+	public static List<String> getBeanNames(){
+		String[] beanNames =applicationContext.getBeanDefinitionNames();
+		if(null !=beanNames && beanNames.length >0){
+			return Arrays.asList(beanNames);
+		}
+		return null;
+	}
+
+	public static Object getProperty(String key){
+		if(StringUtils.isEmpty(key)){
+			return null;
+		}
+		return applicationContext.getEnvironment().getProperty(key);
 	}
 }
