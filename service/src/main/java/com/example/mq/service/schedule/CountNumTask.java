@@ -23,16 +23,13 @@ public class CountNumTask {
 	@Scheduled(cron = "${count.num.schedule.cron}")
 	public void executeSchedue() {
 		Long startTime = System.currentTimeMillis();
-		LOG.info("开始执行定时任务，startTime:{}", DateUtil.formatDateTime(new Date(startTime)));
+		LOG.warn("开始执行定时任务，startTime:{}", DateUtil.formatDateTime(new Date(startTime)));
 		try {
 			this.doExecute(1, 100 * 10000);
 		} catch (Exception e) {
 			LOG.error("定时任务执行出错！", e);
 		}
-		LOG.debug("------debug, 定时任务执行结束，costTime:{}ms", (System.currentTimeMillis() - startTime));
-		LOG.info("------info, 定时任务执行结束，costTime:{}ms", (System.currentTimeMillis() - startTime));
-		LOG.warn("------warn, 定时任务执行结束，costTime:{}ms", (System.currentTimeMillis() - startTime));
-		LOG.error("------error, 定时任务执行结束，costTime:{}ms", (System.currentTimeMillis() - startTime));
+		LOG.warn("定时任务执行结束，costTime:{}ms", (System.currentTimeMillis() - startTime));
 	}
 
 	private void doExecute(int startNum, int endNum) throws Exception {
@@ -45,13 +42,19 @@ public class CountNumTask {
 			intSum += i;
 			longSum += i;
 		}
-		LOG.info("定时任务计算结果, section:[{}, {}]|intSum:{}|longSum:{}",startNum, endNum, intSum, longSum);
+		LOG.debug("------[debug]定时任务计算结果, section:[{}, {}]|intSum:{}|longSum:{}",startNum, endNum, intSum, longSum);
+		LOG.info("------[info]定时任务计算结果, section:[{}, {}]|intSum:{}|longSum:{}",startNum, endNum, intSum, longSum);
+		LOG.warn("------[warn]定时任务计算结果, section:[{}, {}]|intSum:{}|longSum:{}",startNum, endNum, intSum, longSum);
+		LOG.error("------[error]定时任务计算结果, section:[{}, {}]|intSum:{}|longSum:{}",startNum, endNum, intSum, longSum);
 	}
 
 	public void manulExecuteCountNum(int startNum, int endNum) throws Exception{
 		Long startTime =System.currentTimeMillis();
+		LOG.warn("手工执行定时任务启动，countNumSection:[{}, {}]|startTime:{}", startNum, endNum,
+				DateUtil.formatDateTime(new Date(startTime)));
+
 		this.doExecute(startNum, endNum);
-		LOG.info("手工执行定时任务，countNumSection:[{}, {}]|costTime:{}", startNum, endNum,
+		LOG.info("手工执行定时任务结束，countNumSection:[{}, {}]|costTime:{}", startNum, endNum,
 				System.currentTimeMillis() -startTime);
 	}
 }

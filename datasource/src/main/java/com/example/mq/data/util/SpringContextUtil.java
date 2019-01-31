@@ -46,10 +46,10 @@ public class SpringContextUtil implements ApplicationContextAware {
 
 	public static List<String> getBeanNames(){
 		String[] beanNames =applicationContext.getBeanDefinitionNames();
-		if(null !=beanNames && beanNames.length >0){
-			return Arrays.asList(beanNames);
+		if(null ==beanNames && beanNames.length ==0){
+			return null;
 		}
-		return null;
+		return Arrays.asList(beanNames);
 	}
 
 	public static Object getProperty(String key){

@@ -32,10 +32,9 @@ public class ControllerApplication {
     public static void main(String[] args) {
         long startTime =System.currentTimeMillis();
         ApplicationContext context =SpringApplication.run(ControllerApplication.class, args);
-		System.out.println("server.servlet.context-path:"+ context.getEnvironment().getProperty("server.servlet.context-path"));
-		System.out.println("server.servlet.context-path:"+ SpringContextUtil.getProperty("server.servlet.context-path"));
-		printBeanNames(context);
 
+//		printBeanNames();
+		System.out.println("server.servlet.context-path:"+ SpringContextUtil.getProperty("server.servlet.context-path"));
 		System.out.println("------applicatiuon started in "+(System.currentTimeMillis()-startTime));
     }
 
@@ -44,11 +43,8 @@ public class ControllerApplication {
        //初始化zk服务
     }
 
-    private static void printBeanNames(ApplicationContext context){
-		if(null == context){
-			return;
-		}
-		List<String> beanNames = Arrays.asList(context.getBeanDefinitionNames());
+    private static void printBeanNames(){
+		List<String> beanNames = SpringContextUtil.getBeanNames();
 		if(!CollectionUtils.isEmpty(beanNames)){
 			for(String beanName :beanNames){
 				System.out.println("beanName:" + beanName);

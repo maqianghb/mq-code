@@ -9,24 +9,19 @@ import org.springframework.stereotype.Component;
 @Component
 public class MongoConstant {
 
-	private static final SnowflakeIdWorker idWorker =new SnowflakeIdWorker(10L,11L);
-
     @Value("${mongodb.table.customer}")
     public String TABLE_CUSTOMER;
 
     @Value("${mongodb.table.seller}")
     public String TABLE_SELLER;
 
+
     public static final String GREATER_THAN_KEY ="$gt";
 	public static final String GREATER_THAN_OR_EQUAL_KEY ="$gte";
-
-
-    public static Long createId(){
-    	return idWorker.nextId();
-	}
-
-	public static String createStrId(){
-    	return String.valueOf(idWorker.nextId());
-	}
+	public static final String LESSER_THAN_KEY ="$lt";
+	public static final String LESSER_THAN_OR_EQUAL_KEY ="$lte";
+	public static final String NOT_EQUAL_KEY ="$ne";
+	public static final String IN_LIST__KEY ="$in";
+	public static final String NOT_IN_LIST__KEY ="$nin";
 
 }

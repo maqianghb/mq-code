@@ -66,6 +66,15 @@ public class NumberUtil {
 	}
 
 	/**
+	 * format:2位小数，四舍五入
+	 * @param v1
+	 * @return
+	 */
+	public static double format(double v1){
+		return div(v1, 1.0);
+	}
+
+	/**
 	 * double转int，四舍五入
 	 * @param v
 	 * @return
@@ -82,6 +91,8 @@ public class NumberUtil {
 		System.out.println("------ mul result:"+ NumberUtil.mul(num1, num2));
 		System.out.println("------ div result:"+ NumberUtil.div(num1, num2));
 		System.out.println("------ add result parse int:"+ NumberUtil.intValue(NumberUtil.add(num1, num2)));
+		System.out.println("------ format result:"+ NumberUtil.format(num1));
+		System.out.println("------ format result:"+ NumberUtil.format(num2));
 
 	}
 }

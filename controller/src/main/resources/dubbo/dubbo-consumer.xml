@@ -19,5 +19,6 @@
 					 <!--version="${seller.dubbo.reference.version}"/>-->
 
 	<!-- for test -->
-
+	<!--<dubbo:reference id="sellerQueryApi" interface="com.example.mq.api.SellerQueryApi"-->
+					 <!--url="dubbo://192.168.0.1:12345" timeout="3000"/>-->
 </beans>

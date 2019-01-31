@@ -2,16 +2,17 @@ package com.example.mq.data.util;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.locks.ReentrantLock;
 
+import com.alibaba.fastjson.JSONObject;
 import org.apache.commons.jexl3.JexlContext;
 import org.apache.commons.jexl3.JexlEngine;
 import org.apache.commons.jexl3.MapContext;
 import org.apache.commons.jexl3.internal.Engine;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.springframework.util.CollectionUtils;
-import org.springframework.util.StringUtils;
 
 /**
  * @program: mq-code
@@ -24,44 +25,61 @@ import org.springframework.util.StringUtils;
 public class JexlExecuteUtil {
 	private static final Logger LOG = LoggerFactory.getLogger(JexlExecuteUtil.class);
 
+	/**
+	 * 表达式计算引擎
+	 */
 	private static JexlEngine jexl = new Engine();
+
+	private static final ReentrantLock lock =new ReentrantLock();
 
 	public static Boolean checkExps(String exps){
 		if(StringUtils.isEmpty(exps)){
-			return false;
+			throw new IllegalArgumentException("参数为空！");
 		}
+		boolean result=false;
 		try {
+			lock.tryLock();
 			jexl.createExpression(exps);
+			result =true;
 		} catch (Exception e) {
 			LOG.error("表达式创建失败，exps:", exps, e);
-			return false;
+		}finally {
+			jexl.clearCache();
+			lock.unlock();
 		}
-		return true;
+		return result;
 	}
 
-	public static Object evaluateExps(String exps, Map<String, Object> paramsMap){
-		if(StringUtils.isEmpty(exps)){
-			return null;
+	public static Object evaluateExps(String exps, Map<String, Object> params){
+		if(StringUtils.isEmpty(exps) || null ==params){
+			throw new IllegalArgumentException("参数为空！");
 		}
 		JexlContext ctxt =new MapContext();
-		if( !CollectionUtils.isEmpty(paramsMap)){
-			for(Map.Entry<String, Object> entry :paramsMap.entrySet()){
-				ctxt.set(entry.getKey(), entry.getValue());
-			}
+		for(Map.Entry<String, Object> entry :params.entrySet()){
+			ctxt.set(entry.getKey(), entry.getValue());
 		}
-		Object value =jexl.createExpression(exps).evaluate(ctxt);
+		Object value =null;
+		try {
+			lock.tryLock();
+			value =jexl.createExpression(exps).evaluate(ctxt);
+		} catch (Exception e) {
+			LOG.error("表达式执行失败，exps:{}|params:{}", exps, JSONObject.toJSONString(params), e);
+		}finally {
+			jexl.clearCache();
+			lock.unlock();
+		}
 		return value;
 	}
 
 	public static void main(String[] args){
-		String exps ="((a*1.0+ b*1.5)*2.0 +c)*2.5+d";
-		System.out.println("---check result:"+checkExps(exps).toString());
-
+		String exps =" ((a*1.0+ b*1.5)  *2.0 +c)*2.5+d ";
 		Map<String, Object> params =new HashMap<>();
 		params.put("a", 1.0);
 		params.put("b", 1.5);
 		params.put("c", 2.0);
 		params.put("d", 2.5);
-		System.out.println("---evaluate result:"+evaluateExps(exps, params).toString());
+
+		System.out.println("------check result:"+checkExps(exps).toString());
+		System.out.println("------evaluate result:"+evaluateExps(exps, params).toString());
 	}
 }

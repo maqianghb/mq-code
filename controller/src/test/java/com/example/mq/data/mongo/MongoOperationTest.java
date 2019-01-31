@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.Objects;
 
 import com.alibaba.fastjson.JSONObject;
+import com.example.mq.data.util.SnowflakeIdWorker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,6 +28,8 @@ public class MongoOperationTest {
 	private final String TEST_COLLECTION ="mq_test";
 	private final int TEST_NUMBER =1000;
 
+	private static final SnowflakeIdWorker idWorker =new SnowflakeIdWorker(10L, 11L);
+
 	@Autowired
 	private MongoService mongoService;
 
@@ -40,7 +43,7 @@ public class MongoOperationTest {
 		int delErrNum =0;
 		List<Long> ids =new ArrayList<>(TEST_NUMBER);
 		for(int i=0; i<TEST_NUMBER; i++){
-			ids.add(MongoConstant.createId());
+			ids.add(idWorker.nextId());
 		}
 
 		//插入测试
@@ -104,7 +107,7 @@ public class MongoOperationTest {
 		int delErrNum =0;
 		List<String> strIds =new ArrayList<>(TEST_NUMBER);
 		for(int i=0; i<TEST_NUMBER; i++){
-			strIds.add(String.valueOf(MongoConstant.createStrId()));
+			strIds.add(String.valueOf(idWorker.nextId()));
 		}
 
 		//插入测试
