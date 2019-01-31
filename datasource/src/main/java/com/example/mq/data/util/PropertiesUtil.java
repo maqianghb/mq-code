@@ -27,6 +27,8 @@ public class PropertiesUtil {
 		}
 		Properties prop = new Properties();
 		try {
+			//第一种写法会读不到文件
+//			InputStream inputStream =ClassLoader.getSystemResourceAsStream(fileName);
 			InputStream inStream = PropertiesUtil.class.getClassLoader().getResourceAsStream(fileName);
 			if(null !=inStream){
 				prop.load(inStream);
@@ -44,6 +46,7 @@ public class PropertiesUtil {
 		}
 		Properties prop = new Properties();
 		try {
+			//无法读到jar包中的文件
 			InputStream inputStream = FileUtils.openInputStream(FileUtils.getFile(fileName));
 			if(null !=inputStream){
 				prop.load(inputStream);
@@ -55,7 +58,7 @@ public class PropertiesUtil {
 		return null;
 	}
 
-	public static Properties addProperties(Properties prop1, Properties prop2) throws Exception{
+	public static void addProperties(Properties prop1, Properties prop2) throws Exception{
 		if(null ==prop1 || null ==prop2){
 			throw new IllegalArgumentException("参数为空！");
 		}
@@ -64,7 +67,6 @@ public class PropertiesUtil {
 			String key =(String) en.nextElement();
 			prop1.putIfAbsent(key, prop2.getProperty(key));
 		}
-		return prop1;
 	}
 
 }
