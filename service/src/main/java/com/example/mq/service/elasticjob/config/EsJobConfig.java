@@ -8,5 +8,5 @@ package com.example.mq.service.elasticjob.config;
  *
  */
 
-public class EsJobCommonConfig {
+public class EsJobConfig {
 }

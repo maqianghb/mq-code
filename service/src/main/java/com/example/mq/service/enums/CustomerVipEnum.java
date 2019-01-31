@@ -8,7 +8,7 @@ import java.util.Objects;
  * @author: maqiang
  * @create: 2018-10-12 22:17
  */
-public enum CustomerVipLevelEnum {
+public enum CustomerVipEnum {
 
     SILVER((short)1, "白银"),
     GOLD((short)2, "黄金"),
@@ -17,7 +17,7 @@ public enum CustomerVipLevelEnum {
     private Short code;
     private String msg;
 
-    CustomerVipLevelEnum(Short code, String msg){
+    CustomerVipEnum(Short code, String msg){
        this.code =code;
        this.msg =msg;
     }
@@ -30,11 +30,11 @@ public enum CustomerVipLevelEnum {
         return msg;
     }
 
-    public static CustomerVipLevelEnum getByCode(Short code){
+    public static CustomerVipEnum getByCode(Short code){
         if(Objects.isNull(code)){
             return null;
         }
-        for(CustomerVipLevelEnum levelEnum: CustomerVipLevelEnum.values()){
+        for(CustomerVipEnum levelEnum: CustomerVipEnum.values()){
             if(levelEnum.code.equals(code)){
                 return levelEnum;
             }

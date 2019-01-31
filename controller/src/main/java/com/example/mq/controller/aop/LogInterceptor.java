@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.alibaba.fastjson.JSONObject;
+import com.example.mq.data.common.Response;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
@@ -28,20 +29,28 @@ public class LogInterceptor {
     public void ctrlPointCut(){}
 
     @Around("ctrlPointCut()")
-    public Object arround(ProceedingJoinPoint joinPoint) throws Throwable{
-		Object result = null;
+    public Response arround(ProceedingJoinPoint joinPoint) throws Throwable{
+		Response result = null;
 		try {
 			String method = joinPoint.getSignature().getName();
 			Object[] args = joinPoint.getArgs();
 			long startTime =System.currentTimeMillis();
 
-			result = joinPoint.proceed();
+			//执行
+			Object resultObj = joinPoint.proceed();
+			if(resultObj instanceof Response){
+				result =(Response) resultObj;
+			}else {
+				LOG.error("处理结果类型未知，无法返回数据，result:{}", JSONObject.toJSONString(resultObj));
+				result = Response.createByFailMsg("无法获取正确的返回结果！");
+			}
 
+			//log
 			Map<String, Object> logInfo =new HashMap<>();
 			logInfo.put("method", joinPoint.getTarget().getClass().getName()+"."+method);
 			logInfo.put("costTime",(System.currentTimeMillis()-startTime));
 			logInfo.put("args", JSONObject.toJSONString(args));
-			logInfo.put("result", result);
+			logInfo.put("result", JSONObject.toJSONString(result));
 			LOG.info(JSONObject.toJSONString(logInfo));
 		} catch (Throwable throwable) {
 			throw throwable;
