@@ -45,6 +45,14 @@
 			<version>${mysql-connector-java.version}</version>
 		</dependency>
 
+		<!-- page helper -->
+		<dependency>
+			<groupId>com.github.pagehelper</groupId>
+			<artifactId>pagehelper</artifactId>
+			<version>${pagehelper.version}</version>
+			<scope>compile</scope>
+		</dependency>
+
 		<!-- druid -->
 		<dependency>
 			<groupId>com.alibaba</groupId>

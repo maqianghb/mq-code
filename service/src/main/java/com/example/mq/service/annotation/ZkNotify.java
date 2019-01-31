@@ -1,4 +1,4 @@
-package com.example.mq.service.aop;
+package com.example.mq.service.annotation;
 
 
 

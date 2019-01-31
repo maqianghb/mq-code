@@ -24,27 +24,11 @@
         </dependency>
 
 
-
         <!-- jackson annotations -->
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-annotations</artifactId>
             <version>${jackson-annotations.version}</version>
-        </dependency>
-
-        <!-- Spring Transaction -->
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-tx</artifactId>
-            <version>5.0.8.RELEASE</version>
-        </dependency>
-
-        <!-- page helper -->
-        <dependency>
-            <groupId>com.github.pagehelper</groupId>
-            <artifactId>pagehelper</artifactId>
-            <version>${pagehelper.version}</version>
-            <scope>compile</scope>
         </dependency>
 
 		<!-- hystrix -->
