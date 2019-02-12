@@ -16,6 +16,9 @@ public class FilterChain {
 
 	private List<Filter> filters =new ArrayList<>();
 
+	/**
+	 * 过滤器链上的标识，记录过滤器的位置
+	 */
 	private int index =0;
 
 	public FilterChain addFilter(Filter f){
@@ -27,6 +30,7 @@ public class FilterChain {
 		if(index ==filters.size()){
 			return;
 		}
+		//拿到当前过滤器
 		Filter filter =filters.get(index);
 		index++;
 
