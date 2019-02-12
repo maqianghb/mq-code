@@ -44,26 +44,42 @@ public class AuthorityFilter implements Filter {
 	public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
 		HttpServletRequest request = (HttpServletRequest) servletRequest;
 		HttpServletResponse response = (HttpServletResponse) servletResponse;
+
 		if (this.isNotAllowBrowser(request)) {
 			LOG.warn("用户使用的浏览器版本过低，被拦截");
 			return ;
 		}
-		String requestUri = request.getRequestURI();
-		if(!CollectionUtils.isEmpty(SKIP_FILTER_URLS)){
-			for(String skipUrl : SKIP_FILTER_URLS){
-				if(requestUri.contains(skipUrl)){
-					//跳过本次过滤器
-					filterChain.doFilter(request, response);
-					return;
-				}
-			}
+
+		//check
+		if(!this.checkAuthority(request)){
+			LOG.warn("authority check result is false!");
+			return ;
 		}
+
+		//执行filterChain中其他filter
+		filterChain.doFilter(request, response);
+
+
 
 	}
 
 	@Override
 	public void destroy() {
 
+	}
+
+	private boolean checkAuthority(HttpServletRequest request){
+		String requestUri = request.getRequestURI();
+		//过滤配置的白名单列表
+		if(!CollectionUtils.isEmpty(SKIP_FILTER_URLS)){
+			for(String skipUrl : SKIP_FILTER_URLS){
+				if(requestUri.contains(skipUrl)){
+					return true;
+				}
+			}
+		}
+		//do check
+		return false;
 	}
 
 	private boolean isNotAllowBrowser(HttpServletRequest request) {

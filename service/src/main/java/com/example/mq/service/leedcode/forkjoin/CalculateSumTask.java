@@ -24,7 +24,7 @@ import org.slf4j.LoggerFactory;
 public class CalculateSumTask extends RecursiveTask<Integer> {
 	private static final Logger LOG = LoggerFactory.getLogger(CalculateSumTask.class);
 
-	private static AtomicInteger taskNum =new AtomicInteger(0);
+	private static AtomicInteger taskNum =new AtomicInteger(1);
 
 	private final int THRESLOD =10;
 	private final long TASK_TIME_OUT =1 *1000L;
