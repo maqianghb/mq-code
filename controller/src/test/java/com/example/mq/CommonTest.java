@@ -1,5 +1,10 @@
 package com.example.mq;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.concurrent.LinkedBlockingQueue;
+
 /**
  * @program: mq-code
  * @description: ${description}
@@ -13,6 +18,10 @@ public class CommonTest {
 	public static void main(String[] args) {
 		CommonTest commonTest =new CommonTest();
 		commonTest.testReplaceSpace();
+
+		System.out.println("------test end!");
+
+
 	}
 
 	public void testReplaceSpace(){
@@ -24,5 +33,11 @@ public class CommonTest {
 		String str1 ="20181226";
 		String str2 ="20181225";
 		System.out.println("compare result:"+ str1.compareTo(str2));
+	}
+
+	public void testCode(){
+		HashMap map =new HashMap();
+		List<String> list =new ArrayList<>();
+		LinkedBlockingQueue queue =new LinkedBlockingQueue();
 	}
 }

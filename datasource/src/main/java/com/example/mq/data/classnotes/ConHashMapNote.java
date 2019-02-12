@@ -1,4 +1,4 @@
-//package com.example.mq.data.classnote;
+//package com.example.mq.data.classnotes;
 //
 //import java.util.concurrent.ConcurrentHashMap;
 //import java.util.concurrent.ThreadLocalRandom;
@@ -16,6 +16,7 @@
 //public class ConHashMapNote {
 //
 //	ConcurrentHashMap<String, MyException> testMap =new ConcurrentHashMap<>();
+//
 //
 //	//最大容量
 //	private static final int MAXIMUM_CAPACITY = 1 << 30;
@@ -241,7 +242,7 @@
 //	private final void transfer(Node<K,V>[] tab, Node<K,V>[] nextTab) {
 //		//n:桶的总大小，tab:桶首节点构成的链表，类似与老版本的segment
 //		int n = tab.length, stride;
-//		//NCPU为CPU核数
+//		//NCPU为CPU核数, stride大意是每个cpu处理的node数不小于16
 //		if ((stride = (NCPU > 1) ? (n >>> 3) / NCPU : n) < MIN_TRANSFER_STRIDE)
 //			stride = MIN_TRANSFER_STRIDE; // subdivide range
 //		//nextTab为空，表示桶尚未扩容
@@ -266,6 +267,7 @@
 //		boolean finishing = false; // to ensure sweep before committing nextTab
 //		//死循环操作
 //		for (int i = 0, bound = 0;;) {
+//			//i表示执行table中第i个节点，transferIndex为每个线程执行transfer时的index
 //			Node<K,V> f; int fh;
 //			while (advance) {
 //				int nextIndex, nextBound;
@@ -307,6 +309,7 @@
 //				advance = true; // already processed
 //			else {
 //				synchronized (f) {
+//					//进行transfer操作
 //					//再次判断桶节点是否变化
 //					if (tabAt(tab, i) == f) {
 //						//ln表示低位节点，hn表示高位节点，扩容后根据 h&(n-1)来计算
@@ -331,6 +334,7 @@
 //								ln = null;
 //							}
 //							//从f节点开始遍历，计算ln和fn
+//							//注：p.hash&n来决定原node在扩容后的位置，是在高位还是低位(i+n和i的位置)
 //							for (Node<K,V> p = f; p != lastRun; p = p.next) {
 //								int ph = p.hash; K pk = p.key; V pv = p.val;
 //								if ((ph & n) == 0)
