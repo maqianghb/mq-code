@@ -57,7 +57,7 @@ public class ForkJoinManager {
 	public static void main(String[] args){
 		ForkJoinManager manager =new ForkJoinManager();
 		manager.init();
-		int result =manager.calculate(1, 100);
+		int result =manager.calculate(1, 10000);
 		System.out.println("------calculate result:"+result);
 	}
 

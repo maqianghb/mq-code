@@ -8,6 +8,7 @@ import java.util.concurrent.ForkJoinTask;
 import java.util.concurrent.RecursiveTask;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,6 +24,8 @@ import org.slf4j.LoggerFactory;
 public class CalculateSumTask extends RecursiveTask<Integer> {
 	private static final Logger LOG = LoggerFactory.getLogger(CalculateSumTask.class);
 
+	private static AtomicInteger taskNum =new AtomicInteger(0);
+
 	private final int THRESLOD =10;
 	private final long TASK_TIME_OUT =1 *1000L;
 	private Integer startNum;
@@ -35,16 +38,18 @@ public class CalculateSumTask extends RecursiveTask<Integer> {
 
 	@Override
 	protected Integer compute() {
+		int taskIndex = taskNum.getAndIncrement();
+		System.out.println("------taskIndex:"+taskIndex);
 		Long startTime =System.currentTimeMillis();
 		if(endNum -startNum <=THRESLOD){
 			int sum =0;
 			for(int i=startNum; i<=endNum; i++){
 				sum +=i;
-				try {
-					Thread.sleep(10L);
-				} catch (InterruptedException e) {
-					LOG.info("thread InterruptedException. ", e);
-				}
+//				try {
+//					Thread.sleep(10L);
+//				} catch (InterruptedException e) {
+//					LOG.info("thread InterruptedException. ", e);
+//				}
 			}
 			return sum;
 		}
