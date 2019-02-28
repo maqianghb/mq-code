@@ -35,8 +35,8 @@ public class CustomerCache {
 	@Autowired
 	private CuratorClientManager curatorClientManager;
 
-	@PostConstruct
-	private void initMixFeature(){
+//	@PostConstruct
+	private void initCustomerCache(){
 		if(this.loadCustomers() <=0){
 			LOG.error("loadCustomer err!");
 		}
