@@ -27,7 +27,7 @@ import org.springframework.stereotype.Component;
  * @create: 2018/12/7
  *
  */
-//@Component
+@Component
 public class CuratorClientManager {
 	private static Logger LOG = LoggerFactory.getLogger(CuratorClientManager.class);
 

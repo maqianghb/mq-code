@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+		 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<parent>
+		<artifactId>mq-code</artifactId>
+		<groupId>com.example.mq</groupId>
+		<version>1.0.1</version>
+	</parent>
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>com.example.mq</groupId>
+	<artifactId>test-code</artifactId>
+	<packaging>jar</packaging>
+
+	<name>test-code</name>
+	<description>test-code of mq-code</description>
+
+	<dependencies>
+		<dependency>
+			<groupId>com.example.mq</groupId>
+			<artifactId>service</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+
+		<!-- jackson annotations -->
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-annotations</artifactId>
+			<version>${jackson-annotations.version}</version>
+		</dependency>
+
+		<!-- elastic-job -->
+		<dependency>
+			<groupId>com.dangdang</groupId>
+			<artifactId>elastic-job-lite-core</artifactId>
+			<version>${elastic-job.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.dangdang</groupId>
+			<artifactId>elastic-job-lite-spring</artifactId>
+			<version>${elastic-job.version}</version>
+		</dependency>
+
+
+	</dependencies>
+
+	<build>
+		<finalName>mq-code-test-code-${project.version}</finalName>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<source>${java.version}</source>
+					<target>${java.version}</target>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+
+
+</project>

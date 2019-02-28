@@ -31,12 +31,9 @@ public enum RespStatusEnum {
 		this.desc = desc;
 	}
 
-	public static RespStatusEnum getByCode(Integer code){
-		if(Objects.isNull(code)){
-			return null;
-		}
+	public static RespStatusEnum getByCode(int code){
 		for(RespStatusEnum statusEnum: RespStatusEnum.values()){
-			if(statusEnum.getCode().equals(code)){
+			if(code ==statusEnum.getCode()){
 				return statusEnum;
 			}
 		}

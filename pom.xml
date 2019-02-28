@@ -12,7 +12,8 @@
         <module>controller</module>
 		<module>datasource</module>
         <module>service</module>
-    </modules>
+		<module>test-code</module>
+	</modules>
 	<packaging>pom</packaging>
 
     <name>mq-code</name>

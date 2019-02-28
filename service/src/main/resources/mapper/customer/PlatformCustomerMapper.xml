@@ -3,67 +3,123 @@
 <mapper namespace="com.example.mq.service.dao.customer.PlatformCustomerMapper">
 
 	<resultMap id="BaseResultMap" type="com.example.mq.service.bean.Customer">
-		<id column="id" jdbcType="INTEGER" property="id" />
-		<result column="customer_id" jdbcType="BIGINT" property="customerId" />
-		<result column="name" jdbcType="VARCHAR" property="name" />
-		<result column="city" jdbcType="VARCHAR" property="city" />
-		<result column="address" jdbcType="VARCHAR" property="address" />
-		<result column="register_time" jdbcType="BIGINT" property="registerTime" />
-		<result column="total_cost_amount" jdbcType="INTEGER" property="totalCostAmount" />
-		<result column="create_time" jdbcType="BIGINT" property="createTime" />
-		<result column="update_time" jdbcType="BIGINT" property="updateTime" />
+		<id column="id" jdbcType="BIGINT" property="id" />
+		<result column="customer_no" jdbcType="BIGINT" property="customerNo" />
+		<result column="customer_name" jdbcType="VARCHAR" property="customerName" />
+		<result column="customer_age" jdbcType="INTEGER" property="customerAge"/>
+		<result column="customer_type" jdbcType="TINYINT" property="customerType"/>
+		<result column="customer_desc" jdbcType="VARCHAR" property="customerDesc"/>
+		<result column="top_ten_sellers" jdbcType="VARCHAR" property="topTenSellers"/>
+		<result column="total_cost_amount" jdbcType="INTEGER" property="totalCostAmount"/>
+		<result column="min_active_time" jdbcType="TIMESTAMP" property="minActiveTime"/>
+		<result column="max_active_time" jdbcType="TIMESTAMP" property="maxActiveTime"/>
+		<result column="remark" jdbcType="VARCHAR" property="remark"/>
+		<result column="deleted" jdbcType="TINYINT" property="deleted"/>
+		<result column="md5" jdbcType="VARCHAR" property="md5"/>
+
+		<result column="create_user" jdbcType="VARCHAR" property="createUser"/>
+		<result column="update_user" jdbcType="VARCHAR" property="updateUser"/>
+		<result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+		<result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
 	</resultMap>
 
 
-	<sql id="baseColumnList">
-		id, customer_id, name, city, address, register_time, total_cost_amount
+	<sql id="Base_Column_List">
+		id, customer_no, customer_name, customer_age, customer_type, customer_desc, top_ten_sellers,
+		total_cost_amount, min_active_time, max_active_time, remark, deleted, md5,
+		create_user, update_user, create_time, update_time
 	</sql>
 
-	<insert id="insert" parameterType="com.example.mq.service.bean.Customer">
-		insert ignore into platform_customer (
-			customer_id, name, city, address, register_time, total_cost_amount, create_time, update_time
-		)
-		values (
-			#{customerId,jdbcType=BIGINT},
-			#{name,jdbcType=VARCHAR},
-			#{city,jdbcType=VARCHAR},
-			#{address,jdbcType=VARCHAR},
-			#{registerTime,jdbcType=BIGINT},
-			#{totalCostAmount,jdbcType=INTEGER},
-			#{createTime,jdbcType=BIGINT},
-			#{updateTime,jdbcType=BIGINT}
-		)
-	</insert>
-
-	<update id="update" parameterType="com.example.mq.service.bean.Customer">
-		update platform_customer
-		set customer_id = #{customerId,jdbcType=VARCHAR},
-      		name = #{name,jdbcType=VARCHAR},
-     		city = #{city,jdbcType=VARCHAR},
-     		address = #{address,jdbcType=VARCHAR},
-     		register_time = #{registerTime,jdbcType=BIGINT},
-     		total_cost_amount = #{totalCostAmount,jdbcType=INTEGER},
-			create_time = #{createTime,jdbcType=BIGINT},
-			update_time = #{updateTime,jdbcType=BIGINT}
-		where id = #{id,jdbcType=INTEGER}
-	</update>
-
-	<select id="selectByCustomerId" parameterType="java.lang.Long" resultMap="BaseResultMap">
-		select <include refid="baseColumnList" />, create_time, update_time
-		from platform_customer
-		where customer_id = #{customerId,jdbcType=BIGINT} and del_flag !=1
+	<select id="selectByCustomerNo" parameterType="java.lang.Long" resultMap="BaseResultMap">
+		select <include refid="Base_Column_List" />
+		from mc_platform_customer
+		where customer_no = #{customerNo, jdbcType=BIGINT} and deleted !=1
 	</select>
 
 	<select id="selectAll" resultMap="BaseResultMap">
-		select <include refid="baseColumnList" />, create_time, update_time
-		from platform_customer
-		where del_flag !=1
+		select <include refid="Base_Column_List" />
+		from mc_platform_customer where deleted !=1
 	</select>
 
-	<delete id="deleteByCustomerId" parameterType="java.lang.Long">
-		update platform_customer
-		set del_flag = 1
-		where customer_id = #{customerId,jdbcType=BIGINT}
+	<select id="selectByCondition" parameterType="com.example.mq.service.bean.CustomerQueryCondition"
+			resultMap="BaseResultMap">
+		<![CDATA[
+			 select * from mc_platform_customer where deleted !=1
+		]]>
+		<if test = "customerNo != null">
+			and customer_no = #{customerNo, jdbcType=BIGINT}
+		</if>
+		<if test = "customerName != null and customerName.length() >0 ">
+			and customer_name = #{customerName, jdbcType=VARCHAR}
+		</if>
+		<if test = "customerAge != null">
+			and customer_age = #{customerAge, jdbcType=INTEGER}
+		</if>
+		<if test = "minCostAmount != null">
+			and total_cost_amount &gt;= #{minCostAmount, jdbcType=INTEGER}
+		</if>
+		<if test = "maxCostAmount != null">
+			and total_cost_amount &lt;= #{maxCostAmount, jdbcType=INTEGER}
+		</if>
+		<if test = "minActiveTime != null">
+			and max_active_time &gt; #{minActiveTime, jdbcType=INTEGER}
+		</if>
+		<if test = "maxActiveTime != null">
+			and min_active_time &lt; #{maxActiveTime, jdbcType=INTEGER}
+		</if>
+
+	</select>
+
+	<insert id="insert" parameterType="com.example.mq.service.bean.Customer"
+			useGeneratedKeys="true" keyProperty="id">
+		insert ignore into mc_platform_customer (
+			customer_no, customer_name, customer_age, customer_type, customer_desc, top_ten_sellers,
+			total_cost_amount, min_active_time, max_active_time, remark, deleted, md5, create_user, create_time
+		)
+		values (
+			#{customerNo, jdbcType=BIGINT},
+			#{customerName, jdbcType=VARCHAR},
+			#{customerAge, jdbcType=INTEGER},
+			#{customerType, jdbcType=TINYINT},
+			#{customerDesc, jdbcType=VARCHAR},
+			#{topTenSellers, jdbcType=VARCHAR},
+			#{totalCostAmount, jdbcType=INTEGER},
+ 			#{minActiveTime, jdbcType=TIMESTAMP},
+ 			#{maxActiveTime, jdbcType=TIMESTAMP}
+			#{remark, jdbcType=VARCHAR},
+			#{deleted, jdbcType=TINYINT},
+			#{md5, jdbcType=VARCHAR},
+
+			#{createUser, jdbcType=VARCHAR},
+			#{createTime, jdbcType=TIMESTAMP}
+
+		)
+	</insert>
+
+	<update id="updateByCustomerNo" parameterType="com.example.mq.service.bean.Customer">
+		update mc_platform_customer
+		set customer_no = #{customerNo, jdbcType=BIGINT},
+			customer_name = #{customerName, jdbcType=VARCHAR},
+			customer_age = #{customerAge, jdbcType=INTEGER},
+			customer_type = #{customerType, jdbcType=TINYINT},
+			customer_desc = #{customerDesc, jdbcType=VARCHAR},
+			top_ten_sellers = #{topTenSellers, jdbcType=VARCHAR},
+			total_cost_amount = #{totalCostAmount, jdbcType=INTEGER},
+			min_active_time = #{minActiveTime, jdbcType=TIMESTAMP},
+			max_active_time = #{maxActiveTime, jdbcType=TIMESTAMP},
+			remark = #{remark, jdbcType=VARCHAR},
+			deleted = #{deleted, jdbcType=TINYINT},
+			md5 = #{md5, jdbcType=VARCHAR},
+
+			update_user = #{updateUser, jdbcType=VARCHAR},
+			update_time = #{updateTime, jdbcType=TIMESTAMP}
+		where customer_no = #{customerNo, jdbcType=BIGINT}
+	</update>
+
+	<delete id="deleteByCustomerNo" parameterType="java.lang.Long">
+		update mc_platform_customer
+		set deleted = 1
+		where customer_No = #{customerNo, jdbcType=BIGINT}
 	</delete>
 
 

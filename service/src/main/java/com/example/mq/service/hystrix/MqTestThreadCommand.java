@@ -24,7 +24,7 @@ public class MqTestThreadCommand extends AbstractThreadCommand<Map<String, Objec
 	private CustomerService customerService;
 	private Long requestId;
 
-	public MqTestThreadCommand(Long requestId, HystrixConfig config){
+	public MqTestThreadCommand(long requestId, HystrixConfig config){
 		super("myTest", config);
 		this.requestId =requestId;
 		customerService = SpringContextUtil.getBean("customerService", CustomerService.class);
@@ -32,13 +32,14 @@ public class MqTestThreadCommand extends AbstractThreadCommand<Map<String, Objec
 
 	@Override
 	protected Map<String, Object> run() throws Exception {
-		Customer customer =customerService.queryByCustomerId(requestId);
+		long customerNo =requestId.intValue();
+		Customer customer =customerService.queryByCustomerNo(customerNo);
 		LOG.info("before thread sleep, requestId:{}|customer:{}", requestId, JSONObject.toJSONString(customer));
 		Thread.sleep(2 * 1000);
 		LOG.info("after thread sleep, requestId:{}|customer:{}", requestId, JSONObject.toJSONString(customer));
 		Map<String, Object> result =new HashMap<>();
-		result.put("customerId", customer.getCustomerId());
-		result.put("name", customer.getName());
+		result.put("customerNo", customer.getCustomerNo());
+		result.put("customerName", customer.getCustomerName());
 		return result;
 	}
 

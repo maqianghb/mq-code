@@ -15,17 +15,17 @@ import lombok.Data;
 public class PageResult<T> implements Serializable {
     private static final long serialVersionUID = -7208213675825333229L;
 
-    private int pageNum;
-    private int pageSize;
-    private long total;
+    private Integer pageNum;
+    private Integer pageSize;
+    private Long total;
     private List<T> result;
 
-    public PageResult(Integer pageNum, Integer pageSize){
+    public PageResult(int pageNum, int pageSize){
         this.pageNum =pageNum;
         this.pageSize =pageSize;
     }
 
-    public PageResult(Integer pageNum, Integer pageSize, Integer total, List<T> result){
+    public PageResult(int pageNum, int pageSize, long total, List<T> result){
         this.pageNum =pageNum;
         this.pageSize =pageSize;
         this.total =total;

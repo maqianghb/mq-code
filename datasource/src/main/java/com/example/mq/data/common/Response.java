@@ -19,13 +19,13 @@ public class Response<T> implements Serializable {
     private String msg;
     private T data;
 
-    public Response(Boolean is_success, Integer code, String msg){
+    public Response(boolean is_success, int code, String msg){
         this.is_success =is_success;
         this.code =code;
         this.msg =msg;
     }
 
-    public Response(Boolean is_success, Integer code, String msg, T data){
+    public Response(boolean is_success, int code, String msg, T data){
         this.is_success =is_success;
         this.code =code;
         this.msg =msg;
@@ -48,7 +48,7 @@ public class Response<T> implements Serializable {
         return new Response(true, RespStatusEnum.FAIL.getCode(), message);
     }
 
-	public static Response createByFail(Integer code, String msg) {
+	public static Response createByFail(int code, String msg) {
 		return new Response(false, code, msg);
 	}
 

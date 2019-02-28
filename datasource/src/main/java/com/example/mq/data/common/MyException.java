@@ -14,21 +14,19 @@ public class MyException extends RuntimeException {
     private Integer code;
     private String desc;
 
-    public MyException(Integer code) {
-        this.code = code;
-    }
-
 	public MyException(String desc) {
+		super(desc);
 		this.code = -1;
 		this.desc =desc;
 	}
 
-    public MyException(Integer code, String desc) {
+    public MyException(int code, String desc) {
+		super(desc);
         this.code = code;
         this.desc = desc;
     }
 
-    public MyException(String message, Integer code, String desc) {
+    public MyException(int code, String desc, String message) {
         super(message);
         this.code = code;
         this.desc = desc;

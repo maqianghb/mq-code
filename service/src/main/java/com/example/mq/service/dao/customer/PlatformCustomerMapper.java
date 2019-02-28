@@ -1,11 +1,12 @@
 package com.example.mq.service.dao.customer;
 
 import com.example.mq.service.bean.Customer;
+import com.example.mq.service.bean.CustomerQueryCondition;
 
 import java.util.List;
 
 /**
- * @program: crules-management
+ * @program: mq-code
  * @description: customer映射接口
  * @author: maqiang
  * @create: 2018/9/19
@@ -13,13 +14,15 @@ import java.util.List;
  */
 public interface PlatformCustomerMapper {
 
-	int insert(Customer customer);
+	Customer selectByCustomerNo(long customerNo) throws Exception;
 
-	int update(Customer customer);
+	List<Customer> selectAll() throws Exception;
 
-	Customer selectByCustomerId(Long customerId);
+	List<Customer> selectByCondition(CustomerQueryCondition condition) throws Exception;
 
-	List<Customer> selectAll();
+	long insert(Customer customer) throws Exception;
 
-	int deleteByCustomerId(Long customerId);
+	long updateByCustomerNo(Customer customer) throws Exception;
+
+	long deleteByCustomerNo(long customerNo) throws Exception;
 }

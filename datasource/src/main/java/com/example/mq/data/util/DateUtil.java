@@ -24,6 +24,7 @@ public class DateUtil {
 	private static final Logger LOG = LoggerFactory.getLogger(DateUtil.class);
 
 	public static final long ONE_DAY_MILLIS = 24 * 60 * 60 * 1000L;
+	public static final long ONE_WEEK_MILLIS = 7 * ONE_DAY_MILLIS;
 
 	/**
 	 * 获取date当天的凌晨时间，yyyy-MM-dd 00:00:00

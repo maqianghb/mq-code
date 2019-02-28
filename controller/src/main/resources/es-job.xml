@@ -17,7 +17,7 @@
                    max-sleep-time-milliseconds="${esjob.zk.maxSleepTimeMilliseconds}" max-retries="${esjob.zk.maxRetries}"/>
 
     <!-- testJob1 -->
-    <job:simple id="testJob1" class="com.example.mq.service.elasticjob.task.TestJob1"
+    <job:simple id="testJob1" class="com.example.mq.testcode.elasticjob.task.TestJob1"
 				cron="${esjob.cron.testJob1}" sharding-total-count="${esjob.shardingTotalCount.testJob1}"
 				registry-center-ref="regCenter" description="${esjob.desc.testJob1}"
 				monitor-execution="${esjob.monitorExecution}" failover="${esjob.failover}" disabled="${esjob.disabled}"
@@ -25,7 +25,7 @@
     </job:simple>
 
 	<!-- testJob2 -->
-    <job:simple id="testJob2" class="com.example.mq.service.elasticjob.task.TestJob2"
+    <job:simple id="testJob2" class="com.example.mq.testcode.elasticjob.task.TestJob2"
 				 cron="${esjob.cron.testJob2}" sharding-total-count="${esjob.shardingTotalCount.testJob2}"
 				registry-center-ref="regCenter" description="${esjob.desc.testJob2}"
 				monitor-execution="${esjob.monitorExecution}" failover="${esjob.failover}" disabled="${esjob.disabled}"

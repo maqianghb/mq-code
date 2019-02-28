@@ -1,6 +1,8 @@
 package com.example.mq.service.bean;
 
 
+import java.util.Date;
+
 import lombok.Data;
 
 /**
@@ -12,51 +14,50 @@ import lombok.Data;
 @Data
 public class Customer {
 
-	/**
-	 * 主键id
-	 */
 	private Long id;
 
-	/**
-	 * id
-	 */
-	private Long customerId;
+	private Long customerNo;
+
+	private String customerName;
+
+	private Integer customerAge;
+
+	private Integer customerType;
+
+	private String customerDesc;
 
 	/**
-	 * 姓名
+	 * 消费top10的商家
 	 */
-	private String name;
+	private String topTenSellers;
 
 	/**
-	 * 城市
-	 */
-	private String city;
-
-	/**
-	 * 地址
-	 */
-	private String address;
-
-	/**
-	 * 注册时间
-	 */
-	private Long registerTime;
-
-	/**
-	 * 消费总金额
+	 * 总消费金额
 	 * 单位：分
 	 */
 	private Integer totalCostAmount;
 
 	/**
-	 * 记录创建时间
+	 * 活动时间段
 	 */
-	private Long createTime;
+	private Date minActiveTime;
 
-	/**
-	 * 记录更新时间
-	 */
-	private Long updateTime;
+	private Date maxActiveTime;
+
+	private String remark;
+
+	private Integer deleted;
+
+	private String md5;
+
+
+	private String createUser;
+
+	private String updateUser;
+
+	private Date createTime;
+
+	private Date updateTime;
 
 }
 

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.mq.service.dao.customer.PlatformCustomerOperateMapper">
+
+	<resultMap id="BaseResultMap" type="com.example.mq.service.bean.CustomerOperation">
+		<id column="id" jdbcType="BIGINT" property="id" />
+		<result column="customer_no" jdbcType="BIGINT" property="customerNo" />
+		<result column="customer_name" jdbcType="VARCHAR" property="customerName" />
+		<result column="md5" jdbcType="VARCHAR" property="md5"/>
+		<result column="operate_type" jdbcType="TINYINT" property="operateType"/>
+		<result column="operate_type_desc" jdbcType="VARCHAR" property="operateTypeDesc"/>
+		<result column="content" jdbcType="VARCHAR" property="content"/>
+		<result column="operator" jdbcType="VARCHAR" property="operator"/>
+		<result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+		<result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
+	</resultMap>
+
+
+	<sql id="Base_Column_List">
+		id, customer_no, customer_name, md5, operate_type, operate_type_desc, content, operator,
+ 		create_time, update_time
+	</sql>
+
+	<select id="selectByCustomerNo" parameterType="java.lang.Long" resultMap="BaseResultMap">
+		select <include refid="Base_Column_List" />
+		from mc_platform_customer_operation
+		where customer_no = #{customerNo, jdbcType=BIGINT}
+	</select>
+
+	<insert id="insert" parameterType="com.example.mq.service.bean.CustomerOperation"
+			useGeneratedKeys="true" keyProperty="id">
+		insert into mc_platform_customer_operation (
+			customer_no, customer_name, md5, operate_type, operate_type_desc, content, operator, create_time
+		)
+		values (
+			#{customerNo, jdbcType=BIGINT},
+			#{customerName, jdbcType=VARCHAR},
+			#{md5, jdbcType=VARCHAR},
+			#{operateType, jdbcType=TINYINT},
+			#{operateTypeDesc, jdbcType=VARCHAR},
+			#{content, jdbcType=VARCHAR},
+			#{operator, jdbcType=VARCHAR},
+			#{createTime, jdbcType=TIMESTAMP}
+		)
+	</insert>
+
+
+</mapper>

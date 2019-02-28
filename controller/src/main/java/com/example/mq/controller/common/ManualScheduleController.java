@@ -3,7 +3,6 @@ package com.example.mq.controller.common;
 import com.example.mq.data.common.Response;
 import com.example.mq.data.util.SpringContextUtil;
 import com.example.mq.service.schedule.CountNumTask;
-import com.example.mq.service.zk.CuratorTest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,14 +38,4 @@ public class ManualScheduleController {
 		return Response.createBySuccessMsg("手动触发定时任务执行成功");
 	}
 
-	@RequestMapping(value = "/test", method = {RequestMethod.GET})
-	public Response test(
-			@RequestParam(value = "startNum", required = false, defaultValue = "1") Integer startNum,
-			@RequestParam(value = "endNum", required = false, defaultValue = "10000") Integer endNum
-	) throws Exception{
-		LOG.info("手动测试执行，startNum:{}|endNum:{}", startNum, endNum);
-		CuratorTest curatorTest = SpringContextUtil.getBean(CuratorTest.class);
-		curatorTest.test();
-		return Response.createBySuccessMsg("手动触发定时任务执行成功");
-	}
 }

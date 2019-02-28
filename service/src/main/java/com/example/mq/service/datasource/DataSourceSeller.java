@@ -28,6 +28,9 @@ import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 @MapperScan(basePackages = {"com.example.mq.service.dao.seller"}, sqlSessionTemplateRef = "sellerSqlSessionTemplate")
 public class DataSourceSeller {
 
+	@Value("${jdbc.seller.mapper_xml}")
+	private String mapperXml;
+
 	@Value("${jdbc.seller.url}")
 	private String url;
 	@Value("${jdbc.seller.username}")
@@ -35,8 +38,6 @@ public class DataSourceSeller {
 	@Value("${jdbc.seller.password}")
 	private String password;
 
-	@Value("${jdbc.seller.mapper_xml}")
-	private String mapperXml;
 
 	@Autowired
 	private DruidUtil druidUtil;

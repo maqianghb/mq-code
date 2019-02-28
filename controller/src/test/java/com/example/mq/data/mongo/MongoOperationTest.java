@@ -15,7 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 /**
- * @program: penalty-platform
+ * @program: mq-code
  * @description: mongoTest类
  * @author: maqiang
  * @create: 2018/11/23

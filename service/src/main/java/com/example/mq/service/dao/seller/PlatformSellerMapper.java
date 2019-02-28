@@ -1,11 +1,10 @@
 package com.example.mq.service.dao.seller;
 
-import java.util.List;
 
-import com.example.mq.service.bean.Customer;
+import com.example.mq.service.bean.Seller;
 
 /**
- * @program: crules-management
+ * @program: mq-code
  * @description: seller映射接口
  * @author: maqiang
  * @create: 2018/9/19
@@ -13,6 +12,10 @@ import com.example.mq.service.bean.Customer;
  */
 public interface PlatformSellerMapper {
 
-	Customer selectBySellerId(Long sellerId);
+	Seller selectBySellerNo(long sellerNo) throws Exception;
+
+	long insert(Seller seller) throws Exception;
+
+	long updateBySellerNo(Seller seller) throws Exception;
 
 }
