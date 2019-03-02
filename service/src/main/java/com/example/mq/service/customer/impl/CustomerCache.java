@@ -5,6 +5,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import javax.annotation.PostConstruct;
 
+import com.alibaba.fastjson.JSONObject;
 import com.example.mq.data.zk.CuratorClientManager;
 import com.example.mq.service.bean.Customer;
 import com.example.mq.service.dao.customer.PlatformCustomerMapper;
@@ -67,6 +68,7 @@ public class CustomerCache {
 						customerCache.putIfAbsent(customer.getCustomerNo(), customer);
 					}
 				}
+				LOG.info("refresh customers success, customers:{}", JSONObject.toJSONString(customerCache));
 				result =1;
 			}catch (Exception e) {
 				LOG.error("loadMixFeature error!", e);

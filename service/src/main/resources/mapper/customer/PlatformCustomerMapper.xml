@@ -96,6 +96,33 @@
 		)
 	</insert>
 
+	<insert id="batchInsert" parameterType="java.util.List">
+		insert into mc_platform_customer (
+			customer_no, customer_name, customer_age, customer_type, customer_desc, top_ten_sellers,
+			total_cost_amount, min_active_time, max_active_time, remark, deleted, md5, create_user, create_time
+		)
+		values
+		<foreach collection="list" item="item" index="index" separator=",">
+			(
+			#{item.customerNo, jdbcType=BIGINT},
+			#{item.customerName, jdbcType=VARCHAR},
+			#{item.customerAge, jdbcType=INTEGER},
+			#{item.customerType, jdbcType=TINYINT},
+			#{item.customerDesc, jdbcType=VARCHAR},
+			#{item.topTenSellers, jdbcType=VARCHAR},
+			#{item.totalCostAmount, jdbcType=INTEGER},
+			#{item.minActiveTime, jdbcType=TIMESTAMP},
+			#{item.maxActiveTime, jdbcType=TIMESTAMP}
+			#{item.remark, jdbcType=VARCHAR},
+			#{item.deleted, jdbcType=TINYINT},
+			#{item.md5, jdbcType=VARCHAR},
+
+			#{item.createUser, jdbcType=VARCHAR},
+			#{item.createTime, jdbcType=TIMESTAMP}
+			)
+		</foreach>
+	</insert>
+
 	<update id="updateByCustomerNo" parameterType="com.example.mq.service.bean.Customer">
 		update mc_platform_customer
 		set customer_no = #{customerNo, jdbcType=BIGINT},

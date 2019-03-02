@@ -22,6 +22,8 @@ public interface PlatformCustomerMapper {
 
 	long insert(Customer customer) throws Exception;
 
+	long batchInsert(List<Customer> customers) throws Exception;
+
 	long updateByCustomerNo(Customer customer) throws Exception;
 
 	long deleteByCustomerNo(long customerNo) throws Exception;
