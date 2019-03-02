@@ -44,7 +44,7 @@ public class Seller {
 
 	private String remark;
 
-	private Integer deleted;
+	private Integer deleted =0;
 
 	private String createUser;
 

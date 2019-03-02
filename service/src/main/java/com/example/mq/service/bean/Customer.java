@@ -3,6 +3,7 @@ package com.example.mq.service.bean;
 
 import java.util.Date;
 
+import com.example.mq.data.util.DateUtil;
 import lombok.Data;
 
 /**
@@ -22,7 +23,10 @@ public class Customer {
 
 	private Integer customerAge;
 
-	private Integer customerType;
+	/**
+	 * 设置默认值，即类型默认为1
+	 */
+	private Integer customerType =1;
 
 	private String customerDesc;
 
@@ -35,21 +39,21 @@ public class Customer {
 	 * 总消费金额
 	 * 单位：分
 	 */
-	private Integer totalCostAmount;
+	private Integer totalCostAmount =0;
 
 	/**
 	 * 活动时间段
+	 * mySQL中timestamp类型时间范围从1970年~2018年
 	 */
-	private Date minActiveTime;
+	private Date minActiveTime = DateUtil.parseDateTime("1971-01-01 00:00:00");
 
-	private Date maxActiveTime;
+	private Date maxActiveTime = DateUtil.parseDateTime("2018-01-01 00:00:00");
 
 	private String remark;
 
-	private Integer deleted;
+	private Integer deleted =0;
 
 	private String md5;
-
 
 	private String createUser;
 
