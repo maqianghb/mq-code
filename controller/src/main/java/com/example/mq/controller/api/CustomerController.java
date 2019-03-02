@@ -48,24 +48,24 @@ public class CustomerController extends BaseController {
     }
 
 	@RequestMapping(value = "/pageQuery", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
-	public Response pageQueryRules(
+	public Response pageQueryCustomers(
 			CustomerQueryConditionVO vo,
 			@RequestParam(value = "pageNum", required = false, defaultValue = "1") int pageNum,
 			@RequestParam(value = "pageSize", required = false, defaultValue = "10") int pageSize
 	) throws Exception {
 		LOG.info("分页查询顾客信息, condition:{}|pageNum:{}|pageSize:{}", JSONObject.toJSONString(vo), pageNum, pageSize);
 		CustomerQueryCondition condition =CustomerQueryConditionVO.convertToCondition(vo);
-		PageResult<Customer> pageRules =customerService.pageQuery(condition, pageNum, pageSize);
+		PageResult<Customer> pageCustomers =customerService.pageQuery(condition, pageNum, pageSize);
 		List<Customer> customers;
-		if(null ==pageRules || CollectionUtils.isEmpty(customers =pageRules.getResult())){
+		if(null ==pageCustomers || CollectionUtils.isEmpty(customers =pageCustomers.getResult())){
 			return Response.createBySuccessMsg("未查询到符合条件的顾客信息！");
 		}
 		List<CustomerVO> voList =new ArrayList<>(customers.size());
 		for(Customer customer :customers){
 			voList.add(CustomerVO.convertToVO(customer));
 		}
-		PageResult<CustomerVO> pageResult =new PageResult<>(pageRules.getPageNum(), pageRules.getPageSize(),
-				pageRules.getTotal(), voList);
+		PageResult<CustomerVO> pageResult =new PageResult<>(pageCustomers.getPageNum(), pageCustomers.getPageSize(),
+				pageCustomers.getTotal(), voList);
 		return Response.createBySuccess(pageResult);
 	}
 
