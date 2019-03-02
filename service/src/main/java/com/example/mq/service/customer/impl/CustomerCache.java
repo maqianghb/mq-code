@@ -30,6 +30,8 @@ public class CustomerCache {
 
 	private ConcurrentHashMap<Long, Customer> customerCache =new ConcurrentHashMap<>();
 
+	private static volatile long lastUpdateTime =0;
+
 	@Autowired
 	private PlatformCustomerMapper platformCustomerMapper;
 
@@ -69,6 +71,7 @@ public class CustomerCache {
 					}
 				}
 				LOG.info("refresh customers success, customers:{}", JSONObject.toJSONString(customerCache));
+				lastUpdateTime =System.currentTimeMillis();
 				result =1;
 			}catch (Exception e) {
 				LOG.error("loadMixFeature error!", e);
