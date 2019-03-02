@@ -89,7 +89,9 @@ public class CustomerServiceImpl implements CustomerService {
         return new PageResult<>(page.getPageNum(), page.getPageSize(), page.getTotal(), results);
     }
 
-    @Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = { Exception.class})
+    //mysql事务中跨库事务是大难题，customer/seller库有各自的事务bean，指定正确的事务bean
+    @Transactional(value = "customerTransactionManager", propagation = Propagation.REQUIRED,
+			readOnly = false, rollbackFor = { Exception.class})
     @Override
     public long add(Customer customer, User user) throws Exception {
         if(Objects.isNull(customer)){
@@ -108,8 +110,8 @@ public class CustomerServiceImpl implements CustomerService {
         return addResult;
     }
 
-
-    @Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = { Exception.class})
+	@Transactional(value = "customerTransactionManager", propagation = Propagation.REQUIRED,
+			readOnly = false, rollbackFor = { Exception.class})
     @Override
     public long updateByCustomerNo(Customer customer, User user) throws Exception {
         if(Objects.isNull(customer)){
@@ -132,7 +134,8 @@ public class CustomerServiceImpl implements CustomerService {
         return updateResult;
     }
 
-    @Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = { Exception.class})
+	@Transactional(value = "customerTransactionManager", propagation = Propagation.REQUIRED,
+			readOnly = false, rollbackFor = { Exception.class})
     @Override
     public long deleteByCustomerNo(long customerNo, User user) throws Exception {
 //        long delResult =platformCustomerMapper.deleteByCustomerNo(CustomerNo);

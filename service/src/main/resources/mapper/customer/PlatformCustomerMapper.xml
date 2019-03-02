@@ -62,10 +62,10 @@
 			and total_cost_amount &lt;= #{maxCostAmount, jdbcType=INTEGER}
 		</if>
 		<if test = "minActiveTime != null">
-			and max_active_time &gt; #{minActiveTime, jdbcType=INTEGER}
+			and max_active_time &gt; #{minActiveTime, jdbcType=TIMESTAMP}
 		</if>
 		<if test = "maxActiveTime != null">
-			and min_active_time &lt; #{maxActiveTime, jdbcType=INTEGER}
+			and min_active_time &lt; #{maxActiveTime, jdbcType=TIMESTAMP}
 		</if>
 
 	</select>
