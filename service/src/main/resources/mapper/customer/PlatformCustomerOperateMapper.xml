@@ -40,6 +40,7 @@
 			#{operateTypeDesc, jdbcType=VARCHAR},
 			#{content, jdbcType=VARCHAR},
 			#{operator, jdbcType=VARCHAR},
+
 			#{createTime, jdbcType=TIMESTAMP}
 		)
 	</insert>

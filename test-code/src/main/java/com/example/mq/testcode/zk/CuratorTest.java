@@ -2,7 +2,7 @@ package com.example.mq.testcode.zk;
 
 import java.util.Objects;
 
-import com.example.mq.data.zk.CuratorClientManager;
+import com.example.mq.base.zk.CuratorClientManager;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.recipes.cache.NodeCache;
 import org.apache.curator.framework.recipes.cache.NodeCacheListener;
@@ -61,7 +61,7 @@ public class CuratorTest {
 			public void nodeChanged() throws Exception {
 
 				if(!Objects.isNull(nodeCache.getCurrentData())){
-					System.out.println("------data in watchNode:" + new String(nodeCache.getCurrentData().getData()));
+					System.out.println("------base in watchNode:" + new String(nodeCache.getCurrentData().getData()));
 				}
 			}
 		});
@@ -81,8 +81,8 @@ public class CuratorTest {
 						System.out.println("------add childNode:"+ pathChildrenCacheEvent.getData().getPath());
 						break;
 					case CHILD_UPDATED:
-						System.out.println("------data in childNode changed, path:" +pathChildrenCacheEvent.getData().getPath());
-						System.out.println("------ new data in childNode:" + new String(pathChildrenCacheEvent.getData().getData()));
+						System.out.println("------base in childNode changed, path:" +pathChildrenCacheEvent.getData().getPath());
+						System.out.println("------ new base in childNode:" + new String(pathChildrenCacheEvent.getData().getData()));
 						break;
 					case CHILD_REMOVED:
 						System.out.println("------remove childNode:"+ pathChildrenCacheEvent.getData().getPath());
@@ -94,7 +94,7 @@ public class CuratorTest {
 
 		//测试
 		String childPath =testPath + "/childPath";
-		this.zkClient.create().forPath(childPath, "data".getBytes());
+		this.zkClient.create().forPath(childPath, "base".getBytes());
 		this.zkClient.setData().forPath(childPath, "newData".getBytes());
 		this.zkClient.delete().forPath(childPath);
 		this.zkClient.delete().deletingChildrenIfNeeded().forPath(testPath);

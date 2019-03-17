@@ -14,6 +14,8 @@ import java.util.List;
  */
 public interface PlatformCustomerMapper {
 
+	Customer selectById(long id) throws Exception;
+
 	Customer selectByCustomerNo(long customerNo) throws Exception;
 
 	List<Customer> selectAll() throws Exception;
@@ -24,7 +26,13 @@ public interface PlatformCustomerMapper {
 
 	long batchInsert(List<Customer> customers) throws Exception;
 
-	long updateByCustomerNo(Customer customer) throws Exception;
+	/**
+	 * 更新通过主键id操作，避免customer内其他属性修改后无法匹配到记录
+	 * @param customer
+	 * @return
+	 * @throws Exception
+	 */
+	long updateById(Customer customer) throws Exception;
 
-	long deleteByCustomerNo(long customerNo) throws Exception;
+	long deleteById(long customerNo) throws Exception;
 }

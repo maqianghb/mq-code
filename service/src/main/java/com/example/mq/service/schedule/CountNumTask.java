@@ -1,6 +1,6 @@
 package com.example.mq.service.schedule;
 
-import com.example.mq.data.util.DateUtil;
+import com.example.mq.base.util.DateUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -50,11 +50,11 @@ public class CountNumTask {
 
 	public void manulExecuteCountNum(int startNum, int endNum) throws Exception{
 		Long startTime =System.currentTimeMillis();
-		LOG.warn("手工执行定时任务启动，countNumSection:[{}, {}]|startTime:{}", startNum, endNum,
+		LOG.warn("手工执行定时任务启动，startNum:{}|endNum:{}|startTime:{}", startNum, endNum,
 				DateUtil.formatDateTime(new Date(startTime)));
 
 		this.doExecute(startNum, endNum);
-		LOG.info("手工执行定时任务结束，countNumSection:[{}, {}]|costTime:{}", startNum, endNum,
+		LOG.info("手工执行定时任务结束，startNum:{}|endNum:{}|costTime:{}ms", startNum, endNum,
 				System.currentTimeMillis() -startTime);
 	}
 }

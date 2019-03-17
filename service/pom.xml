@@ -5,7 +5,7 @@
     <parent>
         <artifactId>mq-code</artifactId>
         <groupId>com.example.mq</groupId>
-        <version>1.0.1</version>
+        <version>1.0.1-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -19,7 +19,7 @@
     <dependencies>
         <dependency>
             <groupId>com.example.mq</groupId>
-            <artifactId>datasource</artifactId>
+            <artifactId>base</artifactId>
             <version>${project.version}</version>
         </dependency>
 
@@ -54,6 +54,18 @@
 				</configuration>
 			</plugin>
 		</plugins>
+
+		<resources>
+			<resource>
+				<directory>src/main/resources</directory>
+				<includes>
+					<include>**/*.properties</include>
+					<include>**/*.xml</include>
+				</includes>
+				<filtering>false</filtering>
+			</resource>
+		</resources>
+
     </build>
 
 

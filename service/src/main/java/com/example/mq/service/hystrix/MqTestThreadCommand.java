@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.alibaba.fastjson.JSONObject;
-import com.example.mq.data.util.SpringContextUtil;
+import com.example.mq.base.util.SpringContextUtil;
 import com.example.mq.service.bean.Customer;
 import com.example.mq.service.customer.CustomerService;
 import org.slf4j.Logger;

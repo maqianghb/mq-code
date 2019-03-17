@@ -1,6 +1,4 @@
-package com.example.mq.data.util;
-
-import static org.junit.Assert.*;
+package com.example.mq.base.util;
 
 import java.util.HashMap;
 import java.util.Map;

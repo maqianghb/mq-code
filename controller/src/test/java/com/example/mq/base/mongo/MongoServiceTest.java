@@ -1,6 +1,4 @@
-package com.example.mq.data.mongo;
-
-import static org.junit.Assert.*;
+package com.example.mq.base.mongo;
 
 import org.junit.Test;
 

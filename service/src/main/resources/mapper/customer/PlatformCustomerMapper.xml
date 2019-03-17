@@ -30,21 +30,27 @@
 		create_user, update_user, create_time, update_time
 	</sql>
 
+	<select id="selectById" parameterType="java.lang.Long" resultMap="BaseResultMap">
+		select <include refid="Base_Column_List" />
+		from mc_platform_customer
+		where id = #{id, jdbcType=BIGINT}
+	</select>
+
 	<select id="selectByCustomerNo" parameterType="java.lang.Long" resultMap="BaseResultMap">
 		select <include refid="Base_Column_List" />
 		from mc_platform_customer
-		where customer_no = #{customerNo, jdbcType=BIGINT} and deleted !=1
+		where customer_no = #{customerNo, jdbcType=BIGINT}
 	</select>
 
 	<select id="selectAll" resultMap="BaseResultMap">
 		select <include refid="Base_Column_List" />
-		from mc_platform_customer where deleted !=1
+		from mc_platform_customer
 	</select>
 
 	<select id="selectByCondition" parameterType="com.example.mq.service.bean.CustomerQueryCondition"
 			resultMap="BaseResultMap">
 		<![CDATA[
-			 select * from mc_platform_customer where deleted !=1
+			 select * from mc_platform_customer where 1 = 1
 		]]>
 		<if test = "customerNo != null">
 			and customer_no = #{customerNo, jdbcType=BIGINT}
@@ -123,7 +129,7 @@
 		</foreach>
 	</insert>
 
-	<update id="updateByCustomerNo" parameterType="com.example.mq.service.bean.Customer">
+	<update id="updateById" parameterType="com.example.mq.service.bean.Customer">
 		update mc_platform_customer
 		set customer_no = #{customerNo, jdbcType=BIGINT},
 			customer_name = #{customerName, jdbcType=VARCHAR},
@@ -140,13 +146,13 @@
 
 			update_user = #{updateUser, jdbcType=VARCHAR},
 			update_time = #{updateTime, jdbcType=TIMESTAMP}
-		where customer_no = #{customerNo, jdbcType=BIGINT}
+		where id = #{id, jdbcType=BIGINT}
 	</update>
 
-	<delete id="deleteByCustomerNo" parameterType="java.lang.Long">
+	<delete id="deleteById" parameterType="java.lang.Long">
 		update mc_platform_customer
 		set deleted = 1
-		where customer_No = #{customerNo, jdbcType=BIGINT}
+		where id = #{id, jdbcType=BIGINT}
 	</delete>
 
 

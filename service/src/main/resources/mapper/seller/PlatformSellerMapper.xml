@@ -27,7 +27,7 @@
 	<select id="selectBySellerNo" parameterType="java.lang.Long" resultMap="BaseResultMap">
 		select <include refid="Base_Column_List" />
 		from mc_platform_seller
-		where seller_no = #{sellerNo, jdbcType=BIGINT} and deleted !=1
+		where seller_no = #{sellerNo, jdbcType=BIGINT}
 	</select>
 
 	<insert id="insert" parameterType="com.example.mq.service.bean.Seller"
@@ -51,7 +51,7 @@
 		)
 	</insert>
 
-	<update id="updateBySellerNo" parameterType="com.example.mq.service.bean.Seller">
+	<update id="updateById" parameterType="com.example.mq.service.bean.Seller">
 		update mc_platform_seller
 		set seller_no = #{sellerNo, jdbcType=BIGINT},
 			seller_name = #{sellerName, jdbcType=VARCHAR},
@@ -64,7 +64,7 @@
 
 			update_user = #{updateUser, jdbcType=VARCHAR},
 			update_time = #{updateTime, jdbcType=TIMESTAMP}
-		where seller_no = #{sellerNo, jdbcType=BIGINT}
+		where id = #{id, jdbcType=BIGINT}
 	</update>
 
 

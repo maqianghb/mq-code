@@ -1,13 +1,14 @@
 package com.example.mq.service.customer.impl;
 
 import com.alibaba.fastjson.JSONObject;
-import com.example.mq.data.common.PageResult;
-import com.example.mq.data.common.User;
-import com.example.mq.data.enums.PlatformOperateEnum;
-import com.example.mq.data.util.DateUtil;
-import com.example.mq.data.util.MD5Util;
+import com.example.mq.base.common.PageResult;
+import com.example.mq.base.common.User;
+import com.example.mq.base.constant.CustomerConstant;
+import com.example.mq.base.enums.PlatformOperateEnum;
+import com.example.mq.base.util.DateUtil;
+import com.example.mq.base.util.MD5Util;
 import com.example.mq.service.bean.Customer;
-import com.example.mq.data.common.MyException;
+import com.example.mq.base.common.MyException;
 import com.example.mq.service.bean.CustomerOperation;
 import com.example.mq.service.bean.CustomerQueryCondition;
 import com.example.mq.service.customer.CustomerService;
@@ -29,7 +30,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
-import java.util.Objects;
 
 /**
  * @program: mq-code
@@ -37,9 +37,10 @@ import java.util.Objects;
  * @author: maqiang
  * @create: 2018-10-12 23:09
  */
-@Service("customerService")
+@Service
 public class CustomerServiceImpl implements CustomerService {
     private static final Logger LOG = LoggerFactory.getLogger(CustomerServiceImpl.class);
+
 
     @Autowired
     private PlatformCustomerMapper platformCustomerMapper;
@@ -47,9 +48,15 @@ public class CustomerServiceImpl implements CustomerService {
     @Autowired
 	private PlatformCustomerOperateMapper platformCustomerOperateMapper;
 
-    @Override
+	@Override
+	public Customer queryById(long id) throws Exception {
+		return platformCustomerMapper.selectById(id);
+	}
+
+	@Override
     public Customer queryByCustomerNo(long customerNo) throws Exception {
 //    	return platformCustomerMapper.selectByCustomerNo(customerNo);
+		//for test
         Customer customer =new Customer();
         customer.setCustomerNo(customerNo);
         customer.setCustomerName("testCustomerName");
@@ -58,16 +65,21 @@ public class CustomerServiceImpl implements CustomerService {
         return customer;
     }
 
-    @Override
+	@Override
+	public List<Customer> queryAll(CustomerQueryCondition condition) throws Exception {
+		return platformCustomerMapper.selectByCondition(condition);
+	}
+
+	@Override
     public PageResult<Customer> pageQuery(CustomerQueryCondition condition, int pageNum, int pageSize) throws Exception {
 		Page page = PageHelper.startPage(pageNum, pageSize, true);
-//        List<Customer> customers =platformCustomerMapper.selectByCondition(condition);
-		List<Customer> customers =new ArrayList<>();
+        List<Customer> customers =platformCustomerMapper.selectByCondition(condition);
 		if(CollectionUtils.isEmpty(customers)){
 			LOG.warn("未查询到符合条件的顾客数据，condition:{}|pageNum:{}|pageSize:{}",
 					JSONObject.toJSONString(condition), pageNum, pageSize);
-			return  new PageResult<>(page.getPageNum(), page.getPageSize(), page.getTotal(), customers);
+			return  new PageResult<>(pageNum, pageSize, 0, new ArrayList<>());
 		}
+		//获取条件中的seller列表
 		List<String> conditionSellers =null;
 		if(StringUtils.isEmpty(condition.getTopTenSellers())
 				|| CollectionUtils.isEmpty(conditionSellers =JSONObject.parseArray(condition.getTopTenSellers(), String.class))){
@@ -94,73 +106,100 @@ public class CustomerServiceImpl implements CustomerService {
 			readOnly = false, rollbackFor = { Exception.class})
     @Override
     public long add(Customer customer, User user) throws Exception {
-        if(Objects.isNull(customer)){
+        if(null ==customer || null ==customer.getCustomerNo()){
             throw new MyException(-1, "参数为空！");
         }
+        //check customer
+		if(!this.checkAndPrepareOperate(customer)){
+			throw new MyException("customer信息校验不通过！");
+		}
+		if(null !=platformCustomerMapper.selectByCustomerNo(customer.getCustomerNo())){
+			throw new MyException("已存在相同customerNo的顾客信息, customerNo:"+customer.getCustomerNo());
+		}
+
+		//save
         customer.setCreateUser(null ==user ? "" : user.getUserName());
         customer.setCreateTime(new Date());
         customer.setMd5(this.createMD5(customer));
-//        long addResult =platformCustomerMapper.insert(customer);
-		long addResult =1;
-		if(addResult <=0){
+		if(platformCustomerMapper.insert(customer) <=0){
 			LOG.error("platformCustomerMapper insert err, customer:{}", JSONObject.toJSONString(customer));
 			return 0;
 		}
 		this.saveCustomerOperation(customer, PlatformOperateEnum.ADD.getCode(), user);
-        return addResult;
+        return 1;
     }
 
 	@Transactional(value = "customerTransactionManager", propagation = Propagation.REQUIRED,
 			readOnly = false, rollbackFor = { Exception.class})
     @Override
-    public long updateByCustomerNo(Customer customer, User user) throws Exception {
-        if(Objects.isNull(customer)){
-            throw new MyException(-1, "参数为空！");
+    public long updateById(Customer customer, User user) throws Exception {
+        if(null ==customer || null ==customer.getId()){
+            throw new MyException("updateById 操作，参数为空！");
         }
-        if(null ==this.queryByCustomerNo(customer.getCustomerNo())){
-            throw new MyException(-1, "未找到对应customerId的数据！");
+		//check customer
+		if(!this.checkAndPrepareOperate(customer)){
+			throw new MyException("customer信息校验不通过！");
+		}
+        if(null ==this.queryById(customer.getId())){
+            throw new MyException("未找到对应主键id的数据, id:" + customer.getId());
         }
+
+        //update
 		customer.setCustomerDesc(customer.getCustomerName()+ DateUtil.formatDateTime(new Date()));
-		customer.setCreateUser(null ==user ? "" : user.getUserName());
-		customer.setCreateTime(new Date());
+		customer.setUpdateUser(null ==user ? "" : user.getUserName());
+		customer.setUpdateTime(new Date());
 		customer.setMd5(this.createMD5(customer));
-//        long updateResult =platformCustomerMapper.updateByCustomerNo(customer);
-		long updateResult =1;
-		if(updateResult <=0){
-			LOG.error("platformCustomerMapper updateByCustomerNo err, customer:{}", JSONObject.toJSONString(customer));
+		if(platformCustomerMapper.updateById(customer) <=0){
+			LOG.error("platformCustomerMapper updateById err, customer:{}", JSONObject.toJSONString(customer));
 			return 0;
 		}
 		this.saveCustomerOperation(customer, PlatformOperateEnum.UPDATE.getCode(), user);
-        return updateResult;
+        return 1;
     }
 
 	@Transactional(value = "customerTransactionManager", propagation = Propagation.REQUIRED,
 			readOnly = false, rollbackFor = { Exception.class})
     @Override
-    public long deleteByCustomerNo(long customerNo, User user) throws Exception {
-//        long delResult =platformCustomerMapper.deleteByCustomerNo(CustomerNo);
-		long delResult =1;
-		if(delResult <=0){
-			LOG.error("platformCustomerMapper delete err, customerNo:{}", customerNo);
+    public long deleteById(long id, User user) throws Exception {
+		if(null ==this.queryById(id)){
+			throw new MyException("未找到对应主键id的数据, id:" + id);
+		}
+		if(platformCustomerMapper.deleteById(id) <=0){
+			LOG.error("platformCustomerMapper delete err, id:{}", id);
 			return 0;
 		}
 		//保存操作明细
 		Customer customer =new Customer();
-		customer.setCustomerNo(customerNo);
+		customer.setId(id);
 		this.saveCustomerOperation(customer, PlatformOperateEnum.DELETE.getCode(), user);
-        return delResult;
+        return 1;
     }
+
+    private boolean checkAndPrepareOperate(Customer customer) throws Exception{
+    	if(null ==customer){
+    		throw new IllegalArgumentException("checkAndPrepareOperate 操作，参数为空！");
+		}
+		//cheak customerNo
+		if(null == customer.getCustomerNo()) {
+			return false;
+		}
+		if(StringUtils.isEmpty(customer.getCustomerName())
+				|| !customer.getCustomerName().matches(CustomerConstant.CUSTOMER_NAME_PATTERN)){
+			throw new MyException("customer姓名需符合要求：首字母是英文字母, 且仅由大小写英文字母、数字、下划线构成。");
+		}
+		return true;
+	}
 
     private String createMD5(Customer customer) throws Exception{
     	if(null ==customer){
-			throw new IllegalArgumentException("参数为空！");
+			throw new IllegalArgumentException("createMD5 操作，参数为空！");
 		}
 		return MD5Util.getMD5(JSONObject.toJSONString(customer));
 	}
 
 	private int saveCustomerOperation(Customer customer, int operateType, User user) throws Exception{
 		if(null ==customer){
-			throw new IllegalArgumentException("参数为空！");
+			throw new IllegalArgumentException("saveCustomerOperation 操作，参数为空！");
 		}
 		CustomerOperation operation =new CustomerOperation();
 		operation.setCustomerNo(customer.getCustomerNo());

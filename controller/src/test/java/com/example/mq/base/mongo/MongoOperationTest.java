@@ -1,4 +1,4 @@
-package com.example.mq.data.mongo;
+package com.example.mq.base.mongo;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -7,7 +7,7 @@ import java.util.Map;
 import java.util.Objects;
 
 import com.alibaba.fastjson.JSONObject;
-import com.example.mq.data.util.SnowflakeIdWorker;
+import com.example.mq.base.util.SnowflakeIdWorker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

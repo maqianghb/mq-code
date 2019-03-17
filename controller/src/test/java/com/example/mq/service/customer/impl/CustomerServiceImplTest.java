@@ -3,7 +3,6 @@ package com.example.mq.service.customer.impl;
 
 import java.text.DecimalFormat;
 
-import com.example.mq.data.util.NumberUtil;
 import org.junit.Test;
 
 /**

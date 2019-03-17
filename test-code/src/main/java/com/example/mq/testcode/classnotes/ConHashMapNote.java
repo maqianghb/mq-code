@@ -1,9 +1,9 @@
-//package com.example.mq.data.classnotes;
+//package com.example.mq.base.classnotes;
 //
 //import java.util.concurrent.ConcurrentHashMap;
 //import java.util.concurrent.ThreadLocalRandom;
 //
-//import com.example.mq.data.common.MyException;
+//import com.example.mq.base.common.MyException;
 //
 ///**
 // * @program: mq-code

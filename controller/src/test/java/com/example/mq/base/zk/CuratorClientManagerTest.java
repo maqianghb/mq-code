@@ -1,6 +1,4 @@
-package com.example.mq.data.zk;
-
-import static org.junit.Assert.*;
+package com.example.mq.base.zk;
 
 import com.example.mq.controller.ControllerApplication;
 import org.apache.curator.framework.CuratorFramework;

@@ -3,7 +3,7 @@ package com.example.mq.service.datasource;
 import javax.sql.DataSource;
 
 import com.alibaba.druid.pool.DruidDataSource;
-import com.example.mq.data.mysql.DruidUtil;
+import com.example.mq.base.mysql.DruidUtil;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.mybatis.spring.SqlSessionFactoryBean;
 import org.mybatis.spring.SqlSessionTemplate;

@@ -1,6 +1,5 @@
 package com.example.mq.controller;
 
-import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.boot.SpringApplication;
@@ -16,8 +15,11 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import javax.annotation.PostConstruct;
 
-import com.example.mq.data.util.SpringContextUtil;
+import com.example.mq.base.util.SpringContextUtil;
+import com.example.mq.service.customer.CustomerCache;
 import org.apache.commons.collections4.CollectionUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 @SpringBootApplication(exclude = {MongoAutoConfiguration.class})
@@ -28,6 +30,7 @@ import org.apache.commons.collections4.CollectionUtils;
 @EnableAspectJAutoProxy
 @EnableScheduling
 public class ControllerApplication {
+	private static Logger LOG = LoggerFactory.getLogger(ControllerApplication.class);
 
     public static void main(String[] args) {
         long startTime =System.currentTimeMillis();
@@ -39,9 +42,10 @@ public class ControllerApplication {
     }
 
     @PostConstruct
-    void initZk(){
-       //初始化zk服务
-    }
+    void inits(){
+		//初始化内容
+
+	}
 
     private static void printBeanNames(){
 		List<String> beanNames = SpringContextUtil.getBeanNames();

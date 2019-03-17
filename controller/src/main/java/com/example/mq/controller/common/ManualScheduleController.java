@@ -1,7 +1,7 @@
 package com.example.mq.controller.common;
 
-import com.example.mq.data.common.Response;
-import com.example.mq.data.util.SpringContextUtil;
+import com.example.mq.base.common.Response;
+import com.example.mq.base.util.SpringContextUtil;
 import com.example.mq.service.schedule.CountNumTask;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,9 +28,10 @@ public class ManualScheduleController {
 			@RequestParam(value = "startNum" ) Integer startNum,
 			@RequestParam(value = "endNum" ) Integer endNum
 	){
-		LOG.info("定时任务执行，startNum:{}|endNum:{}", startNum, endNum);
+		LOG.info("手动执行定时任务，startNum:{}|endNum:{}", startNum, endNum);
 		try {
 			CountNumTask countNumTask = SpringContextUtil.getBean(CountNumTask.class);
+			countNumTask.manulExecuteCountNum(startNum, endNum);
 		} catch (Exception e) {
 			LOG.error("手动触发定时任务执行失败，exception:{}", e);
 			return Response.createByFailMsg("手动触发定时任务执行失败");

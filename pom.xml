@@ -6,15 +6,16 @@
 
     <groupId>com.example.mq</groupId>
     <artifactId>mq-code</artifactId>
-    <version>1.0.1</version>
+	<packaging>pom</packaging>
+    <version>1.0.1-SNAPSHOT</version>
+
     <modules>
 		<module>api</module>
-        <module>controller</module>
-		<module>datasource</module>
+		<module>base</module>
+		<module>controller</module>
         <module>service</module>
 		<module>test-code</module>
 	</modules>
-	<packaging>pom</packaging>
 
     <name>mq-code</name>
     <description>root of mq-code</description>
@@ -29,6 +30,8 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+		<maven.compiler.source>1.8</maven.compiler.source>
+		<maven.compiler.target>1.8</maven.compiler.target>
         <java.version>1.8</java.version>
         <java.encoding>UTF-8</java.encoding>
 
@@ -49,8 +52,10 @@
         <jackson-annotations.version>2.9.0</jackson-annotations.version>
         <dubbo.version>2.5.8</dubbo.version>
         <zookeeper.version>3.4.9</zookeeper.version>
+		<curator-recipes.version>2.11.1</curator-recipes.version>
 		<hystrix-core.version>1.5.18</hystrix-core.version>
 		<elastic-job.version>2.1.2</elastic-job.version>
+		<jedis.version>2.9.0</jedis.version>
 
     </properties>
 
@@ -69,46 +74,15 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-autoconfigure</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-redis</artifactId>
+		</dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
-
-        <!-- lombok -->
-        <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-            <version>${lombok.version}</version>
-        </dependency>
-
-        <!-- fastjson -->
-        <dependency>
-            <groupId>com.alibaba</groupId>
-            <artifactId>fastjson</artifactId>
-            <version>${fastjson.version}</version>
-        </dependency>
-
-		<!-- commons io -->
-		<dependency>
-			<groupId>commons-io</groupId>
-			<artifactId>commons-io</artifactId>
-			<version>${commons-io.version}</version>
-		</dependency>
-
-        <!-- commons-lang3 -->
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-lang3</artifactId>
-            <version>${commons-lang3.version}</version>
-        </dependency>
-
-		<!-- commons-collections4 -->
-		<dependency>
-			<groupId>org.apache.commons</groupId>
-			<artifactId>commons-collections4</artifactId>
-			<version>${commons-collections4.version}</version>
-		</dependency>
 
     </dependencies>
 
@@ -144,7 +118,34 @@
 				</configuration>
 			</plugin>
 		</plugins>
+
+		<resources>
+			<resource>
+				<directory>src/main/resources</directory>
+				<includes>
+					<include>**/*.properties</include>
+					<include>**/*.xml</include>
+				</includes>
+				<filtering>false</filtering>
+			</resource>
+		</resources>
+
 	</build>
+
+	<!--nexus-->
+	<distributionManagement>
+		<repository>
+			<id>nexus-releases</id>
+			<name>Team Nexus Release Repository</name>
+			<url>http://nexus.mq_xxx.cn/content/repositories/releases</url>
+		</repository>
+		<snapshotRepository>
+			<id>nexus-snapshots</id>
+			<name>Team Nexus Snapshot Repository</name>
+			<url>http://nexus.mq_xxx.cn/content/repositories/snapshots</url>
+			<uniqueVersion>false</uniqueVersion>
+		</snapshotRepository>
+	</distributionManagement>
 
 
 </project>

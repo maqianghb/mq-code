@@ -3,7 +3,7 @@ package com.example.mq.service.bean;
 
 import java.util.Date;
 
-import com.example.mq.data.util.DateUtil;
+import com.example.mq.base.util.DateUtil;
 import lombok.Data;
 
 /**

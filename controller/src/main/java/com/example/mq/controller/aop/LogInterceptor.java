@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.alibaba.fastjson.JSONObject;
-import com.example.mq.data.common.Response;
+import com.example.mq.base.common.Response;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
@@ -46,12 +46,12 @@ public class LogInterceptor {
 			}
 
 			//log
-			Map<String, Object> logInfo =new HashMap<>();
-			logInfo.put("method", joinPoint.getTarget().getClass().getName()+"."+method);
-			logInfo.put("costTime",(System.currentTimeMillis()-startTime));
-			logInfo.put("args", JSONObject.toJSONString(args));
-			logInfo.put("result", JSONObject.toJSONString(result));
-			LOG.info(JSONObject.toJSONString(logInfo));
+			Map<String, Object> logDetail =new HashMap<>();
+			logDetail.put("method", joinPoint.getTarget().getClass().getName()+"."+method);
+			logDetail.put("costTime",(System.currentTimeMillis()-startTime));
+			logDetail.put("args", JSONObject.toJSONString(args));
+			logDetail.put("result", JSONObject.toJSONString(result));
+			LOG.info("controller log detail:{}", JSONObject.toJSONString(logDetail));
 		} catch (Throwable throwable) {
 			throw throwable;
 		}

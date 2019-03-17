@@ -1,4 +1,4 @@
-package com.example.mq.service.customer.impl;
+package com.example.mq.service.customer;
 
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
@@ -6,7 +6,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import javax.annotation.PostConstruct;
 
 import com.alibaba.fastjson.JSONObject;
-import com.example.mq.data.zk.CuratorClientManager;
+import com.example.mq.base.zk.CuratorClientManager;
 import com.example.mq.service.bean.Customer;
 import com.example.mq.service.dao.customer.PlatformCustomerMapper;
 import org.apache.commons.collections4.CollectionUtils;
@@ -39,9 +39,10 @@ public class CustomerCache {
 	private CuratorClientManager curatorClientManager;
 
 //	@PostConstruct
-	private void initCustomerCache(){
+	public int initCacheAndRegisteZk(){
 		if(this.loadCustomers() <=0){
 			LOG.error("loadCustomer err!");
+			return 0;
 		}
 		//zk订阅customerCache的更新通知
 		try {
@@ -50,7 +51,9 @@ public class CustomerCache {
 			});
 		} catch (Exception e) {
 			LOG.error("refer customerCache error",e);
+			return 0;
 		}
+		return 1;
 	}
 
 	private int loadCustomers(){
