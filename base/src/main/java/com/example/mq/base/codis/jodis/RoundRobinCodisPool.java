@@ -258,6 +258,11 @@ public class RoundRobinCodisPool implements CodisResourcePool {
 	}
 
 	@Override
+	public void returnResource(Pool<Jedis> pool, Jedis jedis) {
+		pool.returnResource(jedis);
+	}
+
+	@Override
 	public void close() {
 		try {
 			Closeables.close(watcher, true);

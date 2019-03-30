@@ -16,7 +16,6 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 import javax.annotation.PostConstruct;
 
 import com.example.mq.base.util.SpringContextUtil;
-import com.example.mq.service.customer.CustomerCache;
 import org.apache.commons.collections4.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,7 +23,7 @@ import org.slf4j.LoggerFactory;
 
 @SpringBootApplication(exclude = {MongoAutoConfiguration.class})
 @PropertySource(value = "classpath:application.properties")
-@ImportResource({"classpath:applicationContext-base.xml"})
+@ImportResource({"classpath:application-context-base.xml"})
 @ComponentScan(basePackages = { "com.example.mq"})
 @EnableTransactionManagement
 @EnableAspectJAutoProxy

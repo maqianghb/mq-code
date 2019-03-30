@@ -20,4 +20,6 @@ public interface CodisResourcePool extends Closeable {
 
 	Pool<Jedis> getPool();
 
+	void returnResource(Pool<Jedis> pool, Jedis jedis);
+
 }

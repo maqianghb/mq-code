@@ -14,19 +14,19 @@ import lombok.Data;
 @Data
 public class Response<T> implements Serializable {
 
-    private Boolean is_success;
+    private Boolean success;
     private Integer code;
     private String msg;
     private T data;
 
-    public Response(boolean is_success, int code, String msg){
-        this.is_success =is_success;
+    public Response(boolean success, int code, String msg){
+        this.success =success;
         this.code =code;
         this.msg =msg;
     }
 
-    public Response(boolean is_success, int code, String msg, T data){
-        this.is_success =is_success;
+    public Response(boolean success, int code, String msg, T data){
+        this.success =success;
         this.code =code;
         this.msg =msg;
         this.data =data;

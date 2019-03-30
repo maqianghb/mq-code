@@ -18,18 +18,18 @@ public class PageResult<T> implements Serializable {
     private Integer pageNum;
     private Integer pageSize;
     private Long total;
-    private List<T> result;
+    private List<T> list;
 
     public PageResult(int pageNum, int pageSize){
         this.pageNum =pageNum;
         this.pageSize =pageSize;
     }
 
-    public PageResult(int pageNum, int pageSize, long total, List<T> result){
+    public PageResult(int pageNum, int pageSize, long total, List<T> list){
         this.pageNum =pageNum;
         this.pageSize =pageSize;
         this.total =total;
-        this.result =result;
+        this.list =list;
     }
 
 

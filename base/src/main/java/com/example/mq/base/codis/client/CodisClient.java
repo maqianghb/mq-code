@@ -48,16 +48,11 @@ public class CodisClient {
 		return this.getCodisResourcePool().getPool();
 	}
 
-	public Jedis getJedis(){
-		Pool<Jedis> jedisPool = null;
-		Jedis jedis = null;
-		try {
-			if(null ==(jedisPool = this.getJedisPool()) || null ==(jedis =jedisPool.getResource())){
-				LOG.warn("get jedis failed!");
-			}
-		} catch (Exception e) {
-			LOG.error("get jedis err, exception:", e);
+	public void returnResource(Pool<Jedis> jedisPool, Jedis jedis) {
+		if (jedisPool != null && jedis != null) {
+			this.getCodisResourcePool().returnResource(jedisPool, jedis);
 		}
-		return jedis;
 	}
+
+
 }
