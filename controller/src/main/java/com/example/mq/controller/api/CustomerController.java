@@ -57,7 +57,7 @@ public class CustomerController extends BaseController {
 		CustomerQueryCondition condition =CustomerQueryConditionVO.convertToCondition(vo);
 		PageResult<Customer> pageCustomers =customerService.pageQuery(condition, pageNum, pageSize);
 		List<Customer> customers;
-		if(null ==pageCustomers || CollectionUtils.isEmpty(customers =pageCustomers.getResult())){
+		if(null ==pageCustomers || CollectionUtils.isEmpty(customers =pageCustomers.getList())){
 			return Response.createBySuccessMsg("未查询到符合条件的顾客信息！");
 		}
 		List<CustomerVO> voList =new ArrayList<>(customers.size());
