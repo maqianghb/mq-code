@@ -1,4 +1,4 @@
-package com.example.mq.testcode.leedcode.forkjoin;
+package com.example.mq.testcode.forkjoin;
 
 import java.util.Objects;
 import java.util.concurrent.ExecutionException;

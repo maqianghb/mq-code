@@ -1,4 +1,4 @@
-package com.example.mq.testcode.leedcode.proxy;
+package com.example.mq.testcode.proxy.test;
 
 /**
  * @program: mq-code
@@ -8,11 +8,11 @@ package com.example.mq.testcode.leedcode.proxy;
  *
  */
 
-public class ProxyInterfaceImpl implements ProxyInterface {
+public class TestProxyInterfaceImpl implements TestProxyInterface {
 
 	@Override
 	public String doProcess(String paramStr) {
-		System.out.println("------ProxyInterfaceImpl do process.");
+		System.out.println("------TestProxyInterfaceImpl do process.");
 		//process 省略
 		String result =paramStr + ", process end.";
 		return result;

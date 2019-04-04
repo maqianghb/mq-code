@@ -1,4 +1,4 @@
-package com.example.mq.testcode.leedcode.forkjoin;
+package com.example.mq.testcode.forkjoin;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,8 +26,8 @@ public class CalculateSumTask extends RecursiveTask<Integer> {
 
 	private static AtomicInteger taskNum =new AtomicInteger(1);
 
-	private final int THRESLOD =10;
-	private final long TASK_TIME_OUT =1 *1000L;
+	private final int CALCULATE_THRESHOLD =10;
+	private final long TIME_LIMIT_MILLIS =1 *1000L;
 	private Integer startNum;
 	private Integer endNum;
 
@@ -41,7 +41,7 @@ public class CalculateSumTask extends RecursiveTask<Integer> {
 		int taskIndex = taskNum.getAndIncrement();
 		System.out.println("------taskIndex:"+taskIndex);
 		Long startTime =System.currentTimeMillis();
-		if(endNum -startNum <=THRESLOD){
+		if(endNum -startNum <=CALCULATE_THRESHOLD){
 			int sum =0;
 			for(int i=startNum; i<=endNum; i++){
 				sum +=i;
@@ -64,7 +64,7 @@ public class CalculateSumTask extends RecursiveTask<Integer> {
 
 		Integer sum =0;
 		for(ForkJoinTask<Integer> task :taskList){
-			long forkTime = TASK_TIME_OUT -(System.currentTimeMillis() -startTime);
+			long forkTime = TIME_LIMIT_MILLIS -(System.currentTimeMillis() -startTime);
 			if(forkTime <=0){
 				forkTime =1L;
 			}

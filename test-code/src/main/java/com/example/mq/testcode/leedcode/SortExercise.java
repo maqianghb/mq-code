@@ -6,7 +6,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 import com.alibaba.fastjson.JSONObject;
-import com.example.mq.testcode.leedcode.threadpool.MyThreadPoolExecutor;
+import com.example.mq.testcode.threadpool.MyThreadPoolExecutor;
 
 /**
  * @program: mq-code
@@ -20,8 +20,14 @@ public class SortExercise {
 	private Integer MAX_POOL_SIZE =5;
 	private Integer BROCK_QUEUE_SIZE =100;
 
-	private ThreadPoolExecutor executor = new MyThreadPoolExecutor("sortThreadPool", CORE_POOL_SIZE, MAX_POOL_SIZE,30, TimeUnit.SECONDS,
-			new ArrayBlockingQueue<>(BROCK_QUEUE_SIZE));
+	private ThreadPoolExecutor executor = new MyThreadPoolExecutor(
+			"sortThreadPool",
+			CORE_POOL_SIZE,
+			MAX_POOL_SIZE,
+			30,
+			TimeUnit.SECONDS,
+			new ArrayBlockingQueue<>(BROCK_QUEUE_SIZE)
+	);
 
     public static void main(String[] args){
         int[] arr = new int[]{1,7,6,4,2,5,3};
@@ -42,6 +48,10 @@ public class SortExercise {
 		System.out.println("result:"+ JSONObject.toJSONString(arr));
 	}
 
+	/**
+	 * 冒泡排序
+	 * @param arr
+	 */
     private void bubbleSort(int[] arr){
         for(int i=0 ;i<arr.length;i++){
             for(int j=arr.length-1; j>i; j--){
@@ -54,6 +64,10 @@ public class SortExercise {
         }
     }
 
+	/**
+	 * 选择排序
+	 * @param arr
+	 */
     private void chooseSort(int[] arr){
         for(int i=0;i<arr.length-1; i++){
             int min =i;
@@ -70,6 +84,10 @@ public class SortExercise {
         }
     }
 
+	/**
+	 * 插入排序
+	 * @param arr
+	 */
     private void insertSort(int[] arr){
         for(int i=1; i<arr.length;i++){
             for(int j=i; j>0;j--){
@@ -82,6 +100,12 @@ public class SortExercise {
         }
     }
 
+	/**
+	 * 快排
+	 * @param arr
+	 * @param start
+	 * @param end
+	 */
     private void quickSort(int[] arr, int start, int end){
         if(start <end){
             int p =patition(arr,  start, end);

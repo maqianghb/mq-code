@@ -1,4 +1,4 @@
-//package com.example.mq.base.classnotes;
+//package com.example.mq.base.notes;
 //
 //import java.util.concurrent.ConcurrentHashMap;
 //import java.util.concurrent.ThreadLocalRandom;
@@ -13,7 +13,7 @@
 // *
 // */
 //
-//public class ConHashMapNote {
+//public class ConHashMapNotes {
 //
 //	ConcurrentHashMap<String, MyException> testMap =new ConcurrentHashMap<>();
 //

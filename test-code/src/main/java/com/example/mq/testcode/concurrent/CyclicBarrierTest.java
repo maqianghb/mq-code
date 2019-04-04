@@ -1,4 +1,4 @@
-package com.example.mq.testcode.leedcode.concurrent;
+package com.example.mq.testcode.concurrent;
 
 import java.util.concurrent.CyclicBarrier;
 import java.util.concurrent.ExecutorService;
@@ -52,8 +52,15 @@ public class CyclicBarrierTest {
         CyclicBarrier barrier =new CyclicBarrier(threadNum,()->{
             System.out.println("start do next work section!");
         });
-        ExecutorService executor = new ThreadPoolExecutor(threadNum, threadNum, 10, TimeUnit.SECONDS,
-                new LinkedBlockingDeque<>());
+        ExecutorService executor = new ThreadPoolExecutor(
+        		threadNum,
+				threadNum,
+				10,
+				TimeUnit.SECONDS,
+                new LinkedBlockingDeque<>()
+		);
+
+        //test
         for(int i=0;i<threadNum;i++){
             executor.execute(new Worker(barrier, i));
         }

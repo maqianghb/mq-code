@@ -1,4 +1,4 @@
-package com.example.mq.testcode.leedcode.proxy;
+package com.example.mq.testcode.proxy.test;
 
 /**
  * @program: mq-code
@@ -8,7 +8,7 @@ package com.example.mq.testcode.leedcode.proxy;
  *
  */
 
-public interface ProxyInterface {
+public interface TestProxyInterface {
 
 	String doProcess(String paramStr);
 }

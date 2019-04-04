@@ -1,7 +1,9 @@
-package com.example.mq.testcode.leedcode.filterchain;
+package com.example.mq.testcode.filterchain;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import com.example.mq.testcode.classloader.MqString;
 
 
 /**
@@ -14,14 +16,14 @@ import java.util.List;
 
 public class FilterChain {
 
-	private List<Filter> filters =new ArrayList<>();
+	private List<MqFilter> filters =new ArrayList<>();
 
 	/**
 	 * 过滤器链上的标识，记录过滤器的位置
 	 */
 	private int index =0;
 
-	public FilterChain addFilter(Filter f){
+	public FilterChain addFilter(MqFilter f){
 		filters.add(f);
 		return this;
 	}
@@ -31,7 +33,7 @@ public class FilterChain {
 			return;
 		}
 		//拿到当前过滤器
-		Filter filter =filters.get(index);
+		MqFilter filter =filters.get(index);
 		index++;
 
 		//传入FilterChain是为了保证在某一filter执行时，能继续调用FilterChain中的其他filter

@@ -1,4 +1,4 @@
-package com.example.mq.testcode.leedcode.concurrent;
+package com.example.mq.testcode.concurrent;
 
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
@@ -47,8 +47,15 @@ public class CountDownLatchTest {
     public static void main(String[] args){
         int threadNum =3;
         CountDownLatch latch =new CountDownLatch(threadNum);
-        ExecutorService executor =new ThreadPoolExecutor(threadNum, threadNum, 10, TimeUnit.SECONDS,
-                new LinkedBlockingDeque<>());
+        ExecutorService executor =new ThreadPoolExecutor(
+        		threadNum,
+				threadNum,
+				10,
+				TimeUnit.SECONDS,
+                new LinkedBlockingDeque<>()
+		);
+
+        //test
         for(int i=0;i<threadNum;i++){
             executor.execute(new Worker(latch, i));
         }

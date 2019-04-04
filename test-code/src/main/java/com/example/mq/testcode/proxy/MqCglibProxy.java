@@ -1,4 +1,4 @@
-package com.example.mq.testcode.leedcode.proxy;
+package com.example.mq.testcode.proxy;
 
 import java.lang.reflect.Method;
 
@@ -14,14 +14,14 @@ import org.springframework.cglib.proxy.MethodProxy;
  *
  */
 
-public class CglibProxy implements MethodInterceptor {
+public class MqCglibProxy implements MethodInterceptor {
 
 	/**
 	 * 被代理对象
 	 */
 	private Object target;
 
-	public CglibProxy(Object target) {
+	public MqCglibProxy(Object target) {
 		this.target = target;
 	}
 

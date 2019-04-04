@@ -1,4 +1,4 @@
-//package com.example.mq.testcode.classnotes;
+//package com.example.mq.testcode.notes;
 //
 //import java.util.concurrent.locks.LockSupport;
 //
@@ -10,7 +10,7 @@
 // *
 // */
 //
-//public class AQSNote {
+//public class AQSNotes {
 //
 //	//等待队列的头结点，慢加载，等待队列中的头节点都是获取到锁的线程的节点
 //	private transient volatile Node head;

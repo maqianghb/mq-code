@@ -1,4 +1,4 @@
-package com.example.mq.testcode.leedcode.proxy;
+package com.example.mq.testcode.proxy;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
@@ -11,14 +11,14 @@ import java.lang.reflect.Method;
  * @create: 2019/2/12
  *
  */
-public class ProxyInvocationHandler implements InvocationHandler {
+public class MqProxyInvocationHandler implements InvocationHandler {
 
 	/**
 	 * 目标类，即接口的实现类
 	 */
 	private Object target;
 
-	public ProxyInvocationHandler(Object target) {
+	public MqProxyInvocationHandler(Object target) {
 		this.target = target;
 	}
 

@@ -1,6 +1,9 @@
-package com.example.mq.testcode.leedcode.proxy;
+package com.example.mq.testcode.proxy.test;
 
 import java.lang.reflect.Proxy;
+
+import com.example.mq.testcode.proxy.MqCglibProxy;
+import com.example.mq.testcode.proxy.MqProxyInvocationHandler;
 
 /**
  * @program: mq-code
@@ -19,17 +22,17 @@ public class ProxyTest {
 	}
 
 	private void testJDKProxy(){
-		ProxyInvocationHandler invocationHandler =new ProxyInvocationHandler(new ProxyInterfaceImpl());
+		MqProxyInvocationHandler invocationHandler =new MqProxyInvocationHandler(new TestProxyInterfaceImpl());
 		//绑定接口的实现类到代理对象
-		ProxyInterface proxy =(ProxyInterface) Proxy.newProxyInstance(this.getClass().getClassLoader(),
-				new Class[]{ProxyInterface.class}, invocationHandler);
+		TestProxyInterface proxy =(TestProxyInterface) Proxy.newProxyInstance(this.getClass().getClassLoader(),
+				new Class[]{TestProxyInterface.class}, invocationHandler);
 		String result =proxy.doProcess("test jdk proxy");
 		System.out.println("------result:" + result);
 	}
 
 	private void testCglibProxy(){
-		CglibProxy proxy =new CglibProxy(new ProxyInterfaceImpl());
-		ProxyInterfaceImpl impl =(ProxyInterfaceImpl) proxy.getInstance();
+		MqCglibProxy proxy =new MqCglibProxy(new TestProxyInterfaceImpl());
+		TestProxyInterfaceImpl impl =(TestProxyInterfaceImpl) proxy.getInstance();
 		String result =impl.doProcess("test cglib proxy");
 		System.out.println("------result:" + result);
 	}

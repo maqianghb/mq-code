@@ -1,6 +1,6 @@
-package com.example.mq.testcode.leedcode.filterchain;
+package com.example.mq.testcode.filterchain;
 
-import java.util.List;
+import com.example.mq.testcode.classloader.MqString;
 
 /**
  * @program: mq-code
@@ -22,16 +22,16 @@ public class FilterChainTest {
 		MqString response =new MqString("---12=++3--==++4=5-++-67+==8--9+=++=");
 
 		FilterChain chain =new FilterChain();
-		chain.addFilter(new MinusFilter())
-				.addFilter(new PlusFilter())
-				.addFilter(new EqualsFilter());
+		chain.addFilter(new MqMinusFilter())
+				.addFilter(new MqPlusFilter())
+				.addFilter(new MqEqualsFilter());
 
 		chain.doFilter(request, response);
 		System.out.println("filterResult: request:" + request.getValue());
 		System.out.println("filterResult: response:" + response.getValue());
 	}
 
-	class MinusFilter implements Filter{
+	class MqMinusFilter implements MqFilter {
 
 		@Override
 		public void doFilter(MqString request, MqString response, FilterChain chain) {
@@ -51,7 +51,7 @@ public class FilterChainTest {
 		}
 	}
 
-	class PlusFilter implements Filter{
+	class MqPlusFilter implements MqFilter {
 
 		@Override
 		public void doFilter(MqString request, MqString response, FilterChain chain) {
@@ -71,7 +71,7 @@ public class FilterChainTest {
 		}
 	}
 
-	class EqualsFilter implements Filter{
+	class MqEqualsFilter implements MqFilter {
 
 		@Override
 		public void doFilter(MqString request, MqString response, FilterChain chain) {

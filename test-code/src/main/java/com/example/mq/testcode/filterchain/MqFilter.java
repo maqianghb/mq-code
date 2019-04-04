@@ -1,7 +1,7 @@
-package com.example.mq.testcode.leedcode.filterchain;
+package com.example.mq.testcode.filterchain;
 
 
-import java.util.List;
+import com.example.mq.testcode.classloader.MqString;
 
 /**
  * @program: mq-code
@@ -10,7 +10,7 @@ import java.util.List;
  * @create: 2019/2/12
  *
  */
-public interface Filter {
+public interface MqFilter {
 
 	void doFilter(MqString request, MqString response, FilterChain chain);
 }

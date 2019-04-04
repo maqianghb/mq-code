@@ -1,4 +1,4 @@
-package com.example.mq.testcode.leedcode.threadpool;
+package com.example.mq.testcode.threadpool;
 
 import java.util.Objects;
 import java.util.concurrent.BlockingQueue;

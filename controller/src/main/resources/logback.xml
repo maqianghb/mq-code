@@ -10,7 +10,7 @@
     <property name="LOG_HOME" value="/logs/mq-code"/>
     <property name="LOG_MAX_HISTORY" value="15"/>
     <property name="INFO_LOG_HOME" value="${LOG_HOME}/mq-code-info.log"/>
-    <property name="INFO_LOG_ROLL_HOME" value="${LOG_HOME}/mq-code-info-%d{yyyy-MM-dd}.log"/>
+    <property name="INFO_LOG_ROLL_HOME" value="${LOG_HOME}/mq-code-info-%d{yyyy-MM-dd}-%i.log"/>
     <property name="ERROR_LOG_HOME" value="${LOG_HOME}/mq-code-error.log"/>
     <property name="ERROR_LOG_ROLL_HOME" value="${LOG_HOME}/mq-code-error-%d{yyyy-MM-dd}.log"/>
 
@@ -37,6 +37,9 @@
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             <fileNamePattern>${INFO_LOG_ROLL_HOME}</fileNamePattern>
             <maxHistory>${LOG_MAX_HISTORY}</maxHistory>
+			<timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+				<maxFileSize>512MB</maxFileSize>
+			</timeBasedFileNamingAndTriggeringPolicy>
         </rollingPolicy>
         <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
             <pattern>${ENCODER_PATTERN}</pattern>
