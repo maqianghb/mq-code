@@ -1,4 +1,4 @@
-package com.example.mq.base.enums;
+package com.example.mq.api.enums;
 
 /**
  * @program: mq-code

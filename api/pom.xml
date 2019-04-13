@@ -17,18 +17,11 @@
     <description>api of mq-code</description>
 
     <dependencies>
-        <dependency>
-            <groupId>com.example.mq</groupId>
-            <artifactId>service</artifactId>
-            <version>${project.version}</version>
-            <scope>compile</scope>
-        </dependency>
-
-		<!-- dubbo -->
+		<!-- jackson annotations -->
 		<dependency>
-			<groupId>com.alibaba</groupId>
-			<artifactId>dubbo</artifactId>
-			<version>${dubbo.version}</version>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-annotations</artifactId>
+			<version>${jackson-annotations.version}</version>
 		</dependency>
 
     </dependencies>

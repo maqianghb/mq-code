@@ -10,7 +10,7 @@ import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.LoggerContext;
 import com.alibaba.fastjson.JSONObject;
 import com.example.mq.base.common.MyException;
-import com.example.mq.base.common.Response;
+import com.example.mq.api.common.Response;
 import com.example.mq.base.enums.CityEnum;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;

@@ -36,17 +36,20 @@ public class CodisServiceImpl implements CodisService {
 
 	@Override
 	public Object get(String key) {
+		if(StringUtils.isEmpty(key)){
+			throw new IllegalArgumentException(" get 操作，参数为空！");
+		}
 		Object result =null;
 		Pool<Jedis> jedisPool = null;
 		Jedis jedis =null;
 		try {
 			if(null ==(jedisPool =codisClient.getJedisPool()) || null ==(jedis =jedisPool.getResource()) ){
-				LOG.error("jedis 为空！");
-				return result;
+				LOG.error("jedisPool or jedis 为空！");
+				return null;
 			}
 			result =jedis.get(key);
 		} catch (Exception e) {
-			LOG.error("jedis执行出错，key:{}", JSONObject.toJSONString(key), e);
+			LOG.error("jedis get 执行异常，key:{}", key, e);
 		} finally {
 			codisClient.returnResource(jedisPool, jedis);
 		}
@@ -56,14 +59,14 @@ public class CodisServiceImpl implements CodisService {
 	@Override
 	public Map<String, Object> mget(String... keys) {
 		if(keys.length ==0){
-			throw new IllegalArgumentException("mget 参数为空！");
+			throw new IllegalArgumentException("mget 操作，参数为空！");
 		}
 		Map<String, Object> results =new LinkedHashMap<>(keys.length *2);
 		Pool<Jedis> jedisPool = null;
 		Jedis jedis =null;
 		try {
 			if(null ==(jedisPool =codisClient.getJedisPool()) || null ==(jedis =jedisPool.getResource()) ){
-				LOG.error("jedis 为空！");
+				LOG.error("jedisPool or jedis 为空！");
 				return results;
 			}
 			List<String> tmpResult =jedis.mget(keys);
@@ -73,7 +76,7 @@ public class CodisServiceImpl implements CodisService {
 				}
 			}
 		} catch (Exception e) {
-			LOG.error("jedis执行出错，keys:{}", JSONObject.toJSONString(keys), e);
+			LOG.error("jedis mget 执行异常，keys:{}", JSONObject.toJSONString(keys), e);
 		} finally {
 			codisClient.returnResource(jedisPool, jedis);
 		}

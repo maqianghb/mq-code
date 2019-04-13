@@ -6,7 +6,7 @@ import com.example.mq.controller.bean.CustomerVO;
 import com.example.mq.controller.common.BaseController;
 import com.example.mq.base.common.MyException;
 import com.example.mq.base.common.PageResult;
-import com.example.mq.base.common.Response;
+import com.example.mq.api.common.Response;
 import com.example.mq.base.common.User;
 import com.example.mq.base.util.AuthorityUtil;
 import com.example.mq.service.bean.Customer;

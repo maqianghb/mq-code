@@ -29,8 +29,9 @@ public class CustomerCache {
 	private static final Logger LOG = LoggerFactory.getLogger(CustomerCache.class);
 
 	private ConcurrentHashMap<Long, Customer> customerCache =new ConcurrentHashMap<>();
+	private final boolean PRINT_CACHE = true;
+	private long LAST_UPDATE_TIME =0;
 
-	private static volatile long lastUpdateTime =0;
 
 	@Autowired
 	private PlatformCustomerMapper platformCustomerMapper;
@@ -56,28 +57,47 @@ public class CustomerCache {
 		return 1;
 	}
 
-	private int loadCustomers(){
+	private long loadCustomers(){
+		//load customer
 		List<Customer> customers =null;
 		try {
 			customers = platformCustomerMapper.selectAll();
 		} catch (Exception e) {
-			LOG.error("platformCustomerMapper selectAll err!", e);
+			LOG.error(" platformCustomerMapper selectAll err!", e);
 			return 0;
 		}
+		if(CollectionUtils.isEmpty(customers)){
+			LOG.error(" result of platformCustomerMapper selectAll is empty.");
+			return 0;
+		}
+
+		//update cache
+		if(this.updateCacheAndPrint(customers) <=0){
+			LOG.error(" updataCacheAndPrint err.");
+			return 0;
+		}
+
+		//if success
+		LAST_UPDATE_TIME =System.currentTimeMillis();
+		return 1;
+	}
+
+	private long updateCacheAndPrint(List<Customer> customerList){
 		int result =0;
 		synchronized (customerCache){
 			try {
 				customerCache.clear();
-				if( !CollectionUtils.isEmpty(customers)){
-					for(Customer customer :customers){
+				if( !CollectionUtils.isEmpty(customerList)){
+					for(Customer customer :customerList){
 						customerCache.putIfAbsent(customer.getCustomerNo(), customer);
 					}
 				}
-				LOG.info("refresh customers success, customers:{}", JSONObject.toJSONString(customerCache));
-				lastUpdateTime =System.currentTimeMillis();
+				if(PRINT_CACHE){
+					LOG.info("customer cache detail:{}", null ==customerCache ? "" : JSONObject.toJSONString(customerCache));
+				}
 				result =1;
 			}catch (Exception e) {
-				LOG.error("loadMixFeature error!", e);
+				LOG.error("update cache error!", e);
 			}
 		}
 		return result;

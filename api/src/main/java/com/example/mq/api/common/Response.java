@@ -1,8 +1,8 @@
-package com.example.mq.base.common;
+package com.example.mq.api.common;
 
 import java.io.Serializable;
 
-import com.example.mq.base.enums.RespStatusEnum;
+import com.example.mq.api.enums.RespStatusEnum;
 import lombok.Data;
 
 /**

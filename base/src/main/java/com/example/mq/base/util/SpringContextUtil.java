@@ -32,19 +32,19 @@ public class SpringContextUtil implements ApplicationContextAware {
 	}
 
 	public static Object getBean(String name){
-		return applicationContext.getBean(name);
+		return getApplicationContext().getBean(name);
 	}
 
 	public static <T> T getBean(Class<T> clazz){
-		return applicationContext.getBean(clazz);
+		return getApplicationContext().getBean(clazz);
 	}
 
 	public static <T> T getBean(String name, Class<T> clazz){
-		return applicationContext.getBean(name, clazz);
+		return getApplicationContext().getBean(name, clazz);
 	}
 
 	public static List<String> getBeanNames(){
-		String[] beanNames =applicationContext.getBeanDefinitionNames();
+		String[] beanNames =getApplicationContext().getBeanDefinitionNames();
 		if(null ==beanNames && beanNames.length ==0){
 			return null;
 		}
@@ -55,6 +55,6 @@ public class SpringContextUtil implements ApplicationContextAware {
 		if(StringUtils.isEmpty(key)){
 			return null;
 		}
-		return applicationContext.getEnvironment().getProperty(key);
+		return getApplicationContext().getEnvironment().getProperty(key);
 	}
 }

@@ -1,7 +1,7 @@
 package com.example.mq.api;
 
+import com.example.mq.api.common.Response;
 import com.example.mq.api.vo.CustomerReqVO;
-import com.example.mq.base.common.Response;
 
 /**
  * @program: mq-code

@@ -17,17 +17,11 @@
     <description>service of mq-code</description>
 
     <dependencies>
+		<!-- mq-code-base -->
         <dependency>
             <groupId>com.example.mq</groupId>
             <artifactId>base</artifactId>
             <version>${project.version}</version>
-        </dependency>
-
-        <!-- jackson annotations -->
-        <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-annotations</artifactId>
-            <version>${jackson-annotations.version}</version>
         </dependency>
 
 		<!-- hystrix -->
@@ -36,8 +30,6 @@
 			<artifactId>hystrix-core</artifactId>
 			<version>${hystrix-core.version}</version>
 		</dependency>
-
-
 
 
     </dependencies>
