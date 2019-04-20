@@ -10,7 +10,7 @@ import java.util.concurrent.Future;
 import com.alibaba.fastjson.JSONObject;
 import com.example.mq.controller.ControllerApplication;
 import com.example.mq.service.hystrix.HystrixConfig;
-import com.example.mq.service.hystrix.MqTestThreadCommand;
+import com.example.mq.service.hystrix.MqThreadCommand;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -27,7 +27,7 @@ import org.springframework.test.context.junit4.SpringRunner;
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = ControllerApplication.class)
-public class MqTestThreadCommandTest {
+public class MqTestThreadCommand {
 
 	private HystrixConfig config;
 
@@ -51,7 +51,7 @@ public class MqTestThreadCommandTest {
 	public void testHystrixThreadCommand() {
 		List<Future<Map<String, Object>>> futures =new ArrayList<>(100);
 		for(int i=1; i<=100; i++){
-			futures.add(new MqTestThreadCommand(Long.parseLong(String.valueOf(i)), config).queue());
+			futures.add(new MqThreadCommand(Long.parseLong(String.valueOf(i)), config).queue());
 			try {
 				Thread.sleep(300);
 			} catch (InterruptedException e) {

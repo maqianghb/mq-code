@@ -57,6 +57,10 @@ public class CustomerCache {
 		return 1;
 	}
 
+	public Customer getCustomer(){
+		return null;
+	}
+
 	private long loadCustomers(){
 		//load customer
 		List<Customer> customers =null;
@@ -84,7 +88,7 @@ public class CustomerCache {
 
 	private long updateCacheAndPrint(List<Customer> customerList){
 		int result =0;
-		synchronized (customerCache){
+		synchronized (CustomerCache.class){
 			try {
 				customerCache.clear();
 				if( !CollectionUtils.isEmpty(customerList)){
@@ -102,4 +106,5 @@ public class CustomerCache {
 		}
 		return result;
 	}
+
 }

@@ -32,6 +32,7 @@ public class MongodbConfig {
         MongoClientOptions options = MongoClientOptions.builder()
                 .connectionsPerHost(3000)
                 .threadsAllowedToBlockForConnectionMultiplier(10)
+				//设置读从节点的数据，若有严格时序要求的操作，再考虑改为读主节点数据
                 .readPreference(ReadPreference.secondaryPreferred())
                 .build();
         String[] serverAddrs = serverAddr.split(",");

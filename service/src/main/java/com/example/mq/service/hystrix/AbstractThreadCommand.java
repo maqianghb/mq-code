@@ -39,6 +39,7 @@ public abstract class AbstractThreadCommand<T> extends HystrixCommand<T> {
 						.withMaxQueueSize(config.getMaxQueueSize())
 						.withMaximumSize(config.getMaxQueueSize())
 						.withKeepAliveTimeMinutes(config.getKeepAliveTime())
+						//即使maxQueueSize没有达到，达到queueSizeRejectionThreshold该值后，请求也会被拒绝，默认值5
 						.withQueueSizeRejectionThreshold(config.getQueueRejectSize())
 				)
 		);

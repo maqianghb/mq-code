@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.alibaba.fastjson.JSONObject;
+import com.example.mq.base.util.CommonUtils;
 import com.example.mq.base.util.SpringContextUtil;
 import com.example.mq.service.bean.Customer;
 import com.example.mq.service.customer.CustomerService;
@@ -18,25 +19,25 @@ import org.slf4j.LoggerFactory;
  *
  */
 
-public class MqTestThreadCommand extends AbstractThreadCommand<Map<String, Object>> {
-	private final static Logger LOG = LoggerFactory.getLogger(MqTestThreadCommand.class);
+public class MqThreadCommand extends AbstractThreadCommand<Map<String, Object>> {
+	private final static Logger LOG = LoggerFactory.getLogger(MqThreadCommand.class);
 
 	private CustomerService customerService;
 	private Long requestId;
 
-	public MqTestThreadCommand(long requestId, HystrixConfig config){
+	public MqThreadCommand(long requestId, HystrixConfig config){
 		super("myTest", config);
 		this.requestId =requestId;
-		customerService = SpringContextUtil.getBean("customerService", CustomerService.class);
 	}
 
 	@Override
 	protected Map<String, Object> run() throws Exception {
-		long customerNo =requestId.intValue();
+		if( null ==customerService){
+			customerService = SpringContextUtil.getBean(CustomerService.class);
+		}
+		long customerNo =requestId.longValue();
 		Customer customer =customerService.queryByCustomerNo(customerNo);
-		LOG.info("before thread sleep, requestId:{}|customer:{}", requestId, JSONObject.toJSONString(customer));
-		Thread.sleep(2 * 1000);
-		LOG.info("after thread sleep, requestId:{}|customer:{}", requestId, JSONObject.toJSONString(customer));
+		Thread.sleep(190 + 20 * (CommonUtils.createRandomId(2)%3-1));
 		Map<String, Object> result =new HashMap<>();
 		result.put("customerNo", customer.getCustomerNo());
 		result.put("customerName", customer.getCustomerName());
@@ -45,7 +46,8 @@ public class MqTestThreadCommand extends AbstractThreadCommand<Map<String, Objec
 
 	@Override
 	protected Map<String, Object> getFallback() {
-		LOG.error("MqTestThreadCommand fall back, requestId:{}", requestId);
+		//降级，超时或熔断后执行降级操作
+		LOG.error("MqThreadCommand fallback, requestId:{}", requestId);
 		Map<String, Object> defaultMap =new HashMap<>();
 		return defaultMap;
 	}

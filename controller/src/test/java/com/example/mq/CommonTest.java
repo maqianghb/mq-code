@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import com.alibaba.fastjson.JSONObject;
+import com.example.mq.base.util.CommonUtils;
 
 /**
  * @program: mq-code
@@ -19,11 +20,17 @@ public class CommonTest {
 
 	public static void main(String[] args) {
 		CommonTest commonTest =new CommonTest();
-		commonTest.testStrToList();
+		commonTest.testRandomNumber();
 
 		System.out.println("------test end!");
 
+	}
 
+	private void testRandomNumber(){
+		for(int i=0; i<100; i++){
+			long num =CommonUtils.createRandomId(8);
+			System.out.println("randomId:" + num);
+		}
 	}
 
 	public void testStrToList(){
