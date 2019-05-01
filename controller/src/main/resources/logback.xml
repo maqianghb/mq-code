@@ -83,6 +83,24 @@
 		</filter>
     </appender>
 
+	<appender name="dubbo_log_appender" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<File>${LOG_HOME}/dubbo-deatil.log</File>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<fileNamePattern>${LOG_HOME}/dubbo-deatil-%d{yyyy-MM-dd}-%i.log</fileNamePattern>
+			<maxHistory>${LOG_MAX_HISTORY}</maxHistory>
+			<timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+				<maxFileSize>512MB</maxFileSize>
+			</timeBasedFileNamingAndTriggeringPolicy>
+		</rollingPolicy>
+		<encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+			<pattern>${ENCODER_PATTERN}</pattern>
+			<charset>UTF-8</charset>
+		</encoder>
+	</appender>
+	<logger name="dubbo_log" level="info" additivity="false">
+		<appender-ref ref="dubbo_log_appender"/>
+	</logger>
+
 	<!-- 过滤某些包不必要的日志 -->
 	<!-- additivity为false表示不向上级(即root传递日志)，加入改为true，则本级日志处理后，再将日志向上级传递-->
 	<logger name="com.alibaba.jstorm"  level="WARN" additivity="false">

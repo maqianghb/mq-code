@@ -21,11 +21,13 @@ public abstract class AbstractThreadCommand<T> extends HystrixCommand<T> {
 	private final static String SUFFIX_COMMAND_KEY = "_commandKey";
 	private final static String SUFFIX_THREAD_POOL_KEY = "_threadPool";
 
+
 	public AbstractThreadCommand(String name, HystrixConfig config){
 		super(Setter.withGroupKey(HystrixCommandGroupKey.Factory.asKey(name + SUFFIX_GROUP_KEY))
 				.andCommandKey(HystrixCommandKey.Factory.asKey(name + SUFFIX_COMMAND_KEY))
 				.andThreadPoolKey(HystrixThreadPoolKey.Factory.asKey(name + SUFFIX_THREAD_POOL_KEY))
 				.andCommandPropertiesDefaults(HystrixCommandProperties.Setter()
+						//请求超时时间设置
 						.withExecutionTimeoutInMilliseconds(config.getExecuteTimeOutInMillis())
 						//熔断配置
 						.withCircuitBreakerEnabled(config.getCircuitBreakerEnabled())

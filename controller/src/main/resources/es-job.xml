@@ -12,24 +12,36 @@
 
 
     <!--配置作业注册中心，多个zk地址以逗号隔开 -->
-    <reg:zookeeper id="regCenter" server-lists="${esjob.zk.address}" namespace="${esjob.zk.namespace}"
+    <reg:zookeeper id="regCenter" server-lists="${esjob.zk.address}"
+				   namespace="${esjob.zk.namespace}"
                    base-sleep-time-milliseconds="${esjob.zk.baseSleepTimeMilliseconds}"
-                   max-sleep-time-milliseconds="${esjob.zk.maxSleepTimeMilliseconds}" max-retries="${esjob.zk.maxRetries}"/>
+                   max-sleep-time-milliseconds="${esjob.zk.maxSleepTimeMilliseconds}"
+				   max-retries="${esjob.zk.maxRetries}"/>
 
     <!-- testJob1 -->
     <job:simple id="testJob1" class="com.example.mq.testcode.elasticjob.task.TestJob1"
-				cron="${esjob.cron.testJob1}" sharding-total-count="${esjob.shardingTotalCount.testJob1}"
-				registry-center-ref="regCenter" description="${esjob.desc.testJob1}"
-				monitor-execution="${esjob.monitorExecution}" failover="${esjob.failover}" disabled="${esjob.disabled}"
-				overwrite="${esjob.overwrite}" sharding-item-parameters="${esjob.shardingItemParameters}">
+				cron="${esjob.cron.testJob1}"
+				sharding-total-count="${esjob.shardingTotalCount.testJob1}"
+				registry-center-ref="regCenter"
+				description="${esjob.desc.testJob1}"
+				monitor-execution="${esjob.monitorExecution}"
+				failover="${esjob.failover}"
+				disabled="${esjob.disabled}"
+				overwrite="${esjob.overwrite}"
+				sharding-item-parameters="${esjob.shardingItemParameters}">
     </job:simple>
 
 	<!-- testJob2 -->
     <job:simple id="testJob2" class="com.example.mq.testcode.elasticjob.task.TestJob2"
-				 cron="${esjob.cron.testJob2}" sharding-total-count="${esjob.shardingTotalCount.testJob2}"
-				registry-center-ref="regCenter" description="${esjob.desc.testJob2}"
-				monitor-execution="${esjob.monitorExecution}" failover="${esjob.failover}" disabled="${esjob.disabled}"
-				overwrite="${esjob.overwrite}" sharding-item-parameters="${esjob.shardingItemParameters}">
+				cron="${esjob.cron.testJob2}"
+				sharding-total-count="${esjob.shardingTotalCount.testJob2}"
+				registry-center-ref="regCenter"
+				description="${esjob.desc.testJob2}"
+				monitor-execution="${esjob.monitorExecution}"
+				failover="${esjob.failover}"
+				disabled="${esjob.disabled}"
+				overwrite="${esjob.overwrite}"
+				sharding-item-parameters="${esjob.shardingItemParameters}">
     </job:simple>
 
 </beans>

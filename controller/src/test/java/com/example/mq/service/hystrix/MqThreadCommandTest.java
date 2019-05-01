@@ -2,11 +2,18 @@ package com.example.mq.service.hystrix;
 
 import static org.junit.Assert.*;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import com.alibaba.fastjson.JSONObject;
 import com.example.mq.base.util.CommonUtils;
 import com.example.mq.controller.ControllerApplication;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -27,9 +34,10 @@ import org.springframework.test.context.junit4.SpringRunner;
 public class MqThreadCommandTest {
 	private static Logger LOG = LoggerFactory.getLogger(MqThreadCommandTest.class);
 
-	@Test
-	public void testHytrixCommand(){
-		HystrixConfig hystrixConfig =new HystrixConfig();
+	HystrixConfig hystrixConfig =null;
+
+	@Before
+	public void setUp() throws Exception {
 		hystrixConfig.setExecuteTimeOutInMillis(200);
 		hystrixConfig.setCorePoolSize(2);
 		hystrixConfig.setMaxQueueSize(10);
@@ -41,8 +49,10 @@ public class MqThreadCommandTest {
 		hystrixConfig.setCbErrorThresholdPercent(50);
 		hystrixConfig.setCbRequestVolumeThreshold(20);
 		hystrixConfig.setCbSleepWindowInMillis(5*1000);
+	}
 
-
+	@Test
+	public void testHytrixCommand(){
 		int timeoutNums =0;
 		int fallbackNums =0;
 		for(int i=0; i<100; i++){
@@ -68,6 +78,24 @@ public class MqThreadCommandTest {
 		}
 		LOG.info(" execute result, timeoutNums:{}|fallbackNums:{}", timeoutNums, fallbackNums);
 
+	}
+
+	@Test
+	public void testHytrixCommand1(){
+		List<Future<Map<String, Object>>> futures =new ArrayList<>(100);
+		for(int i=1; i<=100; i++){
+			futures.add(new MqThreadCommand(Long.parseLong(String.valueOf(i)), hystrixConfig).queue());
+		}
+
+		Map<String, Object> resultMap = new HashMap<>();
+		futures.forEach(future -> {
+			try {
+				resultMap.putAll(future.get());
+			} catch (InterruptedException | ExecutionException e) {
+				System.out.println("futureList get error:"+ e);
+			}
+		});
+		System.out.println("resultMap:"+ JSONObject.toJSONString(resultMap));
 	}
 
 }

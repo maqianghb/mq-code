@@ -26,6 +26,7 @@ public abstract class AbstractSemaphoreCommand<T> extends HystrixCommand<T> {
 				.andCommandKey(HystrixCommandKey.Factory.asKey(name + SUFFIX_COMMAND_KEY))
 				.andThreadPoolKey(HystrixThreadPoolKey.Factory.asKey(name + SUFFIX_SEMAPHORE_KEY))
 				.andCommandPropertiesDefaults(HystrixCommandProperties.Setter()
+						//请求超时时间设置
 						.withExecutionTimeoutInMilliseconds(config.getCbSleepWindowInMillis())
 						//熔断配置
 						.withCircuitBreakerEnabled(config.getCircuitBreakerEnabled())

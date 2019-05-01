@@ -9,15 +9,19 @@
 
     <dubbo:application name="mq-code"/>
 
-    <!--<dubbo:registry protocol="${customer.dubbo.registry.protocol}" address="${customer.dubbo.registry.address}"/>-->
+    <!--<dubbo:registry protocol="${customer.dubbo.registry.protocol}"-->
+					<!--address="${customer.dubbo.registry.address}"/>-->
 
-    <!--<dubbo:protocol name="dubbo" id="dubbo" serialization="java" server="netty" client="netty"-->
-                    <!--port="${customer.dubbo.protocol.port}"/>-->
+    <!--<dubbo:protocol name="dubbo" id="dubbo" serialization="java"-->
+					<!--server="netty" client="netty"-->
+					<!--port="${customer.dubbo.protocol.port}"/>-->
 
     <!--<dubbo:provider timeout="8000" group="${customer.dubbo.provider.group}"-->
-                    <!--version="${customer.dubbo.provider.version}" validation="false"/>-->
+					<!--version="${customer.dubbo.provider.version}"-->
+					<!--validation="false"-->
+					<!--filter="dubboProviderLogFilter,dubboProviderHystrixFilter"/>-->
 
-    <!-- dubbo service provider -->
+	<!--dubbo service provider -->
     <!--<dubbo:service interface="com.example.mq.api.CustomerApiService"-->
                    <!--ref="customerApiService" />-->
 

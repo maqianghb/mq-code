@@ -25,12 +25,7 @@ public interface MongoService {
 	 */
 	MongoCollection<Document> getCollection(String collection);
 
-	/**
-	 * 查询集合中所有的document
-	 * @param collectionName
-	 * @return
-	 */
-	List<Document> getAll(String collectionName);
+
 
 	/**
 	 * 向某个集合插入document
@@ -47,7 +42,6 @@ public interface MongoService {
 	 */
 	void insertById(Object id, String json, String collection);
 
-
 	/**
 	 * 向集合根据key匹配到的记录更新document
 	 * @param key
@@ -56,16 +50,16 @@ public interface MongoService {
 	 * @param collection
 	 * @return
 	 */
-	long update(String key, Object value, String json, String collection);
+	long saveOrUpdate(String key, Object value, String json, String collection);
 
 	/**
-	 * 向某个集合根据id更新document
+	 * 根据id进行插入或者更新
 	 * @param id
 	 * @param json
 	 * @param collection
 	 * @return
 	 */
-	long updateById(Object id, String json, String collection);
+	long saveOrUpdateById(Object id, String json, String collection);
 
 	/**
 	 * 批量更新document
@@ -76,30 +70,36 @@ public interface MongoService {
 	long batchUpdate(String json, Map<String, Object> options, String collection);
 
 	/**
-	 * 对某个集合根据主键删除document
-	 * 返回值：1为删除成功，0为删除失败
-	 * @param id
-	 * @param collection
-	 * @return
-	 */
-	long deleteById(Long id, String collection);
-
-	/**
 	 * 根据主键id删除document
 	 * 返回值：1为删除成功，0为删除失败
 	 * @param id
 	 * @param collection
 	 * @return
 	 */
-	long deleteById(String id, String collection);
+	long deleteById(Object id, String collection);
+
+	/**
+	 *
+	 * @param collectionName
+	 * @param keys
+	 * @return
+	 */
+	Integer countByOptions(String collectionName, Map<String, Object> keys);
+
+	/**
+	 * 查询集合中所有的document
+	 * @param collectionName
+	 * @return
+	 */
+	List<Document> getAll(String collectionName);
 
 	/**
 	 * 对某个集合根据id查询document
 	 * @param id
-	 * @param connection
+	 * @param collection
 	 * @return
 	 */
-	Document getById(Object id, String connection);
+	Document getById(Object id, String collection);
 
 	/**
 	 * 多条件查询
@@ -127,12 +127,6 @@ public interface MongoService {
 	 */
 	List<Document> iter(FindIterable<Document> iterable);
 
-	/**
-	 *
-	 * @param collectionName
-	 * @param keys
-	 * @return
-	 */
-	Integer countByOptions(String collectionName, Map<String, Object> keys);
+
 
 }

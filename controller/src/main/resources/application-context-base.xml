@@ -6,8 +6,8 @@
        default-autowire="byName">
 
 
-	<import resource="classpath*:dubbo/dubbo-consumer.xml"/>
-	<import resource="classpath*:dubbo/dubbo-provider.xml"/>
+	<import resource="classpath*:META-INF/dubbo/dubbo-consumer.xml"/>
+	<import resource="classpath*:META-INF/dubbo/dubbo-provider.xml"/>
 	<!--<import resource="classpath*:es-job.xml"/>-->
 
 </beans>

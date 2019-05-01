@@ -58,6 +58,93 @@ public class MongoServiceImpl implements MongoService{
 	}
 
 	@Override
+	public void insert(String json, String collection) {
+		MongoCollection<Document> col = dbClient.getCollection(collection);
+		Document doc = Document.parse(json);
+		col.insertOne(doc);
+	}
+
+
+	@Override
+	public void insertById(Object id, String json, String collection) {
+		MongoCollection<Document> col = dbClient.getCollection(collection);
+		Document doc = Document.parse(json);
+		Document document = doc.append(DEF_ID_KEY, id);
+		col.insertOne(document);
+	}
+
+	@Override
+	public long saveOrUpdate(String key, Object value, String json, String collection) {
+		Document document = null;
+		try {
+			MongoCollection<Document> col = dbClient.getCollection(collection);
+			document = col.findOneAndUpdate(Filters.eq(key, value), new Document("$set", Document.parse(json)),
+					new FindOneAndUpdateOptions().upsert(true));
+		} catch (Exception e) {
+			LOG.error("update err, key:{}|value:{}|json:{}|collection:{}", key, value, json, collection);
+		}
+		if(Objects.isNull(document)){
+			return 0;
+		}
+		return 1;
+	}
+
+	@Override
+	public long saveOrUpdateById(Object id, String json, String collection) {
+		return saveOrUpdate(DEF_ID_KEY, id, json, collection);
+	}
+
+	@Override
+	public long batchUpdate(String json, Map<String, Object> options, String collection) {
+		Document document = null;
+		try {
+			MongoCollection<Document> col = dbClient.getCollection(collection);
+			BasicDBObject condition = new BasicDBObject();
+			for (Map.Entry<String, Object> entry : options.entrySet()) {
+				condition.append(entry.getKey(), entry.getValue());
+			}
+			UpdateResult result = col.updateMany(condition, Document.parse(json));
+			return result.getModifiedCount();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return 0;
+	}
+
+	@Override
+	public long deleteById(Object id, String collection) {
+		if(null ==id || StringUtils.isEmpty(collection)){
+			throw new IllegalArgumentException("参数为空！");
+		}
+		DeleteResult result = null;
+		try {
+			MongoCollection<Document> col = dbClient.getCollection(collection);
+			result = col.deleteOne(Filters.eq(DEF_ID_KEY, id));
+		} catch (Exception e) {
+			LOG.error("deleteById err, collection:{}|id:{}", collection, id);
+		}
+		long count = result.getDeletedCount();
+		return count;
+	}
+
+	@Override
+	public Integer countByOptions(String collectionName, Map<String, Object> keys) {
+		List<Document> documents = new ArrayList<Document>();
+		try {
+			MongoCollection<Document> col = dbClient.getCollection(collectionName);
+			BasicDBObject condition = new BasicDBObject();
+			for (String key : keys.keySet()) {
+				condition.put(key, keys.get(key));
+			}
+			long count = col.count(condition);
+			return (int) count;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return 0;
+	}
+
+	@Override
 	public List<Document> getAll(String collectionName) {
 		List<Document> list = null;
 		try {
@@ -79,100 +166,20 @@ public class MongoServiceImpl implements MongoService{
 	}
 
 	@Override
-	public void insert(String json, String collection) {
-		MongoCollection<Document> col = dbClient.getCollection(collection);
-		Document doc = Document.parse(json);
-		col.insertOne(doc);
-	}
-
-
-	@Override
-	public void insertById(Object id, String json, String collection) {
-		MongoCollection<Document> col = dbClient.getCollection(collection);
-		Document doc = Document.parse(json);
-		Document document = doc.append(DEF_ID_KEY, id);
-		col.insertOne(document);
-	}
-
-	@Override
-	public long update(String key, Object value, String json, String collection) {
-		Document document = null;
-		try {
-			MongoCollection<Document> col = dbClient.getCollection(collection);
-			document = col.findOneAndUpdate(Filters.eq(key, value), new Document("$set", Document.parse(json)),
-					new FindOneAndUpdateOptions().upsert(true));
-		} catch (Exception e) {
-			LOG.error("update err, key:{}|value:{}|json:{}|collection:{}", key, value, json, collection);
-		}
-		if(Objects.isNull(document)){
-			return 0;
-		}
-		return 1;
-	}
-
-	@Override
-	public long updateById(Object id, String json, String collection) {
-		return update(DEF_ID_KEY, id, json, collection);
-	}
-
-	@Override
-	public long batchUpdate(String json, Map<String, Object> options, String collection) {
-		Document document = null;
-		try {
-			MongoCollection<Document> col = dbClient.getCollection(collection);
-			BasicDBObject condition = new BasicDBObject();
-			for (Map.Entry<String, Object> entry : options.entrySet()) {
-				condition.append(entry.getKey(), entry.getValue());
-			}
-			UpdateResult result = col.updateMany(condition, Document.parse(json));
-			return result.getModifiedCount();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return 0;
-	}
-
-	@Override
-	public long deleteById(Long id, String collection) {
-		if(StringUtils.isEmpty(collection) || Objects.isNull(id)){
+	public Document getById(Object id, String collection) {
+		if(null ==id || StringUtils.isEmpty(collection)){
 			throw new IllegalArgumentException("参数为空！");
 		}
-		MongoCollection<Document> col = dbClient.getCollection(collection);
-		DeleteResult result = col.deleteOne(Filters.eq(DEF_ID_KEY, id));
-		long count = result.getDeletedCount();
-		return count;
-	}
-
-	@Override
-	public long deleteById(String id, String collection) {
-		if(StringUtils.isEmpty(collection) || StringUtils.isEmpty(id)){
-			throw new IllegalArgumentException("参数为空！");
-		}
-		DeleteResult result = null;
-		try {
-			MongoCollection<Document> col = dbClient.getCollection(collection);
-			result = col.deleteOne(Filters.eq(DEF_ID_KEY, id));
-		} catch (Exception e) {
-			LOG.error("deleteById err, collection:{}|id:{}", collection, id);
-		}
-		long count = result.getDeletedCount();
-		return count;
-	}
-
-	@Override
-	public Document getById(Object id, String connection) {
 		Document doc = null;
 		try {
-			MongoCollection<Document> col = dbClient.getCollection(connection);
+			MongoCollection<Document> col = dbClient.getCollection(collection);
 			MongoCursor<Document> cursor = col.find(Filters.eq(DEF_ID_KEY, id)).iterator();
-
 			if (cursor.hasNext()) {
 				doc = cursor.next();
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			LOG.error(" getById err, collection:{}|id:{}", collection, id);
 		}
-
 		return doc;
 	}
 
@@ -235,23 +242,6 @@ public class MongoServiceImpl implements MongoService{
 		return documents;
 	}
 
-	@Override
-	public Integer countByOptions(String collectionName, Map<String, Object> keys) {
-		List<Document> documents = new ArrayList<Document>();
-		try {
-			MongoCollection<Document> col = dbClient.getCollection(collectionName);
-			BasicDBObject condition = new BasicDBObject();
-			for (String key : keys.keySet()) {
-				condition.put(key, keys.get(key));
-			}
-			long count = col.count(condition);
-			return (int) count;
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return 0;
-	}
-
 	public List<Document> getDocumentsByOptionsSortLimit(String collectionName, Map<String, Object> keys, Map<String, Integer> sort, Integer skip, Integer limit) {
 		List<Document> documents = new ArrayList<Document>();
 		try {
@@ -280,7 +270,6 @@ public class MongoServiceImpl implements MongoService{
 		}
 		return documents;
 	}
-
 
 	public List<Document> getDocumentsByOptionsSortAndLimit(String collectionName, Document queryCondition, Document sortCondition, Integer skip, Integer limit) {
 		List<Document> documents = new ArrayList<Document>();

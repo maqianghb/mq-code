@@ -63,7 +63,7 @@ public class MongoOperationTest {
 		for(Long id : ids){
 			Map<String, Object> testMap =new HashMap<>();
 			testMap.put("03_updateFlag", 1);
-			if(mongoService.updateById(id, JSONObject.toJSONString(testMap), TEST_COLLECTION) <=0){
+			if(mongoService.saveOrUpdateById(id, JSONObject.toJSONString(testMap), TEST_COLLECTION) <=0){
 				updateErrNum ++;
 				LOG.info("id更新失败，collection:{}|id:{}|id_Type:{}", TEST_COLLECTION, id, id.getClass().getTypeName());
 			}
@@ -127,7 +127,7 @@ public class MongoOperationTest {
 		for(String id : strIds){
 			Map<String, Object> testMap =new HashMap<>();
 			testMap.put("03_updateFlag", 1);
-			if(mongoService.updateById(id, JSONObject.toJSONString(testMap), TEST_COLLECTION) <=0){
+			if(mongoService.saveOrUpdateById(id, JSONObject.toJSONString(testMap), TEST_COLLECTION) <=0){
 				updateErrNum ++;
 				LOG.info("strId更新失败，collection:{}|id:{}|id_Type:{}", TEST_COLLECTION, id, id.getClass().getTypeName());
 			}

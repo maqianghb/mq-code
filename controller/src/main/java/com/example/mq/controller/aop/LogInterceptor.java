@@ -25,6 +25,8 @@ import org.springframework.stereotype.Component;
 public class LogInterceptor {
     private static final Logger LOG =LoggerFactory.getLogger(LogInterceptor.class);
 
+    private static long TIME_OUT_LIMIT =200;
+
     @Pointcut("execution(public * com.example.mq.controller.api..*(..))")
     public void ctrlPointCut(){}
 
@@ -32,11 +34,12 @@ public class LogInterceptor {
     public Response arround(ProceedingJoinPoint joinPoint) throws Throwable{
 		Response result = null;
 		try {
+			String className =joinPoint.getTarget().getClass().getSimpleName();
 			String method = joinPoint.getSignature().getName();
 			Object[] args = joinPoint.getArgs();
-			long startTime =System.currentTimeMillis();
 
 			//执行
+			long startTime=System.currentTimeMillis();
 			Object resultObj = joinPoint.proceed();
 			if(resultObj instanceof Response){
 				result =(Response) resultObj;
@@ -46,12 +49,14 @@ public class LogInterceptor {
 			}
 
 			//log
-			Map<String, Object> logDetail =new HashMap<>();
-			logDetail.put("method", joinPoint.getTarget().getClass().getName()+"."+method);
-			logDetail.put("costTime",(System.currentTimeMillis()-startTime));
-			logDetail.put("args", JSONObject.toJSONString(args));
-			logDetail.put("result", JSONObject.toJSONString(result));
-			LOG.info("controller log detail:{}", JSONObject.toJSONString(logDetail));
+			long costTimeMills= System.currentTimeMillis() -startTime;
+			if (costTimeMills >=TIME_OUT_LIMIT) {
+				LOG.warn("request execute timeout, method:{}|costTime:{}|args:{}|result:{}",
+						className+"."+method, costTimeMills, JSONObject.toJSONString(args), JSONObject.toJSONString(result));
+			} else {
+				LOG.info("request execute normal, method:{}|costTime:{}|args:{}|result:{}",
+						className+"."+method, costTimeMills, JSONObject.toJSONString(args), JSONObject.toJSONString(result));
+			}
 		} catch (Throwable throwable) {
 			throw throwable;
 		}

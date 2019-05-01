@@ -28,15 +28,15 @@
 			<scope>test</scope>
 		</dependency>
 
+		<!-- mq-code-service -->
         <dependency>
-			<!-- mq-code-service -->
             <groupId>com.example.mq</groupId>
             <artifactId>service</artifactId>
             <version>${project.version}</version>
-        </dependency>
+		</dependency>
 
 
-    </dependencies>
+	</dependencies>
 
     <build>
         <finalName>mq-code-controller-${project.version}</finalName>
@@ -53,6 +53,7 @@
 				<includes>
 					<include>**/*.properties</include>
 					<include>**/*.xml</include>
+					<include>**/*.Filter</include>
 				</includes>
 				<filtering>false</filtering>
 			</resource>

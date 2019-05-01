@@ -18,7 +18,6 @@ import org.slf4j.LoggerFactory;
  * @create: 2019/1/15
  *
  */
-
 public class MqThreadCommand extends AbstractThreadCommand<Map<String, Object>> {
 	private final static Logger LOG = LoggerFactory.getLogger(MqThreadCommand.class);
 
@@ -37,6 +36,8 @@ public class MqThreadCommand extends AbstractThreadCommand<Map<String, Object>> 
 		}
 		long customerNo =requestId.longValue();
 		Customer customer =customerService.queryByCustomerNo(customerNo);
+
+		// thread sleep
 		Thread.sleep(190 + 20 * (CommonUtils.createRandomId(2)%3-1));
 		Map<String, Object> result =new HashMap<>();
 		result.put("customerNo", customer.getCustomerNo());
