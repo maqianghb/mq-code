@@ -34,10 +34,11 @@ import org.springframework.test.context.junit4.SpringRunner;
 public class MqThreadCommandTest {
 	private static Logger LOG = LoggerFactory.getLogger(MqThreadCommandTest.class);
 
-	HystrixConfig hystrixConfig =null;
+	private HystrixConfig hystrixConfig;
 
 	@Before
 	public void setUp() throws Exception {
+		hystrixConfig =new HystrixConfig();
 		hystrixConfig.setExecuteTimeOutInMillis(200);
 		hystrixConfig.setCorePoolSize(2);
 		hystrixConfig.setMaxQueueSize(10);
@@ -52,7 +53,7 @@ public class MqThreadCommandTest {
 	}
 
 	@Test
-	public void testHytrixCommand(){
+	public void testHystrixCommand(){
 		int timeoutNums =0;
 		int fallbackNums =0;
 		for(int i=0; i<100; i++){
@@ -81,7 +82,7 @@ public class MqThreadCommandTest {
 	}
 
 	@Test
-	public void testHytrixCommand1(){
+	public void testHystrixCommand1(){
 		List<Future<Map<String, Object>>> futures =new ArrayList<>(100);
 		for(int i=1; i<=100; i++){
 			futures.add(new MqThreadCommand(Long.parseLong(String.valueOf(i)), hystrixConfig).queue());

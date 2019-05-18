@@ -36,8 +36,8 @@
 			<version>${elastic-job.version}</version>
 		</dependency>
 
-
 	</dependencies>
+
 
 	<build>
 		<finalName>mq-code-test-code-${project.version}</finalName>

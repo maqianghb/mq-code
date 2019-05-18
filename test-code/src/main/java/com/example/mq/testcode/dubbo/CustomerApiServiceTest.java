@@ -63,7 +63,7 @@ public class CustomerApiServiceTest {
 		rc.setApplication(application);
 		rc.setRegistry(registry);
 		rc.setInterface(clazz.getName());
-		rc.setUrl("dubbo://127.0.0.1:12345/com.example.mq.api.CustomerApiService");
+		rc.setUrl("dubbo://127.0.0.1:12345/com.example.mq.web.CustomerApiService");
 		if (!StringUtils.isEmpty(version)) {
 			rc.setVersion(version);
 		}

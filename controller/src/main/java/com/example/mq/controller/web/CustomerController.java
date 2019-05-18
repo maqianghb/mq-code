@@ -1,4 +1,4 @@
-package com.example.mq.controller.api;
+package com.example.mq.controller.web;
 
 import com.alibaba.fastjson.JSONObject;
 import com.example.mq.controller.bean.CustomerQueryConditionVO;

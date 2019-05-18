@@ -24,6 +24,8 @@
        %n输出平台相关的分行符“\n”或者“\r\n”
      -->
     <property name="ENCODER_PATTERN" value="[%d{HH:mm:ss.SSS}][%-5level][%thread] %class{36}-%line : %msg%n"/>
+	<property name="DUBBO_ENCODER_PATTERN" value="[%d{HH:mm:ss.SSS}][%-5level] : %msg%n"/>
+
 
     <appender name="console" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
@@ -83,6 +85,7 @@
 		</filter>
     </appender>
 
+	<!-- dubbo-log -->
 	<appender name="dubbo_log_appender" class="ch.qos.logback.core.rolling.RollingFileAppender">
 		<File>${LOG_HOME}/dubbo-deatil.log</File>
 		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
@@ -93,7 +96,7 @@
 			</timeBasedFileNamingAndTriggeringPolicy>
 		</rollingPolicy>
 		<encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
-			<pattern>${ENCODER_PATTERN}</pattern>
+			<pattern>${DUBBO_ENCODER_PATTERN}</pattern>
 			<charset>UTF-8</charset>
 		</encoder>
 	</appender>

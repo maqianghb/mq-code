@@ -31,8 +31,8 @@
 			<version>${hystrix-core.version}</version>
 		</dependency>
 
-
     </dependencies>
+
 
     <build>
         <finalName>mq-code-service-${project.version}</finalName>

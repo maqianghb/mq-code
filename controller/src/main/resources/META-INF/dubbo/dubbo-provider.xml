@@ -22,7 +22,7 @@
 					<!--filter="dubboProviderLogFilter,dubboProviderHystrixFilter"/>-->
 
 	<!--dubbo service provider -->
-    <!--<dubbo:service interface="com.example.mq.api.CustomerApiService"-->
+    <!--<dubbo:service interface="com.example.mq.web.CustomerApiService"-->
                    <!--ref="customerApiService" />-->
 
 </beans>

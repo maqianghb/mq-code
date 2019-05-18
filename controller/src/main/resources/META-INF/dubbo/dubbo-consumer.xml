@@ -19,7 +19,7 @@
 
     <!-- seller消费接口实例 -->
     <!--<dubbo:reference id="sellerQueryApi" protocol="dubbo"-->
-					 <!--interface="com.example.mq.api.SellerQueryApi"-->
+					 <!--interface="com.example.mq.web.SellerQueryApi"-->
 					 <!--registry="sellerRegistry"-->
 					 <!--timeout="${seller.dubbo.registry.timeout}"-->
 					 <!--check="${seller.dubbo.registry.check}"-->
@@ -29,7 +29,7 @@
 
 	<!-- for test -->
 	<!--<dubbo:reference id="sellerQueryApi" -->
-					 <!--interface="com.example.mq.api.SellerQueryApi"-->
+					 <!--interface="com.example.mq.web.SellerQueryApi"-->
 					 <!--url="dubbo://192.168.0.1:12345" -->
 					 <!--timeout="3000"/>-->
 
