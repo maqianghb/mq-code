@@ -55,14 +55,7 @@ public class CustomerServiceImpl implements CustomerService {
 
 	@Override
     public Customer queryByCustomerNo(long customerNo) throws Exception {
-//    	return platformCustomerMapper.selectByCustomerNo(customerNo);
-		//for test
-        Customer customer =new Customer();
-        customer.setCustomerNo(customerNo);
-        customer.setCustomerName("testCustomerName");
-        customer.setTopTenSellers(JSONObject.toJSONString(Arrays.asList("seller1", "seller2", "seller3")));
-        customer.setTotalCostAmount(12345);
-        return customer;
+    	return platformCustomerMapper.selectByCustomerNo(customerNo);
     }
 
 	@Override

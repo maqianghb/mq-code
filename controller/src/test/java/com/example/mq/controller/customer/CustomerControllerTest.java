@@ -5,14 +5,19 @@ import com.example.mq.controller.ControllerApplication;
 import com.example.mq.controller.web.CustomerController;
 import com.example.mq.controller.bean.CustomerVO;
 import com.example.mq.api.common.Response;
+import com.example.mq.service.bean.Customer;
+import com.example.mq.service.dao.customer.PlatformCustomerMapper;
 import org.apache.commons.collections4.CollectionUtils;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mockito;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.Objects;
@@ -28,10 +33,21 @@ import java.util.Objects;
 public class CustomerControllerTest {
     private static final Logger LOG = LoggerFactory.getLogger(CustomerControllerTest.class);
 
+    @MockBean
+	private PlatformCustomerMapper platformCustomerMapper;
+
     @Autowired
     private CustomerController customerController;
 
-    @Test
+	@Before
+	public void setUp() throws Exception {
+		long customerNo =123456L;
+		Customer mockCustomer =new Customer();
+		mockCustomer.setCustomerName("xxx");
+		Mockito.when(platformCustomerMapper.selectByCustomerNo(customerNo)).thenReturn(mockCustomer);
+	}
+
+	@Test
     public void queryByCustomerId() {
     	long customerNo =123456L;
         Response resp =null;
