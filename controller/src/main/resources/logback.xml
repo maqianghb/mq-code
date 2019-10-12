@@ -4,7 +4,7 @@
     scanPeriod:设置监测配置文件是否有修改的时间间隔，如果没有给出时间单位，默认单位是毫秒。当scan为true时，此属性生效。默认的时间间隔为1分钟。
     debug:当此属性设置为true时，将打印出logback内部日志信息，实时查看logback运行状态。默认值为false。
  -->
-<configuration scan="true" scanPeriod="60 seconds" debug="true">
+<configuration scan="true" scanPeriod="60 seconds" debug="false">
 
 	<!-- 定义变量LOG_HOME用于配置log日志生成的项目主目录 本地用相对路径，部署到服务器用绝对路径/logs/ -->
     <property name="LOG_HOME" value="/logs/mq-code"/>
@@ -85,11 +85,11 @@
 		</filter>
     </appender>
 
-	<!-- dubbo-log -->
-	<appender name="dubbo_log_appender" class="ch.qos.logback.core.rolling.RollingFileAppender">
-		<File>${LOG_HOME}/dubbo-deatil.log</File>
+	<!-- dubbo_provider_log -->
+	<appender name="dubbo_provider_log_appender" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<File>${LOG_HOME}/dubbo_provider_log.log</File>
 		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-			<fileNamePattern>${LOG_HOME}/dubbo-deatil-%d{yyyy-MM-dd}-%i.log</fileNamePattern>
+			<fileNamePattern>${LOG_HOME}/dubbo_provider_log-%d{yyyy-MM-dd}-%i.log</fileNamePattern>
 			<maxHistory>${LOG_MAX_HISTORY}</maxHistory>
 			<timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
 				<maxFileSize>512MB</maxFileSize>
@@ -100,8 +100,27 @@
 			<charset>UTF-8</charset>
 		</encoder>
 	</appender>
-	<logger name="dubbo_log" level="info" additivity="false">
-		<appender-ref ref="dubbo_log_appender"/>
+	<logger name="dubbo_provider_log" level="info" additivity="false">
+		<appender-ref ref="dubbo_provider_log_appender"/>
+	</logger>
+
+	<!-- dubbo_consumer_log -->
+	<appender name="dubbo_consumer_log_appender" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<File>${LOG_HOME}/dubbo_consumer_log.log</File>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<fileNamePattern>${LOG_HOME}/dubbo_consumer_log-%d{yyyy-MM-dd}-%i.log</fileNamePattern>
+			<maxHistory>${LOG_MAX_HISTORY}</maxHistory>
+			<timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+				<maxFileSize>512MB</maxFileSize>
+			</timeBasedFileNamingAndTriggeringPolicy>
+		</rollingPolicy>
+		<encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+			<pattern>${DUBBO_ENCODER_PATTERN}</pattern>
+			<charset>UTF-8</charset>
+		</encoder>
+	</appender>
+	<logger name="dubbo_consumer_log" level="info" additivity="false">
+		<appender-ref ref="dubbo_consumer_log_appender"/>
 	</logger>
 
 	<!-- 过滤某些包不必要的日志 -->
@@ -112,9 +131,26 @@
 		<appender-ref ref="error" />
 	</logger>
 
-    <root level="info">
+
+	<!-- 异步输出，异步的log片段必须在同步段后面，否则不起作用 -->
+	<appender name="info-async" class="ch.qos.logback.classic.AsyncAppender">
+		<discardingThreshold>80</discardingThreshold>
+		<queueSize>10240</queueSize>
+		<neverBlock>true</neverBlock>
+		<appender-ref ref="info"/>
+	</appender>
+
+	<appender name="error-async" class="ch.qos.logback.classic.AsyncAppender">
+		<discardingThreshold>80</discardingThreshold>
+		<queueSize>512</queueSize>
+		<neverBlock>true</neverBlock>
+		<appender-ref ref="error"/>
+	</appender>
+
+
+	<root level="info">
 		<!--<appender-ref ref="console" />-->
-		<appender-ref ref="info" />
-		<appender-ref ref="error" />
+		<appender-ref ref="info-async" />
+		<appender-ref ref="error-async" />
     </root>
 </configuration>

@@ -1,5 +1,6 @@
 package com.example.mq;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -7,6 +8,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 import com.alibaba.fastjson.JSONObject;
 import com.example.mq.base.util.CommonUtils;
+import org.apache.commons.io.FileUtils;
 
 /**
  * @program: mq-code
@@ -18,12 +20,21 @@ import com.example.mq.base.util.CommonUtils;
 
 public class CommonTest {
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws Exception{
 		CommonTest commonTest =new CommonTest();
-		commonTest.testRandomNumber();
+		commonTest.testParseWord();
 
 		System.out.println("------test end!");
 
+	}
+
+	private void testParseWord() throws Exception{
+		List<String> sequences = FileUtils.readLines(new File("D:\\testFile\\test.txt"), "UTF-8");
+		List<String> newSeqs =new ArrayList<>(sequences.size());
+		for(int i=0; i<sequences.size(); i++){
+			newSeqs.add(sequences.get(i) + "asdfghj");
+		}
+		FileUtils.writeLines(new File("D:\\testFile\\test1.txt"),"UTF-8", newSeqs);
 	}
 
 	private void testRandomNumber(){

@@ -12,18 +12,21 @@ import java.util.List;
 
 
 @Configuration
-public class MongodbConfig {
+public class MongoConfig {
+
+	@Value("${mongodb.host:127.0.0.1}")
+	private  String serverAddr;
+	@Value("${mongodb.port}")
+	private  int port;
+	@Value("${mongodb.dataBaseName}")
+	private  String database;
 
     @Value("${mongodb.userName}")
     private  String user;
     @Value("${mongodb.password}")
     private  String pass;
-    @Value("${mongodb.dataBaseName}")
-    private  String database;
-    @Value("${mongodb.host}")
-    private  String serverAddr;
-    @Value("${mongodb.port}")
-    private  int port;
+
+
 
     @Bean("mongoDatabase")
     public MongoDatabase mongoDatabase(){

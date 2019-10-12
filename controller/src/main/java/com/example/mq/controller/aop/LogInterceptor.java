@@ -27,7 +27,8 @@ public class LogInterceptor {
 
     private static long TIME_OUT_LIMIT =200;
 
-    @Pointcut("execution(public * com.example.mq.controller.web..*(..))")
+    @Pointcut("execution(public * com.example.mq.controller.web.*.*(..)) " +
+			" && @annotation(com.example.mq.controller.annotation.MonitorLog)")
     public void ctrlPointCut(){}
 
     @Around("ctrlPointCut()")

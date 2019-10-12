@@ -13,6 +13,7 @@ import lombok.Data;
  */
 @Data
 public class Response<T> implements Serializable {
+	private static final long serialVersionUID = 5947224547529405903L;
 
     private Boolean success;
     private Integer code;

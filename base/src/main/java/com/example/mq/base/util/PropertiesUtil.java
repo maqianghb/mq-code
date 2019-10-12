@@ -58,14 +58,18 @@ public class PropertiesUtil {
 		return null;
 	}
 
-	public static void addProperties(Properties prop1, Properties prop2) throws Exception{
+	public static void addProperties(Properties prop1, Properties prop2, boolean overlay) throws Exception{
 		if(null ==prop1 || null ==prop2){
 			throw new IllegalArgumentException("参数为空！");
 		}
 		Enumeration en=prop2.propertyNames();
 		while(en.hasMoreElements()){
 			String key =(String) en.nextElement();
-			prop1.putIfAbsent(key, prop2.getProperty(key));
+			if(overlay){
+				prop1.put(key, prop2.getProperty(key));
+			}else{
+				prop1.putIfAbsent(key, prop2.getProperty(key));
+			}
 		}
 	}
 

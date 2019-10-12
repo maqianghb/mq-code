@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.alibaba.fastjson.JSONObject;
+import com.example.mq.base.dubbo.TraceContextUtils;
 import com.example.mq.base.util.CommonUtils;
 import com.example.mq.base.util.SpringContextUtil;
 import com.example.mq.service.bean.Customer;
@@ -31,6 +32,8 @@ public class MqThreadCommand extends AbstractThreadCommand<Map<String, Object>> 
 
 	@Override
 	protected Map<String, Object> run() throws Exception {
+		TraceContextUtils.setLocalTraceContext(traceContext);
+
 		if( null ==customerService){
 			customerService = SpringContextUtil.getBean(CustomerService.class);
 		}

@@ -2,6 +2,7 @@ package com.example.mq.service.customer;
 
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
 
 import javax.annotation.PostConstruct;
 
@@ -9,6 +10,9 @@ import com.alibaba.fastjson.JSONObject;
 import com.example.mq.base.zk.CuratorClientManager;
 import com.example.mq.service.bean.Customer;
 import com.example.mq.service.dao.customer.PlatformCustomerMapper;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
 import org.apache.commons.collections4.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,7 +32,19 @@ import org.springframework.stereotype.Component;
 public class CustomerCache {
 	private static final Logger LOG = LoggerFactory.getLogger(CustomerCache.class);
 
-	private ConcurrentHashMap<Long, Customer> customerCache =new ConcurrentHashMap<>();
+//	private ConcurrentHashMap<Long, Customer> customerCache =new ConcurrentHashMap<>();
+	private final static LoadingCache<String, Customer> customerCache = CacheBuilder.newBuilder()
+		.initialCapacity(10 *1000)
+		.maximumSize(100 *1000)
+		.expireAfterWrite(5, TimeUnit.MINUTES)
+		.concurrencyLevel(Runtime.getRuntime().availableProcessors() +1)
+		.build(new CacheLoader<String, Customer>() {
+			@Override
+			public Customer load(String key) throws Exception {
+
+				return null;
+			}
+		});
 	private final boolean PRINT_CACHE = true;
 	private long LAST_UPDATE_TIME =0;
 
@@ -90,10 +106,10 @@ public class CustomerCache {
 		int result =0;
 		synchronized (CustomerCache.class){
 			try {
-				customerCache.clear();
+				customerCache.cleanUp();
 				if( !CollectionUtils.isEmpty(customerList)){
 					for(Customer customer :customerList){
-						customerCache.putIfAbsent(customer.getCustomerNo(), customer);
+						customerCache.put(String.valueOf(customer.getCustomerNo()), customer);
 					}
 				}
 				if(PRINT_CACHE){

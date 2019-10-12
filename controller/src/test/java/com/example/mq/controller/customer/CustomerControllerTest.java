@@ -41,10 +41,9 @@ public class CustomerControllerTest {
 
 	@Before
 	public void setUp() throws Exception {
-		long customerNo =123456L;
 		Customer mockCustomer =new Customer();
-		mockCustomer.setCustomerName("xxx");
-		Mockito.when(platformCustomerMapper.selectByCustomerNo(customerNo)).thenReturn(mockCustomer);
+		mockCustomer.setCustomerName("mockName");
+		Mockito.when(platformCustomerMapper.selectByCustomerNo(Mockito.anyLong())).thenReturn(mockCustomer);
 	}
 
 	@Test
@@ -57,12 +56,10 @@ public class CustomerControllerTest {
             LOG.error("query customer err!", e);
         }
 
-        Assert.assertTrue(!Objects.isNull(resp) && !Objects.isNull(resp.getData()));
+        Assert.assertTrue(null !=resp && null !=resp.getData());
         CustomerVO vo =(CustomerVO) resp.getData();
 		LOG.info("customerVO:{}", JSONObject.toJSONString(vo));
-        Assert.assertTrue(!Objects.isNull(vo) && vo.getCustomerNo().equals("123456"));
-        Assert.assertTrue(!CollectionUtils.isEmpty(vo.getTopTenSellers()));
-        Assert.assertTrue(null !=vo.getTotalCostAmount() && vo.getTotalCostAmount() ==123.45);
+        Assert.assertTrue(null !=vo && "mockName".equals(vo.getCustomerName()));
     }
 
     @Test

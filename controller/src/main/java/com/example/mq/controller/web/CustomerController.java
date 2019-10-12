@@ -62,7 +62,11 @@ public class CustomerController extends BaseController {
 		}
 		List<CustomerVO> voList =new ArrayList<>(customers.size());
 		for(Customer customer :customers){
-			voList.add(CustomerVO.convertToVO(customer));
+			try {
+				voList.add(CustomerVO.convertToVO(customer));
+			} catch (Exception e) {
+				LOG.error(" parse customer err, customer:{}", JSONObject.toJSONString(customer), e);
+			}
 		}
 		PageResult<CustomerVO> pageResult =new PageResult<>(pageCustomers.getPageNum(), pageCustomers.getPageSize(),
 				pageCustomers.getTotal(), voList);

@@ -33,7 +33,6 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class MongoServiceImpl implements MongoService{
-
 	private static final Logger LOG = LoggerFactory.getLogger(MongoService.class);
 
 	/**

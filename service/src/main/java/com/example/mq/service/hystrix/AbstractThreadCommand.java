@@ -1,6 +1,8 @@
 package com.example.mq.service.hystrix;
 
 
+import com.example.mq.base.dubbo.TraceContext;
+import com.example.mq.base.dubbo.TraceContextUtils;
 import com.netflix.hystrix.HystrixCommand;
 import com.netflix.hystrix.HystrixCommandGroupKey;
 import com.netflix.hystrix.HystrixCommandKey;
@@ -20,6 +22,8 @@ public abstract class AbstractThreadCommand<T> extends HystrixCommand<T> {
 	private final static String  SUFFIX_GROUP_KEY= "_group";
 	private final static String SUFFIX_COMMAND_KEY = "_commandKey";
 	private final static String SUFFIX_THREAD_POOL_KEY = "_threadPool";
+
+	protected final TraceContext traceContext;
 
 
 	public AbstractThreadCommand(String name, HystrixConfig config){
@@ -45,5 +49,6 @@ public abstract class AbstractThreadCommand<T> extends HystrixCommand<T> {
 						.withQueueSizeRejectionThreshold(config.getQueueRejectSize())
 				)
 		);
+		this.traceContext = TraceContextUtils.getLocalTraceContext();
 	}
 }
