@@ -1,4 +1,4 @@
-package com.example.mq.testcode.leedcode;
+package com.example.mq.testcode.leetcode;
 
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.CountDownLatch;

@@ -1,4 +1,4 @@
-package com.example.mq.testcode.leedcode;
+package com.example.mq.testcode.leetcode;
 
 import java.util.ArrayList;
 import java.util.Arrays;
