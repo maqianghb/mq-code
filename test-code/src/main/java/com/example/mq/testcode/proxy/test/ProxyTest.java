@@ -28,6 +28,7 @@ public class ProxyTest {
 				new Class[]{TestProxyInterface.class}, invocationHandler);
 		String result =proxy.doProcess("test jdk proxy");
 		System.out.println("------result:" + result);
+
 	}
 
 	private void testCglibProxy(){

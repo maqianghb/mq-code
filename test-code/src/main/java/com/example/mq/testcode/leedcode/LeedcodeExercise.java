@@ -1,10 +1,17 @@
 package com.example.mq.testcode.leedcode;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
+
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.PriorityQueue;
 import java.util.Stack;
 
 class ListNode {
@@ -54,16 +61,254 @@ class TreeNode{
  **/
 public class LeedcodeExercise {
 
+    private int n;
+    private int k;
+    private List<List<Integer>> results =new ArrayList<>();
+
+    public List<List<Integer>> combine(int n, int k) {
+        this.n =n;
+        this.k =k;
+        if(n <k){
+            return results;
+        }else if(n ==k){
+            List<Integer> tmp =new ArrayList<>();
+            for(int i=1; i<=n; i++){
+                tmp.add(i);
+            }
+            results.add(tmp);
+            return results;
+        }
+        List<Integer> tmpValue =new ArrayList<>();
+        setValue(0, 1, tmpValue);
+        return results;
+
+    }
+
+    private void setValue(int index, int startValue, List<Integer> tmpValue){
+        if(tmpValue.size() ==k){
+            results.add(new ArrayList<>(tmpValue));
+            return;
+        }
+        for(int i=startValue; i<=n-(k-index-1); i++){
+            tmpValue.add(i);
+            setValue(index+1, i+1, tmpValue);
+            tmpValue.remove(tmpValue.size()-1);
+        }
+    }
+
     public static void main(String[] args) {
         LeedcodeExercise exercise = new LeedcodeExercise();
 
         ListNode l1 =new ListNode(1);
 
         String s =new String("c");
-        int re =exercise.lengthOfLongestSubstring(s);
-        System.out.println(re);
+//        int re =exercise.lengthOfLongestSubstring(s);
+//        System.out.println(re);
+
+        int[] nums =new int[]{1, 0, 2};
+        exercise.sortColors(nums);
+        System.out.println("nums:"+ JSONObject.toJSONString(nums));
+
+        String result =exercise.multiply("123", "456");
+        System.out.println("result:" + result);
+
+        exercise.combine(3, 2);
 
     }
+
+    public void sortColors(int[] nums) {
+        if(nums == null || nums.length ==1){
+            return;
+        }
+        int indexP0 =0;
+        int cur =0;
+        while(indexP0 <nums.length && nums[indexP0] ==0){
+            indexP0 ++;
+            cur ++;
+        }
+        int indexP2 =nums.length-1;
+        while(indexP2 >=0 && nums[indexP2] ==2){
+            indexP2--;
+        }
+        while(cur<=indexP2){
+            if(nums[cur] ==0){
+                int tmp =nums[indexP0];
+                nums[indexP0] =nums[cur];
+                nums[cur] =tmp;
+                indexP0 ++;
+            }
+            if(nums[cur] ==2){
+                int tmp =nums[indexP2];
+                nums[indexP2] =nums[cur];
+                nums[cur] =tmp;
+                indexP2 --;
+            }
+            cur ++;
+        }
+    }
+
+	public String multiply(String num1, String num2) {
+		if(num1 =="0" || num2 =="0"){
+			return "0";
+		}
+		if(num1 =="1" || num2 =="1"){
+			return num1 =="1" ? num2 : num1;
+		}
+		int nums2Length =num2.length();
+		String sum ="0";
+		for(int i=0; i<nums2Length; i++){
+			int key2 =num2.charAt(nums2Length-1 -i) -'0';
+			if(key2 ==0){
+				continue;
+			}
+			for(int j=0; j<num1.length(); j++){
+				int key1 =num1.charAt(num1.length()-1-j) -'0';
+				if(key1 ==0){
+					continue;
+				}
+				int keySum =key2*key1;
+				String strKeySum =String.valueOf(keySum);
+				int num =i+j;
+				while(num >0){
+					strKeySum +="0";
+					num --;
+				}
+				sum =plus(sum, strKeySum);
+			}
+		}
+		return sum;
+	}
+
+	public String plus(String str1, String str2){
+		if(str1 =="0" || str2 =="0"){
+			return str1 =="0" ? str2 :str1;
+		}
+		int length = str1.length() >=str2.length()? str1.length() : str2.length();
+		int high =0;
+		StringBuilder sb =new StringBuilder();
+		for(int i=0; i<length; i++){
+			int num1 =str1.length() >i ? str1.charAt(str1.length()-1-i)-'0' : 0;
+			int num2 =str2.length() >i ? str2.charAt(str2.length()-1-i)-'0' : 0;
+			int tmpSum =num1 +num2+ high;
+			if(tmpSum >9){
+				high =1;
+				sb.append(String.valueOf(tmpSum%10));
+			}else{
+				high =0;
+				sb.append(String.valueOf(tmpSum));
+			}
+		}
+		if(high >0){
+			sb.append(String.valueOf(high));
+		}
+		String reverseStr =sb.toString();
+		StringBuilder resultSb =new StringBuilder();
+		for(int i=0; i<reverseStr.length(); i++){
+			resultSb.append(reverseStr.charAt(reverseStr.length()-1 -i));
+		}
+		return resultSb.toString();
+	}
+
+	public void nextPermutation(int[] nums) {
+		if(nums ==null || nums.length ==1){
+			return;
+		}
+		int length =nums.length;
+		int i =length-2;
+		while(i >=0){
+			if(nums[i] <nums[i+1]){
+				break;
+			}
+		}
+		if(i <0){
+			//交换全部
+			int s =0;
+			int e =length-1;
+			while (s <e){
+				int tmp =nums[s];
+				nums[s] =nums[e];
+				nums[e] =tmp;
+
+				s++;
+				e--;
+			}
+			return;
+		}
+		int j=length-1;
+		for(; j>i; j--){
+			if(nums[j] > nums[i]){
+				break;
+			}
+		}
+		int tmp =nums[i];
+		nums[i] =nums[j];
+		nums[j] =tmp;
+
+		int s =i+1;
+		int e =length-1;
+		while(s <e){
+			int changeTmp =nums[s];
+			nums[s] =nums[e];
+			nums[e] =changeTmp;
+
+			s++;
+			e--;
+		}
+	}
+
+	public String convert(String s, int numRows) {
+		List<StringBuilder> rows =new ArrayList<>(numRows);
+		for(int i=0; i<numRows; i++){
+			rows.add(new StringBuilder());
+		}
+
+		int rowIndex =0;
+		boolean isDown =false;
+		for(int i=0; i<s.length(); i++){
+			char tmpChar =s.charAt(i);
+			rows.get(rowIndex).append(tmpChar);
+			if(rowIndex ==0 || rowIndex ==rows.size()-1){
+				isDown = !isDown;
+			}
+			if(isDown){
+				rowIndex =rowIndex +1;
+			}else{
+				rowIndex =rowIndex -1;
+			}
+		}
+
+		StringBuilder result =new StringBuilder();
+		rows.stream().forEach(sb->result.append(sb.toString()));
+		return result.toString();
+
+	}
+
+    // 347. 前 K 个高频元素
+	public List<Integer> topKFrequent(int[] nums, int k) {
+    	Map<Integer, Integer> numMap =new HashMap<>();
+		for(int i=0; i<nums.length; i++){
+			int tmpNum =nums[i];
+			numMap.put(tmpNum, numMap.getOrDefault(tmpNum, 0)+1);
+		}
+		if(k ==1){
+			return new ArrayList<>(numMap.keySet());
+		}
+
+		PriorityQueue<Integer> heap =new PriorityQueue<>((n1, n2)->numMap.get(n1)-numMap.get(n2));
+			for(int num :numMap.keySet()){
+			heap.add(num);
+			if(heap.size() >k){
+				heap.poll();
+			}
+		}
+
+		List<Integer> topK =new ArrayList<>();
+			while (!heap.isEmpty()){
+				topK.add(heap.poll());
+			}
+		Collections.reverse(topK);
+			return topK;
+	}
 
     public int maxArea(int[] height) {
         int result =0;

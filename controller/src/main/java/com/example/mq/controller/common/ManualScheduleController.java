@@ -1,6 +1,6 @@
 package com.example.mq.controller.common;
 
-import com.example.mq.api.common.Response;
+import com.example.mq.api.dto.common.Response;
 import com.example.mq.base.util.SpringContextUtil;
 import com.example.mq.service.schedule.CountNumTask;
 import org.slf4j.Logger;

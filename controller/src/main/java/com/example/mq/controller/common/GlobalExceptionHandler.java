@@ -3,7 +3,7 @@ package com.example.mq.controller.common;
 import com.alibaba.fastjson.JSON;
 import com.example.mq.base.common.MyException;
 
-import com.example.mq.api.common.Response;
+import com.example.mq.api.dto.common.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -17,6 +17,7 @@ import com.mongodb.client.result.DeleteResult;
 import com.mongodb.client.result.UpdateResult;
 import org.apache.commons.lang3.StringUtils;
 import org.bson.Document;
+import org.bson.types.ObjectId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -124,6 +125,11 @@ public class MongoServiceImpl implements MongoService{
 		}
 		long count = result.getDeletedCount();
 		return count;
+	}
+
+	@Override
+	public long deleteByObjectId(ObjectId id, String collection) {
+		return deleteById(id, collection);
 	}
 
 	@Override

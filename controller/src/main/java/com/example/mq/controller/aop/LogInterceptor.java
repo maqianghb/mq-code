@@ -1,10 +1,7 @@
 package com.example.mq.controller.aop;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import com.alibaba.fastjson.JSONObject;
-import com.example.mq.api.common.Response;
+import com.example.mq.api.dto.common.Response;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;

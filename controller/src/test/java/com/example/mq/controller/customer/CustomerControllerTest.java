@@ -4,10 +4,9 @@ import com.alibaba.fastjson.JSONObject;
 import com.example.mq.controller.ControllerApplication;
 import com.example.mq.controller.web.CustomerController;
 import com.example.mq.controller.bean.CustomerVO;
-import com.example.mq.api.common.Response;
+import com.example.mq.api.dto.common.Response;
 import com.example.mq.service.bean.Customer;
 import com.example.mq.service.dao.customer.PlatformCustomerMapper;
-import org.apache.commons.collections4.CollectionUtils;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -19,8 +18,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
-
-import java.util.Objects;
 
 /**
  * @program: mq-code

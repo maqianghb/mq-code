@@ -4,6 +4,7 @@ import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 
 import org.bson.Document;
+import org.bson.types.ObjectId;
 
 import java.util.List;
 import java.util.Map;
@@ -77,6 +78,8 @@ public interface MongoService {
 	 * @return
 	 */
 	long deleteById(Object id, String collection);
+
+	long deleteByObjectId(ObjectId id, String collection);
 
 	/**
 	 *

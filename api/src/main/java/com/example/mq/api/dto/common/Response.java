@@ -1,4 +1,4 @@
-package com.example.mq.api.common;
+package com.example.mq.api.dto.common;
 
 import java.io.Serializable;
 

@@ -6,8 +6,8 @@ import com.alibaba.dubbo.config.ReferenceConfig;
 import com.alibaba.dubbo.config.RegistryConfig;
 import com.alibaba.fastjson.JSONObject;
 
-import com.example.mq.api.common.Response;
-import com.example.mq.api.vo.CustomerReqVO;
+import com.example.mq.api.dto.common.Response;
+import com.example.mq.api.dto.request.CustomerRequestDTO;
 import com.example.mq.service.bean.Customer;
 import org.apache.commons.lang.StringUtils;
 
@@ -36,13 +36,13 @@ public class DubboServiceTest {
 	}
 
 	private void testQueryCustomer(){
-		CustomerReqVO vo =new CustomerReqVO();
+		CustomerRequestDTO vo =new CustomerRequestDTO();
 		vo.setCustomerId("123456789");
 
 		Response response =null;
 		try {
-			CustomerApiService customerApiService = DubboServiceTest.getDubboService(CustomerApiService.class, null);
-			response =customerApiService.queryCustomer(vo);
+			CustomerServiceApi customerServiceApi = DubboServiceTest.getDubboService(CustomerServiceApi.class, null);
+			response = customerServiceApi.queryCustomer(vo);
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		}
@@ -62,7 +62,7 @@ public class DubboServiceTest {
 		rc.setApplication(application);
 		rc.setRegistry(registry);
 		rc.setInterface(clazz.getName());
-		rc.setUrl("dubbo://127.0.0.1:12345/com.example.mq.web.CustomerApiService");
+		rc.setUrl("dubbo://127.0.0.1:12345/com.example.mq.web.CustomerServiceApi");
 		if (StringUtils.isNotBlank(version)) {
 			rc.setVersion(version);
 		}

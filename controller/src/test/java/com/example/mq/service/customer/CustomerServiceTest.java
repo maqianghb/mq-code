@@ -2,6 +2,9 @@ package com.example.mq.service.customer;
 
 import static org.junit.Assert.*;
 
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+
 import com.example.mq.controller.ControllerApplication;
 import com.example.mq.controller.customer.CustomerControllerTest;
 import com.example.mq.service.bean.Customer;
@@ -18,6 +21,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.test.context.junit4.SpringRunner;
 
 /**
@@ -32,7 +36,8 @@ import org.springframework.test.context.junit4.SpringRunner;
 public class CustomerServiceTest {
 	private static final Logger LOG = LoggerFactory.getLogger(CustomerControllerTest.class);
 
-	@MockBean
+//	@MockBean
+	@SpyBean
 	private PlatformCustomerMapper platformCustomerMapper;
 
 	@Autowired
@@ -43,6 +48,7 @@ public class CustomerServiceTest {
 		Customer mockCustomer =new Customer();
 		mockCustomer.setCustomerName("mockName");
 		Mockito.when(platformCustomerMapper.selectByCustomerNo(Mockito.anyLong())).thenReturn(mockCustomer);
+
 	}
 
 	@Test
