@@ -6,7 +6,7 @@ import com.example.mq.controller.web.CustomerController;
 import com.example.mq.controller.bean.CustomerVO;
 import com.example.mq.api.dto.common.Response;
 import com.example.mq.service.bean.Customer;
-import com.example.mq.service.dao.customer.PlatformCustomerMapper;
+import com.example.mq.service.mapper.customer.PlatformCustomerMapper;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;

@@ -1,4 +1,4 @@
-package com.example.mq.service.dao.customer;
+package com.example.mq.service.mapper.customer;
 
 import java.util.List;
 

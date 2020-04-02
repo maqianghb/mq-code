@@ -3,6 +3,7 @@ package com.example.mq.base.dubbo;
 import java.util.UUID;
 
 import com.google.common.base.Preconditions;
+import org.springframework.util.Assert;
 
 /**
  * @program: mq-code
@@ -30,7 +31,7 @@ public class TraceContextUtils {
 	}
 
 	public static void setLocalTraceContext(TraceContext traceContext){
-		Preconditions.checkArgument(null !=traceContext, "traceContext is empty.");
+		Assert.notNull(traceContext, "traceContext is empty.");
 		localTraceContexts.set(traceContext);
 	}
 

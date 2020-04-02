@@ -1,4 +1,4 @@
-package com.example.mq.service.dao.customer;
+package com.example.mq.service.mapper.customer;
 
 import com.example.mq.service.bean.Customer;
 import com.example.mq.service.bean.CustomerQueryCondition;

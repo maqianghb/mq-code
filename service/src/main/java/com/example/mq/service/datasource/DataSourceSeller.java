@@ -25,7 +25,7 @@ import org.springframework.jdbc.datasource.DataSourceTransactionManager;
  *
  */
 @Configuration
-@MapperScan(basePackages = {"com.example.mq.service.dao.seller"}, sqlSessionTemplateRef = "sellerSqlSessionTemplate")
+@MapperScan(basePackages = {"com.example.mq.service.mapper.seller"}, sqlSessionTemplateRef = "sellerSqlSessionTemplate")
 public class DataSourceSeller {
 
 	@Value("${jdbc.seller.mapper_xml}")

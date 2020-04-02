@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.example.mq.service.dao.seller.PlatformSellerMapper">
+<mapper namespace="com.example.mq.service.mapper.seller.PlatformSellerMapper">
 
 	<resultMap id="BaseResultMap" type="com.example.mq.service.bean.Seller">
 		<id column="id" jdbcType="BIGINT" property="id" />

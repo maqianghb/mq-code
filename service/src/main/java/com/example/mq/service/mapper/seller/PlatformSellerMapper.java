@@ -1,4 +1,4 @@
-package com.example.mq.service.dao.seller;
+package com.example.mq.service.mapper.seller;
 
 
 import com.example.mq.service.bean.Seller;

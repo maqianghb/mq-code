@@ -7,13 +7,15 @@ import com.example.mq.base.constant.CustomerConstant;
 import com.example.mq.base.enums.PlatformOperateEnum;
 import com.example.mq.base.util.DateUtil;
 import com.example.mq.base.util.MD5Util;
+import com.example.mq.service.annotation.CacheGet;
 import com.example.mq.service.bean.Customer;
 import com.example.mq.base.common.MyException;
 import com.example.mq.service.bean.CustomerOperation;
 import com.example.mq.service.bean.CustomerQueryCondition;
+import com.example.mq.service.constant.CacheAntnConstant;
 import com.example.mq.service.customer.CustomerService;
-import com.example.mq.service.dao.customer.PlatformCustomerMapper;
-import com.example.mq.service.dao.customer.PlatformCustomerOperateMapper;
+import com.example.mq.service.mapper.customer.PlatformCustomerMapper;
+import com.example.mq.service.mapper.customer.PlatformCustomerOperateMapper;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import org.apache.commons.collections4.CollectionUtils;
@@ -27,7 +29,6 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -54,6 +55,7 @@ public class CustomerServiceImpl implements CustomerService {
 	}
 
 	@Override
+	@CacheGet(key = "customerNo", expireSeconds = CacheAntnConstant.MINUTE *15, prefix = CacheAntnConstant.CUSTOMER_PREFIX)
     public Customer queryByCustomerNo(long customerNo) throws Exception {
     	return platformCustomerMapper.selectByCustomerNo(customerNo);
     }

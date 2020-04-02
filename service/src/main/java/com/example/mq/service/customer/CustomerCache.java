@@ -1,15 +1,12 @@
 package com.example.mq.service.customer;
 
 import java.util.List;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
-
-import javax.annotation.PostConstruct;
 
 import com.alibaba.fastjson.JSONObject;
 import com.example.mq.base.zk.CuratorClientManager;
 import com.example.mq.service.bean.Customer;
-import com.example.mq.service.dao.customer.PlatformCustomerMapper;
+import com.example.mq.service.mapper.customer.PlatformCustomerMapper;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
