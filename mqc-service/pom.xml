@@ -10,25 +10,29 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.example.mq</groupId>
-    <artifactId>api</artifactId>
+    <artifactId>mqc-service</artifactId>
     <packaging>jar</packaging>
 
-    <name>api</name>
-    <description>api of mq-code</description>
-
     <dependencies>
-		<!-- jackson annotations -->
+		<!-- mq-code-base -->
+        <dependency>
+            <groupId>com.example.mq</groupId>
+            <artifactId>mqc-base</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+		<!-- hystrix -->
 		<dependency>
-			<groupId>com.fasterxml.jackson.core</groupId>
-			<artifactId>jackson-annotations</artifactId>
-			<version>${jackson-annotations.version}</version>
+			<groupId>com.netflix.hystrix</groupId>
+			<artifactId>hystrix-core</artifactId>
+			<version>${hystrix-core.version}</version>
 		</dependency>
 
     </dependencies>
 
 
-	<build>
-		<finalName>mq-code-api-${project.version}</finalName>
+    <build>
+        <finalName>mq-code-service-${project.version}</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -51,7 +55,7 @@
 			</resource>
 		</resources>
 
-	</build>
+    </build>
 
 
 </project>

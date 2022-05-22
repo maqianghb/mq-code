@@ -10,11 +10,8 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.example.mq</groupId>
-    <artifactId>controller</artifactId>
+    <artifactId>mqc-start</artifactId>
     <packaging>jar</packaging>
-
-    <name>controller</name>
-    <description>controller of mq-code</description>
 
     <dependencies>
 		<!--spring boot-->
@@ -27,7 +24,7 @@
 		<!-- mq-code-service -->
         <dependency>
             <groupId>com.example.mq</groupId>
-            <artifactId>service</artifactId>
+            <artifactId>mqc-service</artifactId>
             <version>${project.version}</version>
 		</dependency>
 

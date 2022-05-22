@@ -20,7 +20,7 @@
 		<!-- mq-code-service -->
 		<dependency>
 			<groupId>com.example.mq</groupId>
-			<artifactId>service</artifactId>
+			<artifactId>mqc-service</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 

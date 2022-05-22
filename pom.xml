@@ -10,12 +10,13 @@
     <version>1.0.1-SNAPSHOT</version>
 
     <modules>
-		<module>api</module>
-		<module>base</module>
-		<module>controller</module>
-        <module>service</module>
+		<module>mqc-base</module>
+		<module>mqc-client</module>
+        <module>mqc-service</module>
+		<module>mqc-start</module>
+        <module>mqc-wrapper</module>
 		<module>test-code</module>
-	</modules>
+    </modules>
 
     <name>mq-code</name>
     <description>root of mq-code</description>

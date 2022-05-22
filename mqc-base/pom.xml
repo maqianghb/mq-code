@@ -10,17 +10,14 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.example.mq</groupId>
-    <artifactId>base</artifactId>
+    <artifactId>mqc-base</artifactId>
     <packaging>jar</packaging>
-
-    <name>base</name>
-    <description>base of mq-code</description>
 
     <dependencies>
 		<!-- mq-code-web-->
 		<dependency>
 			<groupId>com.example.mq</groupId>
-			<artifactId>api</artifactId>
+			<artifactId>mqc-client</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 
