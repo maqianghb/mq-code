@@ -1,18 +1,18 @@
 package com.example.mq.controller.web;
 
 import com.alibaba.fastjson.JSONObject;
+import com.example.mq.client.common.Result;
+import com.example.mq.client.service.customer.CustomerService;
 import com.example.mq.controller.bean.CustomerQueryConditionVO;
 import com.example.mq.controller.bean.CustomerVO;
 import com.example.mq.controller.common.BaseController;
 import com.example.mq.base.common.MyException;
-import com.example.mq.base.common.PageResult;
-import com.example.mq.api.dto.common.Response;
 import com.example.mq.base.common.User;
 import com.example.mq.base.util.AuthorityUtil;
 import com.example.mq.service.bean.Customer;
 import com.example.mq.service.bean.CustomerQueryCondition;
-import com.example.mq.service.customer.CustomerService;
 import org.apache.commons.collections4.CollectionUtils;
+import org.assertj.core.util.Lists;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,27 +38,26 @@ public class CustomerController extends BaseController {
     private CustomerService customerService;
 
     @RequestMapping(value = "/queryByCustomerNo", method = {RequestMethod.GET}, produces = "application/json;charset=UTF-8")
-    public Response queryByCustomerNo(@RequestParam(value = "customerNo") long customerNo)  throws Exception{
+    public Result queryByCustomerNo(@RequestParam(value = "customerNo") long customerNo)  throws Exception{
 		LOG.info("根据customerNo查询顾客信息, customerNo:{}}", customerNo);
-		Customer customer =customerService.queryByCustomerNo(customerNo);
+		Customer customer =new Customer();
         if(Objects.isNull(customer)){
-            return Response.createBySuccessMsg("未查询到对应数据！");
+            return Result.success("未查询到对应数据！");
         }
-        return Response.createBySuccess(CustomerVO.convertToVO(customer));
+		return Result.success(CustomerVO.convertToVO(customer));
     }
 
 	@RequestMapping(value = "/pageQuery", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
-	public Response pageQueryCustomers(
+	public Result pageQueryCustomers(
 			CustomerQueryConditionVO vo,
 			@RequestParam(value = "pageNum", required = false, defaultValue = "1") int pageNum,
 			@RequestParam(value = "pageSize", required = false, defaultValue = "10") int pageSize
 	) throws Exception {
 		LOG.info("分页查询顾客信息, condition:{}|pageNum:{}|pageSize:{}", JSONObject.toJSONString(vo), pageNum, pageSize);
 		CustomerQueryCondition condition =CustomerQueryConditionVO.convertToCondition(vo);
-		PageResult<Customer> pageCustomers =customerService.pageQuery(condition, pageNum, pageSize);
-		List<Customer> customers;
-		if(null ==pageCustomers || CollectionUtils.isEmpty(customers =pageCustomers.getList())){
-			return Response.createBySuccessMsg("未查询到符合条件的顾客信息！");
+		List<Customer> customers = Lists.newArrayList();
+		if(CollectionUtils.isEmpty(customers)){
+			return Result.success("未查询到符合条件的顾客信息！");
 		}
 		List<CustomerVO> voList =new ArrayList<>(customers.size());
 		for(Customer customer :customers){
@@ -68,13 +67,11 @@ public class CustomerController extends BaseController {
 				LOG.error(" parse customer err, customer:{}", JSONObject.toJSONString(customer), e);
 			}
 		}
-		PageResult<CustomerVO> pageResult =new PageResult<>(pageCustomers.getPageNum(), pageCustomers.getPageSize(),
-				pageCustomers.getTotal(), voList);
-		return Response.createBySuccess(pageResult);
+		return Result.success(voList);
 	}
 
     @RequestMapping(value = "/add", method = {RequestMethod.POST}, produces = "application/json;charset=UTF-8")
-    public Response add(@RequestBody String paramStr)  throws Exception{
+    public Result add(@RequestBody String paramStr)  throws Exception{
         if(StringUtils.isEmpty(paramStr)){
             throw new MyException(-1, "参数为空！");
         }
@@ -83,11 +80,11 @@ public class CustomerController extends BaseController {
             throw new MyException(-1, "参数转换失败！");
         }
 		User user = AuthorityUtil.getCurrentUser();
-        long result =customerService.add(CustomerVO.convertToCustomer(vo), user);
+        long result =1;
         if(result <=0){
-            return Response.createByFailMsg("插入数据失败！");
+            return Result.success("插入数据失败！");
         }
-        return Response.createBySuccessMsg("插入数据成功！");
+        return Result.success("插入数据成功！");
     }
 
 

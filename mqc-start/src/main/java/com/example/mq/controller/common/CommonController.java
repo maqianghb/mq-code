@@ -10,8 +10,8 @@ import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.LoggerContext;
 import com.alibaba.fastjson.JSONObject;
 import com.example.mq.base.common.MyException;
-import com.example.mq.api.dto.common.Response;
 import com.example.mq.base.enums.CityEnum;
+import com.example.mq.client.common.Result;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,7 +34,7 @@ public class CommonController {
 	private static final Logger LOG = LoggerFactory.getLogger(CommonController.class);
 
 	@RequestMapping(value = "/logLevel", method = {RequestMethod.POST}, produces = "application/json;charset=UTF-8")
-	public Response setLogLevel(@RequestBody String paramStr) throws Exception{
+	public Result setLogLevel(@RequestBody String paramStr) throws Exception{
 		LOG.info("设置logLevel，paramStr:{}", paramStr);
 		JSONObject jsonObj = JSONObject.parseObject(paramStr);
 		if(Objects.isNull(jsonObj)){
@@ -50,11 +50,11 @@ public class CommonController {
 				LOG.info("logger reset level info, logger:{}, level:{}", logName, logLevel);
 			}
 		}
-		return Response.createBySuccess();
+		return Result.success();
 	}
 
 	@RequestMapping(value = "/queryCityList", method = {RequestMethod.GET}, produces = "application/json;charset=UTF-8")
-	public Response queryCityList() throws Exception{
+	public Result queryCityList() throws Exception{
 		List<Map<String, Object>> result =new ArrayList<>();
 		for(CityEnum cityEnum : CityEnum.values()){
 			Map<String, Object> tmpMap =new HashMap<>(4);
@@ -62,6 +62,6 @@ public class CommonController {
 			tmpMap.put("name", cityEnum.getName());
 			result.add(tmpMap);
 		}
-		return Response.createBySuccess(result);
+		return Result.success();
 	}
 }

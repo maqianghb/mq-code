@@ -9,25 +9,23 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-
-
     <groupId>com.example.mq</groupId>
-    <artifactId>mqc-wrapper</artifactId>
+    <artifactId>mqc-core</artifactId>
     <packaging>jar</packaging>
 
     <dependencies>
-        <!-- mq-code-data -->
+        <!-- jackson annotations -->
         <dependency>
-            <groupId>com.example.mq</groupId>
-            <artifactId>mqc-common</artifactId>
-            <version>${project.version}</version>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-annotations</artifactId>
+            <version>${jackson-annotations.version}</version>
         </dependency>
 
     </dependencies>
 
 
     <build>
-        <finalName>mq-code-wrapper-${project.version}</finalName>
+        <finalName>mq-code-core-${project.version}</finalName>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -51,5 +49,6 @@
         </resources>
 
     </build>
+
 
 </project>

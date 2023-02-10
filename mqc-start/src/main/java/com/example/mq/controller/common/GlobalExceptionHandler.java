@@ -3,7 +3,8 @@ package com.example.mq.controller.common;
 import com.alibaba.fastjson.JSON;
 import com.example.mq.base.common.MyException;
 
-import com.example.mq.api.dto.common.Response;
+
+import com.example.mq.client.common.Result;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +24,7 @@ public class GlobalExceptionHandler {
     private Environment environment;
 
     @ExceptionHandler(Exception.class)
-    public Response handlerException(HttpServletRequest request, Exception ex) {
+    public Result handlerException(HttpServletRequest request, Exception ex) {
         int respCode = -1;
         String respMsg = StringUtils.isEmpty(ex.getMessage()) ? "系统发生未知错误!":ex.getMessage();
         try {
@@ -36,7 +37,7 @@ public class GlobalExceptionHandler {
                 respCode = myException.getCode();
                 respMsg = myException.getDesc();
             }
-           return Response.createByFail(respCode, respMsg);
+           return Result.fail(respCode, respMsg);
         } catch (Exception e) {
             LOG.error("未知错误:"+ e.getMessage(), e);
             e.printStackTrace();

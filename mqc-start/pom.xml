@@ -28,11 +28,11 @@
             <version>${project.version}</version>
 		</dependency>
 
-	</dependencies>
+    </dependencies>
 
 
     <build>
-        <finalName>mq-code-${project.version}</finalName>
+        <finalName>mq-code-start-${project.version}</finalName>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>

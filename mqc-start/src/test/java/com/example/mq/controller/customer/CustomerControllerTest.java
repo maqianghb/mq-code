@@ -4,7 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.example.mq.controller.ControllerApplication;
 import com.example.mq.controller.web.CustomerController;
 import com.example.mq.controller.bean.CustomerVO;
-import com.example.mq.api.dto.common.Response;
+import com.example.mq.client.common.Response;
 import com.example.mq.service.bean.Customer;
 import com.example.mq.service.dao.customer.PlatformCustomerMapper;
 import org.junit.Assert;

@@ -1,7 +1,7 @@
 package com.example.mq.controller.aop;
 
 import com.alibaba.fastjson.JSONObject;
-import com.example.mq.api.dto.common.Response;
+import com.example.mq.client.common.Result;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
@@ -29,8 +29,8 @@ public class LogInterceptor {
     public void ctrlPointCut(){}
 
     @Around("ctrlPointCut()")
-    public Response arround(ProceedingJoinPoint joinPoint) throws Throwable{
-		Response result = null;
+    public Result arround(ProceedingJoinPoint joinPoint) throws Throwable{
+		Result result = null;
 		try {
 			String className =joinPoint.getTarget().getClass().getSimpleName();
 			String method = joinPoint.getSignature().getName();
@@ -39,11 +39,11 @@ public class LogInterceptor {
 			//执行
 			long startTime=System.currentTimeMillis();
 			Object resultObj = joinPoint.proceed();
-			if(resultObj instanceof Response){
-				result =(Response) resultObj;
+			if(resultObj instanceof Result){
+				result =(Result) resultObj;
 			}else {
 				LOG.error("处理结果类型未知，无法返回数据，result:{}", JSONObject.toJSONString(resultObj));
-				result = Response.createByFailMsg("无法获取正确的返回结果！");
+				result = Result.fail("无法获取正确的返回结果！");
 			}
 
 			//log

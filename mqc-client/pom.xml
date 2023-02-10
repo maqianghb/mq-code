@@ -21,11 +21,17 @@
 			<version>${jackson-annotations.version}</version>
 		</dependency>
 
+		<dependency>
+			<groupId>com.example.mq</groupId>
+			<artifactId>mqc-common</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+
     </dependencies>
 
 
 	<build>
-		<finalName>mq-code-api-${project.version}</finalName>
+		<finalName>mq-code-client-${project.version}</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>

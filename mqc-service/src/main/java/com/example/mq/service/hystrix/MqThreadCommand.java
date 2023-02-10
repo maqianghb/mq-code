@@ -3,12 +3,11 @@ package com.example.mq.service.hystrix;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.alibaba.fastjson.JSONObject;
 import com.example.mq.base.dubbo.TraceContextUtils;
 import com.example.mq.base.util.CommonUtils;
 import com.example.mq.base.util.SpringContextUtil;
 import com.example.mq.service.bean.Customer;
-import com.example.mq.service.customer.CustomerService;
+import com.example.mq.service.customer.CustomerDomainService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,7 +21,7 @@ import org.slf4j.LoggerFactory;
 public class MqThreadCommand extends AbstractThreadCommand<Map<String, Object>> {
 	private final static Logger LOG = LoggerFactory.getLogger(MqThreadCommand.class);
 
-	private CustomerService customerService;
+	private CustomerDomainService customerDomainService;
 	private Long requestId;
 
 	public MqThreadCommand(long requestId, HystrixConfig config){
@@ -34,11 +33,11 @@ public class MqThreadCommand extends AbstractThreadCommand<Map<String, Object>> 
 	protected Map<String, Object> run() throws Exception {
 		TraceContextUtils.setLocalTraceContext(traceContext);
 
-		if( null ==customerService){
-			customerService = SpringContextUtil.getBean(CustomerService.class);
+		if( null == customerDomainService){
+			customerDomainService = SpringContextUtil.getBean(CustomerDomainService.class);
 		}
 		long customerNo =requestId.longValue();
-		Customer customer =customerService.queryByCustomerNo(customerNo);
+		Customer customer = customerDomainService.queryByCustomerNo(customerNo);
 
 		// thread sleep
 		Thread.sleep(190 + 20 * (CommonUtils.createRandomId(2)%3-1));
