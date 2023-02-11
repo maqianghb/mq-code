@@ -3,7 +3,7 @@ package com.example.mq.service.datasource;
 import javax.sql.DataSource;
 
 import com.alibaba.druid.pool.DruidDataSource;
-import com.example.mq.base.mysql.DruidUtil;
+import com.example.mq.data.mysql.DruidUtil;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.mybatis.spring.SqlSessionFactoryBean;
 import org.mybatis.spring.SqlSessionTemplate;
@@ -25,7 +25,7 @@ import org.springframework.jdbc.datasource.DataSourceTransactionManager;
  *
  */
 @Configuration
-@MapperScan(basePackages = {"com.example.mq.service.dao.customer"}, sqlSessionTemplateRef = "customerSqlSessionTemplate")
+@MapperScan(basePackages = {"com.example.mq.core.dao.customer"}, sqlSessionTemplateRef = "customerSqlSessionTemplate")
 public class DataSourceCustomer {
 
 	@Value("${jdbc.customer.mapper_xml}")

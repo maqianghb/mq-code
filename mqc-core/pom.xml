@@ -21,6 +21,20 @@
             <version>${jackson-annotations.version}</version>
         </dependency>
 
+        <!-- mq-common-->
+        <dependency>
+            <groupId>com.example.mq</groupId>
+            <artifactId>mqc-common</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <!-- mq-data-->
+        <dependency>
+            <groupId>com.example.mq</groupId>
+            <artifactId>mqc-data</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
     </dependencies>
 
 

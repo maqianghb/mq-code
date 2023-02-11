@@ -1,9 +1,9 @@
 package com.example.mq.controller.common;
 
 
-import com.example.mq.base.util.SpringContextUtil;
+import com.example.mq.common.utils.SpringContextUtil;
 import com.example.mq.client.common.Result;
-import com.example.mq.service.schedule.CountNumTask;
+import com.example.mq.core.schedule.CountNumTask;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

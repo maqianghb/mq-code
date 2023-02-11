@@ -1,12 +1,13 @@
 package com.example.mq.controller.customer;
 
 import com.alibaba.fastjson.JSONObject;
+import com.example.mq.client.common.Result;
 import com.example.mq.controller.ControllerApplication;
 import com.example.mq.controller.web.CustomerController;
 import com.example.mq.controller.bean.CustomerVO;
-import com.example.mq.client.common.Response;
-import com.example.mq.service.bean.Customer;
-import com.example.mq.service.dao.customer.PlatformCustomerMapper;
+import com.example.mq.core.domain.customer.model.Customer;
+import com.example.mq.service.customer.CustomerDomainService;
+import org.assertj.core.util.Lists;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -18,6 +19,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
+
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * @program: mq-code
@@ -31,30 +35,31 @@ public class CustomerControllerTest {
     private static final Logger LOG = LoggerFactory.getLogger(CustomerControllerTest.class);
 
     @MockBean
-	private PlatformCustomerMapper platformCustomerMapper;
+	private CustomerDomainService customerDomainService;
 
     @Autowired
     private CustomerController customerController;
 
 	@Before
 	public void setUp() throws Exception {
-		Customer mockCustomer =new Customer();
+        Customer mockCustomer =new Customer();
 		mockCustomer.setCustomerName("mockName");
-		Mockito.when(platformCustomerMapper.selectByCustomerNo(Mockito.anyLong())).thenReturn(mockCustomer);
+        List<Customer> mockCustomerList = Arrays.asList(mockCustomer);
+		Mockito.when(customerDomainService.queryCustomerList(Mockito.any(Customer.class))).thenReturn(mockCustomerList);
 	}
 
 	@Test
     public void queryByCustomerId() {
     	long customerNo =123456L;
-        Response resp =null;
+        Result result =null;
         try {
-            resp =customerController.queryByCustomerNo(customerNo);
+            result =customerController.queryByCustomerNo(customerNo);
         } catch (Exception e) {
             LOG.error("query customer err!", e);
         }
 
-        Assert.assertTrue(null !=resp && null !=resp.getData());
-        CustomerVO vo =(CustomerVO) resp.getData();
+        Assert.assertTrue(null !=result && null !=result.getData());
+        CustomerVO vo =(CustomerVO) result.getData();
 		LOG.info("customerVO:{}", JSONObject.toJSONString(vo));
         Assert.assertTrue(null !=vo && "mockName".equals(vo.getCustomerName()));
     }

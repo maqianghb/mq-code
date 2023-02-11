@@ -1,8 +1,8 @@
 package com.example.mq.service.hystrix;
 
 
-import com.example.mq.base.dubbo.TraceContext;
-import com.example.mq.base.dubbo.TraceContextUtils;
+import com.example.mq.data.dubbo.TraceContext;
+import com.example.mq.data.dubbo.TraceContextUtils;
 import com.netflix.hystrix.HystrixCommand;
 import com.netflix.hystrix.HystrixCommandGroupKey;
 import com.netflix.hystrix.HystrixCommandKey;

@@ -1,6 +1,7 @@
 package com.example.mq.service.customer;
 
-import com.example.mq.service.bean.Customer;
+
+import com.example.mq.core.domain.customer.model.Customer;
 
 /**
  * @program: mq-code

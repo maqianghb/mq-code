@@ -1,13 +1,16 @@
 package com.example.mq.service.hystrix;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
-import com.example.mq.base.dubbo.TraceContextUtils;
-import com.example.mq.base.util.CommonUtils;
-import com.example.mq.base.util.SpringContextUtil;
-import com.example.mq.service.bean.Customer;
+import com.example.mq.core.domain.customer.model.Customer;
+import com.example.mq.data.dubbo.TraceContextUtils;
+import com.example.mq.common.utils.CommonUtils;
+import com.example.mq.common.utils.SpringContextUtil;
 import com.example.mq.service.customer.CustomerDomainService;
+import org.assertj.core.util.Lists;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,7 +40,10 @@ public class MqThreadCommand extends AbstractThreadCommand<Map<String, Object>> 
 			customerDomainService = SpringContextUtil.getBean(CustomerDomainService.class);
 		}
 		long customerNo =requestId.longValue();
-		Customer customer = customerDomainService.queryByCustomerNo(customerNo);
+		List<Customer> customerList = customerDomainService.queryCustomerList(new Customer());
+		Customer customer = Optional.ofNullable(customerList).orElse(Lists.newArrayList()).stream()
+				.findFirst()
+				.orElse(null);
 
 		// thread sleep
 		Thread.sleep(190 + 20 * (CommonUtils.createRandomId(2)%3-1));

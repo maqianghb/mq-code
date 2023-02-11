@@ -5,7 +5,7 @@ import java.util.List;
 import com.alibaba.dubbo.config.ReferenceConfig;
 import com.alibaba.dubbo.config.RegistryConfig;
 import com.alibaba.fastjson.JSONObject;
-import com.example.mq.base.util.DubboUtils;
+import com.example.mq.core.utils.DubboUtils;
 import com.example.mq.service.bean.dubbo.DubboRegisterConfig;
 import com.example.mq.service.bean.dubbo.DubboRequestConfig;
 import com.example.mq.service.dubbo.AutoDubboService;

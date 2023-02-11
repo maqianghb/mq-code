@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.mq.core.mapper.seller.SellerMapper">
+
+	<resultMap id="BaseResultMap" type="com.example.mq.core.domain.customer.model.Seller">
+		<id column="id" jdbcType="BIGINT" property="id" />
+		<result column="seller_no" jdbcType="BIGINT" property="sellerNo" />
+		<result column="seller_name" jdbcType="VARCHAR" property="sellerName" />
+		<result column="seller_age" jdbcType="INTEGER" property="sellerAge"/>
+		<result column="seller_type" jdbcType="TINYINT" property="sellerType"/>
+		<result column="seller_desc" jdbcType="VARCHAR" property="sellerDesc"/>
+		<result column="top_ten_customers" jdbcType="VARCHAR" property="topTenCustomers"/>
+
+		<result column="remark" jdbcType="VARCHAR" property="remark"/>
+		<result column="deleted" jdbcType="TINYINT" property="deleted"/>
+		<result column="create_user" jdbcType="VARCHAR" property="createUser"/>
+		<result column="update_user" jdbcType="VARCHAR" property="updateUser"/>
+		<result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+		<result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
+	</resultMap>
+
+	<sql id="Base_Column_List">
+		id, seller_no, seller_name, seller_age, seller_type, seller_desc, top_ten_customers, remark, deleted,
+		create_user, update_user, create_time, update_time
+	</sql>
+
+	<select id="selectBySellerNo" parameterType="java.lang.Long" resultMap="BaseResultMap">
+		select <include refid="Base_Column_List" />
+		from mc_platform_seller
+		where seller_no = #{sellerNo, jdbcType=BIGINT}
+	</select>
+
+	<insert id="insert" parameterType="com.example.mq.core.domain.customer.model.Seller"
+			useGeneratedKeys="true" keyProperty="id">
+		insert into mc_platform_seller (
+			seller_no, seller_name, seller_age, seller_type, seller_desc, top_ten_customers, remark, deleted,
+			create_user, create_time
+		)
+		values (
+			#{sellerNo, jdbcType=BIGINT},
+			#{sellerName, jdbcType=VARCHAR},
+			#{sellerAge, jdbcType=INTEGER},
+			#{sellerType, jdbcType=TINYINT},
+			#{sellerDesc, jdbcType=VARCHAR},
+			#{topTenCustomers, jdbcType=VARCHAR},
+			#{remark, jdbcType=VARCHAR},
+			#{deleted, jdbcType=TINYINT},
+
+			#{createUser, jdbcType=VARCHAR},
+			#{createTime, jdbcType=TIMESTAMP}
+		)
+	</insert>
+
+	<update id="updateById" parameterType="com.example.mq.core.domain.customer.model.Seller">
+		update mc_platform_seller
+		set seller_no = #{sellerNo, jdbcType=BIGINT},
+			seller_name = #{sellerName, jdbcType=VARCHAR},
+			seller_age = #{sellerAge, jdbcType=INTEGER},
+			seller_type = #{sellerType, jdbcType=TINYINT},
+			seller_desc = #{sellerDesc, jdbcType=VARCHAR},
+			top_ten_customers = #{topTenCustomers, jdbcType=VARCHAR},
+			remark = #{remark, jdbcType=VARCHAR},
+			deleted = #{deleted, jdbcType=TINYINT},
+
+			update_user = #{updateUser, jdbcType=VARCHAR},
+			update_time = #{updateTime, jdbcType=TIMESTAMP}
+		where id = #{id, jdbcType=BIGINT}
+	</update>
+
+
+</mapper>

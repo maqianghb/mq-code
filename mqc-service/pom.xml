@@ -14,10 +14,10 @@
     <packaging>jar</packaging>
 
     <dependencies>
-		<!-- mq-code-data -->
+		<!-- mqc-core -->
         <dependency>
             <groupId>com.example.mq</groupId>
-            <artifactId>mqc-data</artifactId>
+            <artifactId>mqc-core</artifactId>
             <version>${project.version}</version>
         </dependency>
 

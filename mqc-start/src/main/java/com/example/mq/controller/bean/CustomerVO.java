@@ -4,9 +4,9 @@ import java.util.List;
 import java.util.Objects;
 
 import com.alibaba.fastjson.JSONObject;
-import com.example.mq.base.util.DateUtil;
-import com.example.mq.base.util.NumberUtil;
-import com.example.mq.service.bean.Customer;
+import com.example.mq.common.utils.DateUtil;
+import com.example.mq.common.utils.NumberUtil;
+import com.example.mq.core.domain.customer.model.Customer;
 import lombok.Data;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;

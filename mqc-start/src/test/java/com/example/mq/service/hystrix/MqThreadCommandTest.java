@@ -1,17 +1,14 @@
 package com.example.mq.service.hystrix;
 
-import static org.junit.Assert.*;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import com.alibaba.fastjson.JSONObject;
-import com.example.mq.base.util.CommonUtils;
+import com.example.mq.common.utils.CommonUtils;
 import com.example.mq.controller.ControllerApplication;
 import org.junit.Before;
 import org.junit.Test;

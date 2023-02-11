@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import com.alibaba.fastjson.JSONObject;
-import com.example.mq.base.util.CommonUtils;
+import com.example.mq.common.utils.CommonUtils;
 import org.apache.commons.io.FileUtils;
 
 /**

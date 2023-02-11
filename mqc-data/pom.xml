@@ -14,7 +14,7 @@
     <packaging>jar</packaging>
 
     <dependencies>
-		<!-- mq-code-web-->
+		<!-- mq-client-->
 		<dependency>
 			<groupId>com.example.mq</groupId>
 			<artifactId>mqc-client</artifactId>

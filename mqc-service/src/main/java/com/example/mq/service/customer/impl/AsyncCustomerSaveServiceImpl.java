@@ -1,7 +1,5 @@
 package com.example.mq.service.customer.impl;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -10,7 +8,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 import com.alibaba.fastjson.JSONObject;
-import com.example.mq.service.bean.Customer;
+import com.example.mq.core.domain.customer.model.Customer;
 import com.example.mq.service.customer.CustomerSaveService;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import org.slf4j.Logger;

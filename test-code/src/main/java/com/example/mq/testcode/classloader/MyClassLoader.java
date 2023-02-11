@@ -98,7 +98,7 @@ public class MyClassLoader extends ClassLoader {
 	public static void main(String[] args) throws Exception{
 //		String basePath ="D:/myTestProject/mq-demo/controller/target/classes";
 		String basePath ="D:/testFile";
-		String className ="com.example.mq.service.bean.Customer";
+		String className ="com.example.mq.core.domain.customer.model.Customer";
 		MyClassLoader.testClassLoader(basePath, className);
 
 		//系统加载类

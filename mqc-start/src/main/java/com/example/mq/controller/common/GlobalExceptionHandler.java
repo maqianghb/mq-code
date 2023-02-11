@@ -1,7 +1,7 @@
 package com.example.mq.controller.common;
 
 import com.alibaba.fastjson.JSON;
-import com.example.mq.base.common.MyException;
+import com.example.mq.common.model.MyException;
 
 
 import com.example.mq.client.common.Result;

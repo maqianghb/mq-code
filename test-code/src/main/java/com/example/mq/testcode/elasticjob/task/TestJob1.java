@@ -4,8 +4,8 @@ import java.util.Date;
 
 import com.dangdang.ddframe.job.api.ShardingContext;
 import com.dangdang.ddframe.job.api.simple.SimpleJob;
-import com.example.mq.base.mongo.MongoService;
-import com.example.mq.base.util.DateUtil;
+import com.example.mq.data.mongo.MongoService;
+import com.example.mq.common.utils.DateUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

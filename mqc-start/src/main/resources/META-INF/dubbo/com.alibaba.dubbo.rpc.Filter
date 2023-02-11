@@ -1,3 +1,3 @@
-dubboConsumerLogFilter=com.example.mq.base.dubbo.DubboConsumerLogFilter
-dubboProviderLogFilter=com.example.mq.base.dubbo.DubboProviderLogFilter
-dubboProviderHystrixFilter=com.example.mq.base.dubbo.DubboProviderHystrixFilter
+dubboConsumerLogFilter=com.example.mq.data.dubbo.DubboConsumerLogFilter
+dubboProviderLogFilter=com.example.mq.data.dubbo.DubboProviderLogFilter
+dubboProviderHystrixFilter=com.example.mq.data.dubbo.DubboProviderHystrixFilter
