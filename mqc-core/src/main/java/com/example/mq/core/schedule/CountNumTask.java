@@ -1,6 +1,5 @@
 package com.example.mq.core.schedule;
 
-import com.example.mq.common.utils.DateUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,7 +22,7 @@ public class CountNumTask {
 	@Scheduled(cron = "${count.num.schedule.cron}")
 	public void executeSchedue() {
 		Long startTime = System.currentTimeMillis();
-		LOG.warn("开始执行定时任务，startTime:{}", DateUtil.formatDateTime(new Date(startTime)));
+		LOG.warn("开始执行定时任务，startTime:{}", startTime);
 		try {
 			this.doExecute(1, 100 * 10000);
 		} catch (Exception e) {
@@ -51,7 +50,7 @@ public class CountNumTask {
 	public void manulExecuteCountNum(int startNum, int endNum) throws Exception{
 		Long startTime =System.currentTimeMillis();
 		LOG.warn("手工执行定时任务启动，startNum:{}|endNum:{}|startTime:{}", startNum, endNum,
-				DateUtil.formatDateTime(new Date(startTime)));
+				startTime);
 
 		this.doExecute(startNum, endNum);
 		LOG.info("手工执行定时任务结束，startNum:{}|endNum:{}|costTime:{}ms", startNum, endNum,

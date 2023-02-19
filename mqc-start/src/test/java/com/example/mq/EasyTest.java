@@ -18,11 +18,11 @@ import org.apache.commons.io.FileUtils;
  *
  */
 
-public class CommonTest {
+public class EasyTest {
 
 	public static void main(String[] args) throws Exception{
-		CommonTest commonTest =new CommonTest();
-		commonTest.testParseWord();
+		EasyTest easyTest =new EasyTest();
+		easyTest.testParseWord();
 
 		System.out.println("------test end!");
 

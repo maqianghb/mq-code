@@ -59,6 +59,7 @@
 		<hystrix-core.version>1.5.18</hystrix-core.version>
 		<elastic-job.version>2.1.2</elastic-job.version>
 		<jedis.version>2.9.0</jedis.version>
+		<httpclient.version>4.5.2</httpclient.version>
 
     </properties>
 
@@ -119,6 +120,12 @@
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-collections4</artifactId>
 			<version>${commons-collections4.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.httpcomponents</groupId>
+			<artifactId>httpclient</artifactId>
+			<version>${httpclient.version}</version>
 		</dependency>
 
     </dependencies>

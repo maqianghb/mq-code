@@ -1,7 +1,6 @@
 package com.example.mq.core.manager.customer.model;
 
 
-import com.example.mq.common.utils.DateUtil;
 import com.example.mq.core.manager.BaseDO;
 import lombok.Data;
 
@@ -46,9 +45,9 @@ public class CustomerDO extends BaseDO {
 	 * 活动时间段
 	 * mySQL中timestamp类型时间范围从1970年~2018年
 	 */
-	private Date minActiveTime = DateUtil.parseDateTime("1971-01-01 00:00:00");
+	private Date minActiveTime;
 
-	private Date maxActiveTime = DateUtil.parseDateTime("2018-01-01 00:00:00");
+	private Date maxActiveTime;
 
 	private String remark;
 

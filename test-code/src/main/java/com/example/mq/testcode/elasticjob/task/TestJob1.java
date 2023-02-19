@@ -5,7 +5,6 @@ import java.util.Date;
 import com.dangdang.ddframe.job.api.ShardingContext;
 import com.dangdang.ddframe.job.api.simple.SimpleJob;
 import com.example.mq.data.mongo.MongoService;
-import com.example.mq.common.utils.DateUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,7 +28,7 @@ public class TestJob1 implements SimpleJob {
 	@Override
 	public void execute(ShardingContext shardingContext) {
 		long startTime =System.currentTimeMillis();
-		LOG.info("testJob1定时任务启动，startTime:{}", DateUtil.formatDateTime(new Date(startTime)));
+		LOG.info("testJob1定时任务启动，startTime:{}",startTime);
 		try {
 			int startNum =111;
 			int endNum =999;

@@ -3,7 +3,6 @@ package com.example.mq.controller.bean;
 import java.util.List;
 
 import com.alibaba.fastjson.JSONObject;
-import com.example.mq.common.utils.DateUtil;
 import com.example.mq.common.utils.NumberUtil;
 import com.example.mq.service.bean.CustomerQueryCondition;
 import lombok.Data;
