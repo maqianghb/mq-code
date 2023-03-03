@@ -3,7 +3,19 @@ package com.example.mq.wrapper.stock.model;
 import lombok.Data;
 
 @Data
-public class XueQiuStockIndicatorDTO extends BaseStockFinanceDTO {
+public class XueQiuStockIndicatorDTO {
+
+    private String code;
+
+    private String name;
+
+    private Integer report_year;
+
+    /**
+     * 1季报,中报,3季报,年报
+     * Q1,Q2,Q3,Q4
+     */
+    private String report_type;
 
     /**
      * 净资产收益率

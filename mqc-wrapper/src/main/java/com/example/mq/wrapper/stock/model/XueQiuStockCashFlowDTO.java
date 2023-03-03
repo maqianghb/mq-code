@@ -6,7 +6,19 @@ import lombok.Data;
  * 现金流数据
  */
 @Data
-public class XueQiuStockCashFlowDTO extends BaseStockFinanceDTO {
+public class XueQiuStockCashFlowDTO {
+
+    private String code;
+
+    private String name;
+
+    private Integer report_year;
+
+    /**
+     * 1季报,中报,3季报,年报
+     * Q1,Q2,Q3,Q4
+     */
+    private String report_type;
 
     /**
      * 销售商品、提供劳务收到的现金
