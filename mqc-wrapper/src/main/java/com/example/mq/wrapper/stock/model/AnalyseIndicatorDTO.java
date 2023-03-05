@@ -40,6 +40,16 @@ public class AnalyseIndicatorDTO {
     private Double avg_roe_ttm;
 
     /**
+     * 营业收入
+     */
+    private Double revenue;
+
+    /**
+     * 营业成本
+     */
+    private Double operating_cost;
+
+    /**
      * 销售毛利率
      */
     private Double gross_margin_rate;
@@ -68,11 +78,6 @@ public class AnalyseIndicatorDTO {
      * 经营活动现金流入小计
      */
     private Double sub_total_of_ci_from_oa;
-
-    /**
-     * 营业收入
-     */
-    private Double revenue;
 
     /**
      * 经营活动现金流入小计/营业收入
