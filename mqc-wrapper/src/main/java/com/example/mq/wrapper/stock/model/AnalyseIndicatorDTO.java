@@ -35,6 +35,11 @@ public class AnalyseIndicatorDTO {
     private Double pb_p_1000;
 
     /**
+     * 股东权益合计
+     */
+    private Double total_holders_equity;
+
+    /**
      * 净资产收益率TTM
      */
     private Double avg_roe_ttm;
@@ -60,6 +65,26 @@ public class AnalyseIndicatorDTO {
     private Double net_selling_rate;
 
     /**
+     * 当季销售毛利率
+     */
+    private Double cur_q_gross_margin_rate;
+
+    /**
+     * 当季销售净利率
+     */
+    private Double cur_q_net_selling_rate;
+
+    /**
+     * 当季销售毛利率同比
+     */
+    private Double cur_q_gross_margin_rate_change;
+
+    /**
+     * 当季销售净利率同比
+     */
+    private Double cur_q_net_selling_rate_change;
+
+    /**
      * 营业收入同比增长
      */
     private Double operating_income_yoy;
@@ -68,6 +93,16 @@ public class AnalyseIndicatorDTO {
      * 净利润同比增长
      */
     private Double net_profit_atsopc_yoy;
+
+    /**
+     * 当季营业收入同比增长
+     */
+    private Double cur_q_operating_income_yoy;
+
+    /**
+     * 当季净利润同比增长
+     */
+    private Double cur_q_net_profit_atsopc_yoy;
 
     /**
      * 总市值

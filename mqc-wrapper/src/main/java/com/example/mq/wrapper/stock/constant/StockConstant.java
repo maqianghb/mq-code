@@ -28,6 +28,6 @@ public class StockConstant {
     public static final String KLINE_LIST_DAY ="E:/stock_data/xq_k_line/k_line_list_day_%s.txt";
 
     public static final String INCOME_LIST_Q ="E:/stock_data/xq_income_list_q.txt";
-    public static final String INDICATOR_LIST_ANALYSIS ="E:/stock_data/indicator_list_analysis.csv";
+    public static final String INDICATOR_LIST_ANALYSIS ="E:/stock_data/indicator_list_analysis_%s.csv";
 
 }

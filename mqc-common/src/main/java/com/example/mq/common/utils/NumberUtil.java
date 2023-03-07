@@ -75,6 +75,17 @@ public class NumberUtil {
 	}
 
 	/**
+	 * format:2位小数，四舍五入
+	 * @param v1
+	 * @return
+	 */
+	public static double format(double v1, int scale){
+		BigDecimal b1=new BigDecimal(v1);
+		BigDecimal b2=new BigDecimal(1.0);
+		return b1.divide(b2, scale, BigDecimal.ROUND_HALF_UP).doubleValue();
+	}
+
+	/**
 	 * double转int，四舍五入
 	 * @param v
 	 * @return

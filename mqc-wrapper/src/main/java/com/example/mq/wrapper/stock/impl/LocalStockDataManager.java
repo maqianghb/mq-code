@@ -2,11 +2,14 @@ package com.example.mq.wrapper.stock.impl;
 
 import com.alibaba.fastjson.JSON;
 import com.example.mq.wrapper.stock.constant.StockConstant;
+import com.example.mq.wrapper.stock.enums.FinanceReportTypeEnum;
+import com.example.mq.wrapper.stock.enums.KLineTypeEnum;
 import com.example.mq.wrapper.stock.model.*;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.assertj.core.util.Lists;
 import org.springframework.beans.BeanUtils;
 
@@ -16,6 +19,13 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class LocalStockDataManager {
+
+    private static List<XueQiuStockBalanceDTO> balanceDTOList =Lists.newArrayList();
+    private static List<XueQiuStockIncomeDTO> incomeDTOList =Lists.newArrayList();
+    private static List<XueQiuStockCashFlowDTO> cashFlowDTOList =Lists.newArrayList();
+    private static List<XueQiuStockIndicatorDTO> xqIndicatorDTOList =Lists.newArrayList();
+    private static List<QuarterIncomeDTO> quarterIncomeDTOList =Lists.newArrayList();
+
 
     public static void main(String[] args) {
         LocalStockDataManager manager =new LocalStockDataManager();
@@ -151,6 +161,9 @@ public class LocalStockDataManager {
         }
     }
 
+    /**
+     * 保存全部code
+     */
     public void saveStockCodeList(){
         try {
             List<String> strList = FileUtils.readLines(new File(StockConstant.SH_STOCK_LIST), Charset.forName("UTF-8"));
@@ -204,35 +217,6 @@ public class LocalStockDataManager {
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }
-
-    /**
-     * 获取全部编码
-     *
-     * @return
-     */
-    public List<String> getStockCodeList(){
-        List<String> stockCodeList = Lists.newArrayList();
-        try {
-            List<String> strList = FileUtils.readLines(new File(StockConstant.SH_STOCK_CODE_LIST), Charset.forName("UTF-8"));
-            if(CollectionUtils.isNotEmpty(strList)){
-                stockCodeList.addAll(strList);
-            }
-
-            strList = FileUtils.readLines(new File(StockConstant.SZ_STOCK_CODE_LIST), Charset.forName("UTF-8"));
-            if(CollectionUtils.isNotEmpty(strList)){
-                stockCodeList.addAll(strList);
-            }
-
-            strList = FileUtils.readLines(new File(StockConstant.CYB_STOCK_CODE_LIST), Charset.forName("UTF-8"));
-            if(CollectionUtils.isNotEmpty(strList)){
-                stockCodeList.addAll(strList);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        return stockCodeList.stream().sorted().collect(Collectors.toList());
     }
 
     /**
@@ -461,6 +445,239 @@ public class LocalStockDataManager {
         }
 
         return quarterIncomeDTO;
+    }
+
+    /**
+     * 获取全部编码
+     *
+     * @return
+     */
+    public List<String> getStockCodeList(){
+        List<String> stockCodeList = Lists.newArrayList();
+        try {
+            List<String> strList = FileUtils.readLines(new File(StockConstant.SH_STOCK_CODE_LIST), Charset.forName("UTF-8"));
+            if(CollectionUtils.isNotEmpty(strList)){
+                stockCodeList.addAll(strList);
+            }
+
+            strList = FileUtils.readLines(new File(StockConstant.SZ_STOCK_CODE_LIST), Charset.forName("UTF-8"));
+            if(CollectionUtils.isNotEmpty(strList)){
+                stockCodeList.addAll(strList);
+            }
+
+            strList = FileUtils.readLines(new File(StockConstant.CYB_STOCK_CODE_LIST), Charset.forName("UTF-8"));
+            if(CollectionUtils.isNotEmpty(strList)){
+                stockCodeList.addAll(strList);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return stockCodeList.stream().sorted().collect(Collectors.toList());
+    }
+
+    /**
+     * 负债表指标查询
+     *
+     * @param code
+     * @param year
+     * @param typeEnum
+     * @return
+     */
+    public XueQiuStockBalanceDTO getBalanceDTO(String code, Integer year, FinanceReportTypeEnum typeEnum){
+        try {
+            if(CollectionUtils.isEmpty(balanceDTOList)){
+                List<String> strList =FileUtils.readLines(new File(StockConstant.BALANCE_LIST), Charset.forName("UTF-8"));
+                balanceDTOList = Optional.ofNullable(strList).orElse(Lists.newArrayList()).stream()
+                        .map(str -> JSON.parseObject(str, XueQiuStockBalanceDTO.class))
+                        .collect(Collectors.toList());
+            }
+
+            return Optional.ofNullable(balanceDTOList).orElse(Lists.newArrayList()).stream()
+                    .filter(balanceDTO -> Objects.equals(balanceDTO.getCode(), code))
+                    .filter(balanceDTO -> Objects.equals(balanceDTO.getReport_year(), year))
+                    .filter(balanceDTO -> Objects.equals(balanceDTO.getReport_type(), typeEnum.getCode()))
+                    .findFirst()
+                    .orElse(null);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
+
+    /**
+     * 利润表指标查询
+     *
+     * @param code
+     * @param year
+     * @param typeEnum
+     * @return
+     */
+    public XueQiuStockIncomeDTO getIncomeDTO(String code, Integer year, FinanceReportTypeEnum typeEnum){
+        try {
+            if(CollectionUtils.isEmpty(incomeDTOList)){
+                List<String> strList =FileUtils.readLines(new File(StockConstant.INCOME_LIST), Charset.forName("UTF-8"));
+                incomeDTOList = Optional.ofNullable(strList).orElse(Lists.newArrayList()).stream()
+                        .map(str -> JSON.parseObject(str, XueQiuStockIncomeDTO.class))
+                        .collect(Collectors.toList());
+            }
+
+            return Optional.ofNullable(incomeDTOList).orElse(Lists.newArrayList()).stream()
+                    .filter(incomeDTO -> Objects.equals(incomeDTO.getCode(), code))
+                    .filter(incomeDTO -> Objects.equals(incomeDTO.getReport_year(), year))
+                    .filter(incomeDTO -> Objects.equals(incomeDTO.getReport_type(), typeEnum.getCode()))
+                    .findFirst()
+                    .orElse(null);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
+    /**
+     * 单季利润表指标查询
+     *
+     * @param code
+     * @param yearAndReportTypeList
+     * @return
+     */
+    public List<QuarterIncomeDTO> getQuarterIncomeDTO(String code, List<ImmutablePair<Integer, FinanceReportTypeEnum>> yearAndReportTypeList){
+        try {
+            if(CollectionUtils.isEmpty(quarterIncomeDTOList)){
+                List<String> strList =FileUtils.readLines(new File(StockConstant.INCOME_LIST_Q), Charset.forName("UTF-8"));
+                quarterIncomeDTOList = Optional.ofNullable(strList).orElse(Lists.newArrayList()).stream()
+                        .map(str -> JSON.parseObject(str, QuarterIncomeDTO.class))
+                        .collect(Collectors.toList());
+            }
+
+            List<QuarterIncomeDTO> tmpQuarterIncomeDTOList = Optional.ofNullable(quarterIncomeDTOList).orElse(Lists.newArrayList()).stream()
+                    .filter(IncomeDTO -> Objects.equals(IncomeDTO.getCode(), code))
+                    .collect(Collectors.toList());
+            if(CollectionUtils.isEmpty(tmpQuarterIncomeDTOList)){
+                return Lists.newArrayList();
+            }
+
+            List<QuarterIncomeDTO> resultIncomeDTOList =Lists.newArrayList();
+            for(QuarterIncomeDTO incomeDTO : tmpQuarterIncomeDTOList){
+                for(ImmutablePair<Integer, FinanceReportTypeEnum> pair : yearAndReportTypeList){
+                    Integer year =pair.getLeft();
+                    FinanceReportTypeEnum reportTypeEnum =pair.getRight();
+
+                    if(Objects.equals(incomeDTO.getReport_year(), year)
+                            && Objects.equals(incomeDTO.getReport_type(), reportTypeEnum.getCode())){
+                        resultIncomeDTOList.add(incomeDTO);
+                    }
+                }
+            }
+
+            return resultIncomeDTOList;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return Lists.newArrayList();
+    }
+
+    /**
+     * 现金流指标查询
+     *
+     * @param code
+     * @param year
+     * @param typeEnum
+     * @return
+     */
+    public XueQiuStockCashFlowDTO getCashFlowDTO(String code, Integer year, FinanceReportTypeEnum typeEnum){
+        try {
+            if(CollectionUtils.isEmpty(cashFlowDTOList)){
+                List<String> strList =FileUtils.readLines(new File(StockConstant.CASH_FLOW_LIST), Charset.forName("UTF-8"));
+                cashFlowDTOList = Optional.ofNullable(strList).orElse(Lists.newArrayList()).stream()
+                        .map(str -> JSON.parseObject(str, XueQiuStockCashFlowDTO.class))
+                        .collect(Collectors.toList());
+            }
+
+            return Optional.ofNullable(cashFlowDTOList).orElse(Lists.newArrayList()).stream()
+                    .filter(cashFlowDTO -> Objects.equals(cashFlowDTO.getCode(), code))
+                    .filter(cashFlowDTO -> Objects.equals(cashFlowDTO.getReport_year(), year))
+                    .filter(cashFlowDTO -> Objects.equals(cashFlowDTO.getReport_type(), typeEnum.getCode()))
+                    .findFirst()
+                    .orElse(null);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
+    /**
+     * 指标查询
+     *
+     * @param code
+     * @param year
+     * @param typeEnum
+     * @return
+     */
+    public XueQiuStockIndicatorDTO getXQIndicatorDTO(String code, Integer year, FinanceReportTypeEnum typeEnum){
+        try {
+            if(CollectionUtils.isEmpty(xqIndicatorDTOList)){
+                List<String> strList =FileUtils.readLines(new File(StockConstant.INDICATOR_LIST_XQ), Charset.forName("UTF-8"));
+                xqIndicatorDTOList = Optional.ofNullable(strList).orElse(Lists.newArrayList()).stream()
+                        .map(str -> JSON.parseObject(str, XueQiuStockIndicatorDTO.class))
+                        .collect(Collectors.toList());
+            }
+
+            XueQiuStockIndicatorDTO stockIndicatorDTO = Optional.ofNullable(xqIndicatorDTOList).orElse(Lists.newArrayList()).stream()
+                    .filter(indicatorDTO -> Objects.equals(indicatorDTO.getCode(), code))
+                    .filter(indicatorDTO -> Objects.equals(indicatorDTO.getReport_year(), year))
+                    .filter(indicatorDTO -> Objects.equals(indicatorDTO.getReport_type(), typeEnum.getCode()))
+                    .findFirst()
+                    .orElse(null);
+
+            return stockIndicatorDTO;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
+    /**
+     * K线指标查询
+     *
+     * @param code
+     * @param typeEnum
+     * @param count
+     * @return
+     */
+    public List<XueQiuStockKLineDTO> getKLineList(String code, KLineTypeEnum typeEnum, Integer count){
+        String klineListFileName = StringUtils.EMPTY;
+        if(Objects.equals(typeEnum.getCode(), KLineTypeEnum.DAY.getCode())){
+            klineListFileName = String.format(StockConstant.KLINE_LIST_DAY, code);
+        }
+
+        File file = new File(klineListFileName);
+        if(!file.exists()){
+            return Lists.newArrayList();
+        }
+
+        try {
+            List<String> strList =FileUtils.readLines(file, Charset.forName("UTF-8"));
+            List<XueQiuStockKLineDTO> kLineDTOList = Optional.ofNullable(strList).orElse(Lists.newArrayList()).stream()
+                    .map(str -> JSON.parseObject(str, XueQiuStockKLineDTO.class))
+                    .sorted(Comparator.comparing(XueQiuStockKLineDTO::getTimestamp).reversed())
+                    .collect(Collectors.toList());
+            if(kLineDTOList.size() <=count){
+                return kLineDTOList;
+            }else {
+                return kLineDTOList.subList(0, count);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return Lists.newArrayList();
     }
 
 }

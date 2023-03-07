@@ -2,22 +2,31 @@ package com.example.mq.wrapper.stock.impl;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.example.mq.common.utils.NumberUtil;
 import com.example.mq.wrapper.stock.constant.StockConstant;
 import com.example.mq.wrapper.stock.enums.FinanceReportTypeEnum;
 import com.example.mq.wrapper.stock.enums.KLineTypeEnum;
 import com.example.mq.wrapper.stock.model.*;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.assertj.core.util.Lists;
 
 import java.io.File;
 import java.lang.reflect.Field;
-import java.nio.charset.Charset;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class StockIndicatorManager {
 
-    private static final String HEADER ="编码,名称,资产负债率,市盈率TTM,pe分位值,市净率,pe分位值,净资产收益率TTM,营业收入,营业成本,销售毛利率,销售净利率,营业收入同比增长,净利润同比增长,总市值,经营活动现金流入小计,经营活动现金流入小计/营业收入,经营活动产生的现金流量净额,净利润,经营活动产生的现金流量净额/净利润,应付票据及应付账款,应收票据及应收账款,应付票据及应付账款/应收票据及应收账款,应收账款周转天数,存货周转天数";
+    private static final String HEADER ="编码,名称,资产负债率,市盈率TTM,pe分位值,市净率,pb分位值,股东权益合计,净资产收益率TTM" +
+            ",营业收入,营业成本,毛利率,净利率,当季毛利率,当季净利率,当季毛利率同比,当季净利率同比" +
+            ",营收同比,净利润同比,当季营收同比,当季净利润同比,总市值,经营现金流入" +
+            ",经营现金流入/营收,经营现金净额,净利润,经营现金净额/净利润,应付票据及应付账款" +
+            ",应收票据及应收账款,应付票据及应付账款/应收票据及应收账款,应收账款周转天数,存货周转天数";
 
     public static void main(String[] args) {
         StockIndicatorManager manager =new StockIndicatorManager();
@@ -30,8 +39,10 @@ public class StockIndicatorManager {
         indicatorList.add(HEADER);
         for(String stockCode : stockCodeList){
             try {
-                AnalyseIndicatorDTO analyseIndicatorDTO = manager.getAnalyseIndicatorDTO(stockCode,  2022, FinanceReportTypeEnum.QUARTER_3);
-                manager.assembleAnalyseIndicator(analyseIndicatorDTO);
+                AnalyseIndicatorElement indicatorElement = manager.getIndicatorElement(stockCode, 2022, FinanceReportTypeEnum.QUARTER_3);
+                AnalyseIndicatorDTO analyseIndicatorDTO = manager.getAnalyseIndicatorDTO(indicatorElement);
+                manager.formatAnalyseIndicatorDTO(analyseIndicatorDTO);
+
                 Field[] fields = AnalyseIndicatorDTO.class.getDeclaredFields();
                 JSONObject jsonObject = JSON.parseObject(JSON.toJSONString(analyseIndicatorDTO));
                 StringBuilder indicatorBuilder =new StringBuilder();
@@ -46,7 +57,11 @@ public class StockIndicatorManager {
         }
 
         try {
-            FileUtils.writeLines(new File(StockConstant.INDICATOR_LIST_ANALYSIS), "UTF-8", indicatorList, true);
+            DateTimeFormatter df =DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss");
+            LocalDateTime localDateTime = LocalDateTime.now();//当前时间
+            String strDateTime = df.format(localDateTime);//格式化为字符串
+            String analysisListName =String.format(StockConstant.INDICATOR_LIST_ANALYSIS, strDateTime);
+            FileUtils.writeLines(new File(analysisListName), "UTF-8", indicatorList, true);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -54,57 +69,275 @@ public class StockIndicatorManager {
         System.out.println("indicatorList: "+ JSON.toJSONString(indicatorList));
     }
 
-    private AnalyseIndicatorDTO getAnalyseIndicatorDTO(String code, Integer year, FinanceReportTypeEnum typeEnum){
-        JSONObject jsonIndicator =new JSONObject();
-        jsonIndicator.put("code", code);
-
-        XueQiuStockBalanceDTO balanceDTO = this.getBalanceDTO(code, year, typeEnum);
-        if(balanceDTO !=null){
-            JSONObject jsonObject = JSON.parseObject(JSON.toJSONString(balanceDTO));
-            for(String key : jsonObject.keySet()){
-                jsonIndicator.put(key, jsonObject.getString(key));
-            }
+    private void formatAnalyseIndicatorDTO(AnalyseIndicatorDTO analyseIndicatorDTO){
+        if(analyseIndicatorDTO ==null){
+            return ;
         }
 
-        XueQiuStockIncomeDTO incomeDTO = this.getIncomeDTO(code, year, typeEnum);
-        if(incomeDTO !=null){
-            JSONObject jsonObject = JSON.parseObject(JSON.toJSONString(incomeDTO));
-            for(String key : jsonObject.keySet()){
-                jsonIndicator.put(key, jsonObject.getString(key));
-            }
+        if(analyseIndicatorDTO.getAsset_liab_ratio() !=null){
+            analyseIndicatorDTO.setAsset_liab_ratio(NumberUtil.format(analyseIndicatorDTO.getAsset_liab_ratio()/100, 3));
         }
-
-        XueQiuStockCashFlowDTO cashFlowDTO = this.getCashFlowDTO(code, year, typeEnum);
-        if(cashFlowDTO !=null){
-            JSONObject jsonObject = JSON.parseObject(JSON.toJSONString(cashFlowDTO));
-            for(String key : jsonObject.keySet()){
-                jsonIndicator.put(key, jsonObject.getString(key));
-            }
+        if(analyseIndicatorDTO.getPe() !=null){
+            analyseIndicatorDTO.setPe(NumberUtil.format(analyseIndicatorDTO.getPe(), 1));
         }
-
-        XueQiuStockIndicatorDTO indicatorDTO = this.getFromXQIndicatorList(code, year, typeEnum);
-        if(indicatorDTO !=null){
-            JSONObject jsonObject = JSON.parseObject(JSON.toJSONString(indicatorDTO));
-            for(String key : jsonObject.keySet()){
-                jsonIndicator.put(key, jsonObject.getString(key));
-            }
+        if(analyseIndicatorDTO.getPe_p_1000() !=null){
+            analyseIndicatorDTO.setPe_p_1000(NumberUtil.format(analyseIndicatorDTO.getPe_p_1000(), 3));
         }
-
-        XueQiuStockKLineDTO kLineDTO = this.getFromKLineList(code, KLineTypeEnum.DAY);
-        if(kLineDTO !=null){
-            JSONObject jsonObject = JSON.parseObject(JSON.toJSONString(kLineDTO));
-            for(String key : jsonObject.keySet()){
-                jsonIndicator.put(key, jsonObject.getString(key));
-            }
+        if(analyseIndicatorDTO.getPb() !=null){
+            analyseIndicatorDTO.setPb(NumberUtil.format(analyseIndicatorDTO.getPb(), 1));
         }
-
-        System.out.println("jsonIndicator: " + JSON.toJSONString(jsonIndicator));
-        return JSON.parseObject(JSON.toJSONString(jsonIndicator), AnalyseIndicatorDTO.class);
+        if(analyseIndicatorDTO.getPb_p_1000() !=null){
+            analyseIndicatorDTO.setPb_p_1000(NumberUtil.format(analyseIndicatorDTO.getPb_p_1000(), 3));
+        }
+        if(analyseIndicatorDTO.getTotal_holders_equity() !=null){
+            analyseIndicatorDTO.setTotal_holders_equity(NumberUtil.format(analyseIndicatorDTO.getTotal_holders_equity() /(10000 *10000), 1));
+        }
+        if(analyseIndicatorDTO.getAvg_roe_ttm() !=null){
+            analyseIndicatorDTO.setAvg_roe_ttm(NumberUtil.format(analyseIndicatorDTO.getAvg_roe_ttm(), 3));
+        }
+        if(analyseIndicatorDTO.getRevenue() !=null){
+            analyseIndicatorDTO.setRevenue(NumberUtil.format(analyseIndicatorDTO.getRevenue() /(10000 *10000), 1));
+        }
+        if(analyseIndicatorDTO.getOperating_cost() !=null){
+            analyseIndicatorDTO.setOperating_cost(NumberUtil.format(analyseIndicatorDTO.getOperating_cost() /(10000 *10000), 1));
+        }
+        if(analyseIndicatorDTO.getGross_margin_rate() !=null){
+            analyseIndicatorDTO.setGross_margin_rate(NumberUtil.format(analyseIndicatorDTO.getGross_margin_rate(), 3));
+        }
+        if(analyseIndicatorDTO.getNet_selling_rate() !=null){
+            analyseIndicatorDTO.setNet_selling_rate(NumberUtil.format(analyseIndicatorDTO.getNet_selling_rate()/100, 3));
+        }
+        if(analyseIndicatorDTO.getCur_q_gross_margin_rate() !=null){
+            analyseIndicatorDTO.setCur_q_gross_margin_rate(NumberUtil.format(analyseIndicatorDTO.getCur_q_gross_margin_rate(), 3));
+        }
+        if(analyseIndicatorDTO.getCur_q_net_selling_rate() !=null){
+            analyseIndicatorDTO.setCur_q_net_selling_rate(NumberUtil.format(analyseIndicatorDTO.getCur_q_net_selling_rate(), 3));
+        }
+        if(analyseIndicatorDTO.getCur_q_gross_margin_rate_change() !=null){
+            analyseIndicatorDTO.setCur_q_gross_margin_rate_change(NumberUtil.format(analyseIndicatorDTO.getCur_q_gross_margin_rate_change(), 3));
+        }
+        if(analyseIndicatorDTO.getCur_q_net_selling_rate_change() !=null){
+            analyseIndicatorDTO.setCur_q_net_selling_rate_change(NumberUtil.format(analyseIndicatorDTO.getCur_q_net_selling_rate_change(), 3));
+        }
+        if(analyseIndicatorDTO.getOperating_income_yoy() !=null){
+            analyseIndicatorDTO.setOperating_income_yoy(NumberUtil.format(analyseIndicatorDTO.getOperating_income_yoy()/100, 3));
+        }
+        if(analyseIndicatorDTO.getNet_profit_atsopc_yoy() !=null){
+            analyseIndicatorDTO.setNet_profit_atsopc_yoy(NumberUtil.format(analyseIndicatorDTO.getNet_profit_atsopc_yoy()/100, 3));
+        }
+        if(analyseIndicatorDTO.getCur_q_operating_income_yoy() !=null){
+            analyseIndicatorDTO.setCur_q_operating_income_yoy(NumberUtil.format(analyseIndicatorDTO.getCur_q_operating_income_yoy(), 3));
+        }
+        if(analyseIndicatorDTO.getCur_q_net_profit_atsopc_yoy() !=null){
+            analyseIndicatorDTO.setCur_q_net_profit_atsopc_yoy(NumberUtil.format(analyseIndicatorDTO.getCur_q_net_profit_atsopc_yoy(), 3));
+        }
+        if(analyseIndicatorDTO.getMarket_capital() !=null){
+            analyseIndicatorDTO.setMarket_capital(NumberUtil.format(analyseIndicatorDTO.getMarket_capital() /(10000 *10000), 1));
+        }
+        if(analyseIndicatorDTO.getSub_total_of_ci_from_oa() !=null){
+            analyseIndicatorDTO.setSub_total_of_ci_from_oa(NumberUtil.format(analyseIndicatorDTO.getSub_total_of_ci_from_oa() /(10000 *10000), 1));
+        }
+        if(analyseIndicatorDTO.getCi_oi_rate() !=null){
+            analyseIndicatorDTO.setCi_oi_rate(NumberUtil.format(analyseIndicatorDTO.getCi_oi_rate(), 1));
+        }
+        if(analyseIndicatorDTO.getNcf_from_oa() !=null){
+            analyseIndicatorDTO.setNcf_from_oa(NumberUtil.format(analyseIndicatorDTO.getNcf_from_oa() /(10000 *10000), 1));
+        }
+        if(analyseIndicatorDTO.getNet_profit_atsopc() !=null){
+            analyseIndicatorDTO.setNet_profit_atsopc(NumberUtil.format(analyseIndicatorDTO.getNet_profit_atsopc() /(10000 *10000), 1));
+        }
+        if(analyseIndicatorDTO.getNcf_pri_rate() !=null){
+            analyseIndicatorDTO.setNcf_pri_rate(NumberUtil.format(analyseIndicatorDTO.getNcf_pri_rate(), 1));
+        }
+        if(analyseIndicatorDTO.getBp_and_ap() !=null){
+            analyseIndicatorDTO.setBp_and_ap(NumberUtil.format(analyseIndicatorDTO.getBp_and_ap() /(10000 *10000), 1));
+        }
+        if(analyseIndicatorDTO.getAr_and_br() !=null){
+            analyseIndicatorDTO.setAr_and_br(NumberUtil.format(analyseIndicatorDTO.getAr_and_br() /(10000 *10000), 1));
+        }
+        if(analyseIndicatorDTO.getAp_ar_rate() !=null){
+            analyseIndicatorDTO.setAp_ar_rate(NumberUtil.format(analyseIndicatorDTO.getAp_ar_rate(), 1));
+        }
+        if(analyseIndicatorDTO.getReceivable_turnover_days() !=null){
+            analyseIndicatorDTO.setReceivable_turnover_days(NumberUtil.format(analyseIndicatorDTO.getReceivable_turnover_days(), 1));
+        }
+        if(analyseIndicatorDTO.getInventory_turnover_days() !=null){
+            analyseIndicatorDTO.setInventory_turnover_days(NumberUtil.format(analyseIndicatorDTO.getInventory_turnover_days(), 1));
+        }
     }
 
-    private void assembleAnalyseIndicator(AnalyseIndicatorDTO indicatorDTO){
+    private AnalyseIndicatorElement getIndicatorElement(String code, Integer year, FinanceReportTypeEnum typeEnum){
+        AnalyseIndicatorElement indicatorElement =new AnalyseIndicatorElement();
+        indicatorElement.setCode(code);
+        indicatorElement.setReportYear(year);
+        indicatorElement.setReportType(typeEnum.getCode());
+
+        LocalStockDataManager localStockDataManager =new LocalStockDataManager();
+        XueQiuStockBalanceDTO balanceDTO = localStockDataManager.getBalanceDTO(code, year, typeEnum);
+        if(balanceDTO !=null){
+            indicatorElement.setCurBalanceDTO(balanceDTO);
+        }
+
+        XueQiuStockIncomeDTO incomeDTO = localStockDataManager.getIncomeDTO(code, year, typeEnum);
+        if(incomeDTO !=null){
+            indicatorElement.setCurIncomeDTO(incomeDTO);
+        }
+
+        XueQiuStockCashFlowDTO cashFlowDTO = localStockDataManager.getCashFlowDTO(code, year, typeEnum);
+        if(cashFlowDTO !=null){
+            indicatorElement.setCurCashFlowDTO(cashFlowDTO);
+        }
+
+        XueQiuStockIndicatorDTO indicatorDTO = localStockDataManager.getXQIndicatorDTO(code, year, typeEnum);
+        if(indicatorDTO !=null){
+            indicatorElement.setCurIndicatorDTO(indicatorDTO);
+        }
+
+        List<XueQiuStockKLineDTO> kLineDTOList = localStockDataManager.getKLineList(code, KLineTypeEnum.DAY, 1000);
+        if(CollectionUtils.isNotEmpty(kLineDTOList)){
+            indicatorElement.setKLineDTOList(kLineDTOList);
+        }
+
+        XueQiuStockBalanceDTO lastYearBalanceDTO = localStockDataManager.getBalanceDTO(code, year-1, FinanceReportTypeEnum.ALL_YEAR);
+        if(lastYearBalanceDTO !=null){
+            indicatorElement.setLastYearBalanceDTO(lastYearBalanceDTO);
+        }
+
+        XueQiuStockIncomeDTO lastYearIncomeDTO = localStockDataManager.getIncomeDTO(code, year-1, FinanceReportTypeEnum.ALL_YEAR);
+        if(lastYearIncomeDTO !=null){
+            indicatorElement.setLastYearIncomeDTO(lastYearIncomeDTO);
+        }
+
+        XueQiuStockCashFlowDTO lastYearCashFlowDTO = localStockDataManager.getCashFlowDTO(code, year-1, FinanceReportTypeEnum.ALL_YEAR);
+        if(lastYearCashFlowDTO !=null){
+            indicatorElement.setLastYearCashFlowDTO(lastYearCashFlowDTO);
+        }
+
+        List<ImmutablePair<Integer, FinanceReportTypeEnum>> immutablePairList =Lists.newArrayList();
+        String curQuarterType =StringUtils.EMPTY;
+        if(Objects.equals(typeEnum.getCode(), FinanceReportTypeEnum.QUARTER_1.getCode())){
+            curQuarterType =FinanceReportTypeEnum.SINGLE_Q_1.getCode();
+            immutablePairList =Arrays.asList(
+                    new ImmutablePair<>(year, FinanceReportTypeEnum.SINGLE_Q_1),
+                    new ImmutablePair<>(year-1, FinanceReportTypeEnum.SINGLE_Q_4),
+                    new ImmutablePair<>(year-1, FinanceReportTypeEnum.SINGLE_Q_3),
+                    new ImmutablePair<>(year-1, FinanceReportTypeEnum.SINGLE_Q_2),
+                    new ImmutablePair<>(year-1, FinanceReportTypeEnum.SINGLE_Q_1));
+        }else if(Objects.equals(typeEnum.getCode(), FinanceReportTypeEnum.HALF_YEAR.getCode())){
+            curQuarterType =FinanceReportTypeEnum.SINGLE_Q_2.getCode();
+            immutablePairList =Arrays.asList(
+                    new ImmutablePair<>(year, FinanceReportTypeEnum.SINGLE_Q_2),
+                    new ImmutablePair<>(year, FinanceReportTypeEnum.SINGLE_Q_1),
+                    new ImmutablePair<>(year-1, FinanceReportTypeEnum.SINGLE_Q_4),
+                    new ImmutablePair<>(year-1, FinanceReportTypeEnum.SINGLE_Q_3),
+                    new ImmutablePair<>(year-1, FinanceReportTypeEnum.SINGLE_Q_2));
+        }else if(Objects.equals(typeEnum.getCode(), FinanceReportTypeEnum.QUARTER_3.getCode())){
+            curQuarterType =FinanceReportTypeEnum.SINGLE_Q_3.getCode();
+            immutablePairList =Arrays.asList(
+                    new ImmutablePair<>(year, FinanceReportTypeEnum.SINGLE_Q_3),
+                    new ImmutablePair<>(year, FinanceReportTypeEnum.SINGLE_Q_2),
+                    new ImmutablePair<>(year, FinanceReportTypeEnum.SINGLE_Q_1),
+                    new ImmutablePair<>(year-1, FinanceReportTypeEnum.SINGLE_Q_4),
+                    new ImmutablePair<>(year-1, FinanceReportTypeEnum.SINGLE_Q_3));
+        }else if(Objects.equals(typeEnum.getCode(), FinanceReportTypeEnum.ALL_YEAR.getCode())){
+            curQuarterType =FinanceReportTypeEnum.SINGLE_Q_4.getCode();
+            immutablePairList =Arrays.asList(
+                    new ImmutablePair<>(year, FinanceReportTypeEnum.SINGLE_Q_4),
+                    new ImmutablePair<>(year, FinanceReportTypeEnum.SINGLE_Q_3),
+                    new ImmutablePair<>(year, FinanceReportTypeEnum.SINGLE_Q_2),
+                    new ImmutablePair<>(year, FinanceReportTypeEnum.SINGLE_Q_1),
+                    new ImmutablePair<>(year-1, FinanceReportTypeEnum.SINGLE_Q_4));
+        }
+        List<QuarterIncomeDTO> quarterIncomeDTOList = localStockDataManager.getQuarterIncomeDTO(code, immutablePairList);
+        if(CollectionUtils.isNotEmpty(quarterIncomeDTOList)){
+            indicatorElement.setQuarterIncomeDTOList(quarterIncomeDTOList);
+            for(QuarterIncomeDTO quarterIncomeDTO : quarterIncomeDTOList){
+                if(Objects.equals(quarterIncomeDTO.getReport_year(), year)
+                        && Objects.equals(quarterIncomeDTO.getReport_type(), curQuarterType)){
+                    indicatorElement.setCurQuarterIncomeDTO(quarterIncomeDTO);
+                }
+
+                if(Objects.equals(quarterIncomeDTO.getReport_year(), year-1)
+                        && Objects.equals(quarterIncomeDTO.getReport_type(), curQuarterType)){
+                    indicatorElement.setLastYearQuarterIncomeDTO(quarterIncomeDTO);
+                }
+            }
+        }
+
+        return indicatorElement;
+    }
+
+    private AnalyseIndicatorDTO getAnalyseIndicatorDTO(AnalyseIndicatorElement indicatorElement){
+        JSONObject jsonIndicator =new JSONObject();
+        jsonIndicator.put("code", indicatorElement.getCode());
+
+        if(indicatorElement.getCurBalanceDTO() !=null){
+            JSONObject jsonObject = JSON.parseObject(JSON.toJSONString(indicatorElement.getCurBalanceDTO()));
+            for(String key : jsonObject.keySet()){
+                jsonIndicator.put(key, jsonObject.getString(key));
+            }
+        }
+
+        if(indicatorElement.getCurIncomeDTO() !=null){
+            JSONObject jsonObject = JSON.parseObject(JSON.toJSONString(indicatorElement.getCurIncomeDTO()));
+            for(String key : jsonObject.keySet()){
+                jsonIndicator.put(key, jsonObject.getString(key));
+            }
+        }
+
+        if(indicatorElement.getCurCashFlowDTO() !=null){
+            JSONObject jsonObject = JSON.parseObject(JSON.toJSONString(indicatorElement.getCurCashFlowDTO()));
+            for(String key : jsonObject.keySet()){
+                jsonIndicator.put(key, jsonObject.getString(key));
+            }
+        }
+
+        if(indicatorElement.getCurIndicatorDTO() !=null){
+            JSONObject jsonObject = JSON.parseObject(JSON.toJSONString(indicatorElement.getCurIndicatorDTO()));
+            for(String key : jsonObject.keySet()){
+                jsonIndicator.put(key, jsonObject.getString(key));
+            }
+        }
+
+        if(CollectionUtils.isNotEmpty(indicatorElement.getKLineDTOList())){
+            XueQiuStockKLineDTO curKLineDTO = indicatorElement.getKLineDTOList().stream()
+                    .sorted(Comparator.comparing(XueQiuStockKLineDTO::getTimestamp).reversed())
+                    .collect(Collectors.toList())
+                    .get(0);
+            JSONObject jsonObject = JSON.parseObject(JSON.toJSONString(curKLineDTO));
+            for(String key : jsonObject.keySet()){
+                jsonIndicator.put(key, jsonObject.getString(key));
+            }
+        }
+
+        AnalyseIndicatorDTO indicatorDTO = JSON.parseObject(JSON.toJSONString(jsonIndicator), AnalyseIndicatorDTO.class);
+        this.assembleAnalyseIndicator(indicatorDTO, indicatorElement);
+
+        System.out.println("indicatorDTO: " + JSON.toJSONString(indicatorDTO));
+        return indicatorDTO;
+    }
+
+    private void assembleAnalyseIndicator(AnalyseIndicatorDTO indicatorDTO, AnalyseIndicatorElement indicatorElement){
         if(indicatorDTO ==null){
             return ;
+        }
+        if(indicatorDTO.getPe_p_1000() ==null){
+            Double pe_p_1000 =this.getPeP1000Value(indicatorDTO, indicatorElement);
+            if(pe_p_1000 !=null){
+                indicatorDTO.setPe_p_1000(pe_p_1000);
+            }
+        }
+        if(indicatorDTO.getPb_p_1000() ==null){
+            Double pb_p_1000 =this.getPbP1000Value(indicatorDTO, indicatorElement);
+            if(pb_p_1000 !=null){
+                indicatorDTO.setPb_p_1000(pb_p_1000);
+            }
+        }
+        if(indicatorDTO.getAvg_roe_ttm() ==null){
+            Double avg_roe_ttm =this.getAvgRoeTtm(indicatorDTO, indicatorElement);
+            if(avg_roe_ttm !=null){
+                indicatorDTO.setAvg_roe_ttm(avg_roe_ttm);
+            }
         }
         if(indicatorDTO.getGross_margin_rate() ==null){
             Double operating_cost = indicatorDTO.getOperating_cost();
@@ -138,141 +371,166 @@ public class StockIndicatorManager {
             }
         }
 
+        if(indicatorDTO.getCur_q_gross_margin_rate() ==null){
+            QuarterIncomeDTO curQuarterIncomeDTO = indicatorElement.getCurQuarterIncomeDTO();
+            if(curQuarterIncomeDTO !=null && curQuarterIncomeDTO.getRevenue() !=null && curQuarterIncomeDTO.getOperating_cost() !=null){
+                double cur_q_gross_margin_rate = 1- curQuarterIncomeDTO.getOperating_cost()/curQuarterIncomeDTO.getRevenue();
+                indicatorDTO.setCur_q_gross_margin_rate(cur_q_gross_margin_rate);
+            }
+        }
+
+        if(indicatorDTO.getCur_q_net_selling_rate() ==null){
+            QuarterIncomeDTO curQuarterIncomeDTO = indicatorElement.getCurQuarterIncomeDTO();
+            if(curQuarterIncomeDTO !=null && curQuarterIncomeDTO.getRevenue() !=null && curQuarterIncomeDTO.getNet_profit() !=null){
+                double cur_q_net_selling_rate = curQuarterIncomeDTO.getNet_profit()/curQuarterIncomeDTO.getRevenue();
+                indicatorDTO.setCur_q_net_selling_rate(cur_q_net_selling_rate);
+            }
+        }
+
+        if(indicatorDTO.getCur_q_gross_margin_rate_change() ==null){
+            Double cur_q_gross_margin_rate = indicatorDTO.getCur_q_gross_margin_rate();
+            if(cur_q_gross_margin_rate !=null){
+                QuarterIncomeDTO lastYearQuarterIncomeDTO = indicatorElement.getLastYearQuarterIncomeDTO();
+                if(lastYearQuarterIncomeDTO !=null && lastYearQuarterIncomeDTO.getRevenue() !=null && lastYearQuarterIncomeDTO.getOperating_cost() !=null){
+                    double last_year_cur_q_gross_margin_rate = 1- lastYearQuarterIncomeDTO.getOperating_cost()/lastYearQuarterIncomeDTO.getRevenue();
+                    indicatorDTO.setCur_q_gross_margin_rate_change(cur_q_gross_margin_rate /last_year_cur_q_gross_margin_rate -1);
+                }
+            }
+        }
+
+        if(indicatorDTO.getCur_q_net_selling_rate_change() ==null){
+            Double cur_q_net_selling_rate = indicatorDTO.getCur_q_net_selling_rate();
+            if(cur_q_net_selling_rate !=null){
+                QuarterIncomeDTO lastYearQuarterIncomeDTO = indicatorElement.getLastYearQuarterIncomeDTO();
+                if(lastYearQuarterIncomeDTO !=null && lastYearQuarterIncomeDTO.getRevenue() !=null && lastYearQuarterIncomeDTO.getNet_profit() !=null){
+                    double last_year_cur_q_net_selling_rate = lastYearQuarterIncomeDTO.getNet_profit()/lastYearQuarterIncomeDTO.getRevenue();
+                    indicatorDTO.setCur_q_net_selling_rate_change(cur_q_net_selling_rate /last_year_cur_q_net_selling_rate -1);
+                }
+            }
+        }
+
+        if(indicatorDTO.getCur_q_operating_income_yoy() ==null){
+            QuarterIncomeDTO curQuarterIncomeDTO = indicatorElement.getCurQuarterIncomeDTO();
+            QuarterIncomeDTO lastYearQuarterIncomeDTO = indicatorElement.getLastYearQuarterIncomeDTO();
+            if(curQuarterIncomeDTO !=null && curQuarterIncomeDTO.getRevenue() !=null
+                    && lastYearQuarterIncomeDTO !=null && lastYearQuarterIncomeDTO.getRevenue() !=null ){
+                indicatorDTO.setCur_q_operating_income_yoy(curQuarterIncomeDTO.getRevenue()/lastYearQuarterIncomeDTO.getRevenue() -1);
+            }
+        }
+
+        if(indicatorDTO.getCur_q_net_profit_atsopc_yoy() ==null){
+            QuarterIncomeDTO curQuarterIncomeDTO = indicatorElement.getCurQuarterIncomeDTO();
+            QuarterIncomeDTO lastYearQuarterIncomeDTO = indicatorElement.getLastYearQuarterIncomeDTO();
+            if(curQuarterIncomeDTO !=null && lastYearQuarterIncomeDTO !=null){
+                indicatorDTO.setCur_q_net_profit_atsopc_yoy(curQuarterIncomeDTO.getNet_profit()/lastYearQuarterIncomeDTO.getNet_profit() -1);
+            }
+        }
+
     }
 
-    /**
-     * 负债表指标查询
-     *
-     * @param code
-     * @param year
-     * @param typeEnum
-     * @return
-     */
-    private XueQiuStockBalanceDTO getBalanceDTO(String code, Integer year, FinanceReportTypeEnum typeEnum){
-        try {
-            List<String> strList =FileUtils.readLines(new File(StockConstant.BALANCE_LIST), Charset.forName("UTF-8"));
-            XueQiuStockBalanceDTO stockBalanceDTO = Optional.ofNullable(strList).orElse(Lists.newArrayList()).stream()
-                    .map(str -> JSON.parseObject(str, XueQiuStockBalanceDTO.class))
-                    .filter(balanceDTO -> Objects.equals(balanceDTO.getCode(), code))
-                    .filter(balanceDTO -> Objects.equals(balanceDTO.getReport_year(), year))
-                    .filter(balanceDTO -> Objects.equals(balanceDTO.getReport_type(), typeEnum.getCode()))
-                    .findFirst()
-                    .orElse(null);
+    private Double getPeP1000Value(AnalyseIndicatorDTO indicatorDTO, AnalyseIndicatorElement indicatorElement){
+        if(indicatorDTO ==null || indicatorDTO.getPe() ==null){
+            return null;
+        }
+        if(indicatorElement ==null || CollectionUtils.isEmpty(indicatorElement.getKLineDTOList())){
+            return null;
+        }
 
-            return stockBalanceDTO;
-        } catch (Exception e) {
-            e.printStackTrace();
+        Double currentPe = indicatorDTO.getPe();
+
+        List<Double> peList = indicatorElement.getKLineDTOList().stream()
+                .filter(kLineDTO -> kLineDTO.getPe() !=null)
+                .sorted(Comparator.comparing(XueQiuStockKLineDTO::getPe))
+                .map(XueQiuStockKLineDTO::getPe)
+                .collect(Collectors.toList());
+
+        for(int index =0; index <peList.size(); index++){
+            if(Math.abs(currentPe -peList.get(index)) <=0.01){
+                return (index*1.0)/peList.size();
+            }
         }
 
         return null;
     }
 
-    /**
-     * 利润表指标查询
-     *
-     * @param code
-     * @param year
-     * @param typeEnum
-     * @return
-     */
-    private XueQiuStockIncomeDTO getIncomeDTO(String code, Integer year, FinanceReportTypeEnum typeEnum){
-        try {
-            List<String> strList =FileUtils.readLines(new File(StockConstant.INCOME_LIST), Charset.forName("UTF-8"));
-            XueQiuStockIncomeDTO stockIncomeDTO = Optional.ofNullable(strList).orElse(Lists.newArrayList()).stream()
-                    .map(str -> JSON.parseObject(str, XueQiuStockIncomeDTO.class))
-                    .filter(balanceDTO -> Objects.equals(balanceDTO.getCode(), code))
-                    .filter(balanceDTO -> Objects.equals(balanceDTO.getReport_year(), year))
-                    .filter(balanceDTO -> Objects.equals(balanceDTO.getReport_type(), typeEnum.getCode()))
-                    .findFirst()
-                    .orElse(null);
+    private Double getPbP1000Value(AnalyseIndicatorDTO indicatorDTO, AnalyseIndicatorElement indicatorElement){
+        if(indicatorDTO ==null || indicatorDTO.getPe() ==null){
+            return null;
+        }
+        if(indicatorElement ==null || CollectionUtils.isEmpty(indicatorElement.getKLineDTOList())){
+            return null;
+        }
 
-            return stockIncomeDTO;
-        } catch (Exception e) {
-            e.printStackTrace();
+        Double currentPb = indicatorDTO.getPb();
+
+        List<Double> pbList = indicatorElement.getKLineDTOList().stream()
+                .filter(kLineDTO -> kLineDTO.getPb() !=null)
+                .sorted(Comparator.comparing(XueQiuStockKLineDTO::getPb))
+                .map(XueQiuStockKLineDTO::getPb)
+                .collect(Collectors.toList());
+
+        for(int index =0; index <pbList.size(); index++){
+            if(Math.abs(currentPb -pbList.get(index)) <=0.01){
+                return (index*1.0)/pbList.size();
+            }
         }
 
         return null;
     }
 
-    /**
-     * 利润表指标查询
-     *
-     * @param code
-     * @param year
-     * @param typeEnum
-     * @return
-     */
-    private XueQiuStockCashFlowDTO getCashFlowDTO(String code, Integer year, FinanceReportTypeEnum typeEnum){
-        try {
-            List<String> strList =FileUtils.readLines(new File(StockConstant.CASH_FLOW_LIST), Charset.forName("UTF-8"));
-            XueQiuStockCashFlowDTO stockCashFlowDTO = Optional.ofNullable(strList).orElse(Lists.newArrayList()).stream()
-                    .map(str -> JSON.parseObject(str, XueQiuStockCashFlowDTO.class))
-                    .filter(balanceDTO -> Objects.equals(balanceDTO.getCode(), code))
-                    .filter(balanceDTO -> Objects.equals(balanceDTO.getReport_year(), year))
-                    .filter(balanceDTO -> Objects.equals(balanceDTO.getReport_type(), typeEnum.getCode()))
-                    .findFirst()
-                    .orElse(null);
+    private Double getAvgRoeTtm(AnalyseIndicatorDTO indicatorDTO, AnalyseIndicatorElement indicatorElement){
+        if(indicatorDTO ==null || StringUtils.isBlank(indicatorDTO.getCode()) ||indicatorDTO.getTotal_holders_equity() ==null){
+            return null;
+        }
 
-            return stockCashFlowDTO;
-        } catch (Exception e) {
-            e.printStackTrace();
+        Integer year = indicatorElement.getReportYear();
+        String reportType = indicatorElement.getReportType();
+
+        List<ImmutablePair<Integer, FinanceReportTypeEnum>> immutablePairList =Lists.newArrayList();
+        if(Objects.equals(reportType, FinanceReportTypeEnum.QUARTER_1.getCode())){
+            immutablePairList =Arrays.asList(
+                    new ImmutablePair<>(year, FinanceReportTypeEnum.SINGLE_Q_1),
+                    new ImmutablePair<>(year-1, FinanceReportTypeEnum.SINGLE_Q_4),
+                    new ImmutablePair<>(year-1, FinanceReportTypeEnum.SINGLE_Q_3),
+                    new ImmutablePair<>(year-1, FinanceReportTypeEnum.SINGLE_Q_2));
+        }else if(Objects.equals(reportType, FinanceReportTypeEnum.HALF_YEAR.getCode())){
+            immutablePairList =Arrays.asList(
+                    new ImmutablePair<>(year, FinanceReportTypeEnum.SINGLE_Q_2),
+                    new ImmutablePair<>(year, FinanceReportTypeEnum.SINGLE_Q_1),
+                    new ImmutablePair<>(year-1, FinanceReportTypeEnum.SINGLE_Q_4),
+                    new ImmutablePair<>(year-1, FinanceReportTypeEnum.SINGLE_Q_3));
+        }else if(Objects.equals(reportType, FinanceReportTypeEnum.QUARTER_3.getCode())){
+            immutablePairList =Arrays.asList(
+                    new ImmutablePair<>(year, FinanceReportTypeEnum.SINGLE_Q_3),
+                    new ImmutablePair<>(year, FinanceReportTypeEnum.SINGLE_Q_2),
+                    new ImmutablePair<>(year, FinanceReportTypeEnum.SINGLE_Q_1),
+                    new ImmutablePair<>(year-1, FinanceReportTypeEnum.SINGLE_Q_4));
+        }else if(Objects.equals(reportType, FinanceReportTypeEnum.ALL_YEAR.getCode())){
+            immutablePairList =Arrays.asList(
+                    new ImmutablePair<>(year, FinanceReportTypeEnum.SINGLE_Q_4),
+                    new ImmutablePair<>(year, FinanceReportTypeEnum.SINGLE_Q_3),
+                    new ImmutablePair<>(year, FinanceReportTypeEnum.SINGLE_Q_2),
+                    new ImmutablePair<>(year, FinanceReportTypeEnum.SINGLE_Q_1));
+        }
+
+        List<QuarterIncomeDTO> quarterIncomeDTOList =Lists.newArrayList();
+        for(QuarterIncomeDTO quarterIncomeDTO : indicatorElement.getQuarterIncomeDTOList()){
+            for(ImmutablePair<Integer, FinanceReportTypeEnum> pair : immutablePairList){
+                Integer tmpYear =pair.getLeft();
+                FinanceReportTypeEnum reportTypeEnum =pair.getRight();
+
+                if(Objects.equals(quarterIncomeDTO.getReport_year(), tmpYear)
+                        && Objects.equals(quarterIncomeDTO.getReport_type(), reportTypeEnum.getCode())){
+                    quarterIncomeDTOList.add(quarterIncomeDTO);
+                }
+            }
+        }
+        if(CollectionUtils.isNotEmpty(quarterIncomeDTOList) && quarterIncomeDTOList.size() ==4){
+            double sum = quarterIncomeDTOList.stream().mapToDouble(QuarterIncomeDTO::getNet_profit).sum();
+            return sum /indicatorDTO.getTotal_holders_equity();
         }
 
         return null;
     }
 
-    /**
-     * 指标查询
-     *
-     * @param code
-     * @param year
-     * @param typeEnum
-     * @return
-     */
-    private XueQiuStockIndicatorDTO getFromXQIndicatorList(String code, Integer year, FinanceReportTypeEnum typeEnum){
-        try {
-            List<String> strList =FileUtils.readLines(new File(StockConstant.INDICATOR_LIST_XQ), Charset.forName("UTF-8"));
-            XueQiuStockIndicatorDTO stockIndicatorDTO = Optional.ofNullable(strList).orElse(Lists.newArrayList()).stream()
-                    .map(str -> JSON.parseObject(str, XueQiuStockIndicatorDTO.class))
-                    .filter(balanceDTO -> Objects.equals(balanceDTO.getCode(), code))
-                    .filter(balanceDTO -> Objects.equals(balanceDTO.getReport_year(), year))
-                    .filter(balanceDTO -> Objects.equals(balanceDTO.getReport_type(), typeEnum.getCode()))
-                    .findFirst()
-                    .orElse(null);
-
-            return stockIndicatorDTO;
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        return null;
-    }
-
-    /**
-     * K线指标查询
-     *
-     * @param code
-     * @param typeEnum
-     * @return
-     */
-    private XueQiuStockKLineDTO getFromKLineList(String code, KLineTypeEnum typeEnum){
-        String klineListFileName = StringUtils.EMPTY;
-        if(Objects.equals(typeEnum.getCode(), KLineTypeEnum.DAY.getCode())){
-            klineListFileName = String.format(StockConstant.KLINE_LIST_DAY, code);
-        }
-        try {
-            List<String> strList =FileUtils.readLines(new File(klineListFileName), Charset.forName("UTF-8"));
-            XueQiuStockKLineDTO stockKLineDTO = Optional.ofNullable(strList).orElse(Lists.newArrayList()).stream()
-                    .map(str -> JSON.parseObject(str, XueQiuStockKLineDTO.class))
-                    .sorted(Comparator.comparing(XueQiuStockKLineDTO::getTimestamp).reversed())
-                    .findFirst()
-                    .orElse(null);
-
-            return stockKLineDTO;
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        return null;
-    }
 }
