@@ -15,24 +15,26 @@ public class AnalyseIndicatorElement {
 
     private XueQiuStockBalanceDTO curBalanceDTO;
 
-    private XueQiuStockIncomeDTO curIncomeDTO;
-
-    private XueQiuStockCashFlowDTO curCashFlowDTO;
-
-    private XueQiuStockIndicatorDTO curIndicatorDTO;
-
-    private List<XueQiuStockKLineDTO> kLineDTOList;
+    private XueQiuStockBalanceDTO lastSamePeriodBalanceDTO;
 
     private XueQiuStockBalanceDTO lastYearBalanceDTO;
 
+    private XueQiuStockIncomeDTO curIncomeDTO;
+
     private XueQiuStockIncomeDTO lastYearIncomeDTO;
 
+    private XueQiuStockCashFlowDTO curCashFlowDTO;
+
     private XueQiuStockCashFlowDTO lastYearCashFlowDTO;
+
+    private List<XueQiuStockKLineDTO> kLineDTOList;
+
+    private XueQiuStockIndicatorDTO curIndicatorDTO;
 
     private List<QuarterIncomeDTO> quarterIncomeDTOList;
 
     private QuarterIncomeDTO curQuarterIncomeDTO;
 
-    private QuarterIncomeDTO lastYearQuarterIncomeDTO;
+    private QuarterIncomeDTO lastSamePeriodQuarterIncomeDTO;
 
 }

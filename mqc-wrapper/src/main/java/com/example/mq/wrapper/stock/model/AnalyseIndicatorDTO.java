@@ -105,6 +105,16 @@ public class AnalyseIndicatorDTO {
     private Double cur_q_net_profit_atsopc_yoy;
 
     /**
+     * 固定资产同比增长
+     */
+    private Double fixed_asset_sum_inc;
+
+    /**
+     * 在建工程同比增长
+     */
+    private Double construction_in_process_sum_inc;
+
+    /**
      * 总市值
      */
     private Double market_capital;

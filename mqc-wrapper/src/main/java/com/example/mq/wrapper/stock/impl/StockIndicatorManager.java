@@ -24,7 +24,7 @@ public class StockIndicatorManager {
 
     private static final String HEADER ="编码,名称,资产负债率,市盈率TTM,pe分位值,市净率,pb分位值,股东权益合计,净资产收益率TTM" +
             ",营业收入,营业成本,毛利率,净利率,当季毛利率,当季净利率,当季毛利率同比,当季净利率同比" +
-            ",营收同比,净利润同比,当季营收同比,当季净利润同比,总市值,经营现金流入" +
+            ",营收同比,净利润同比,当季营收同比,当季净利润同比,固定资产同比,在建工程同比,总市值,经营现金流入" +
             ",经营现金流入/营收,经营现金净额,净利润,经营现金净额/净利润,应付票据及应付账款" +
             ",应收票据及应收账款,应付票据及应付账款/应收票据及应收账款,应收账款周转天数,存货周转天数";
 
@@ -52,6 +52,7 @@ public class StockIndicatorManager {
                 }
                 indicatorList.add(indicatorBuilder.toString().substring(1));
             } catch (Exception e) {
+                System.out.println("errCode: " + stockCode);
                 e.printStackTrace();
             }
         }
@@ -131,6 +132,12 @@ public class StockIndicatorManager {
         if(analyseIndicatorDTO.getCur_q_net_profit_atsopc_yoy() !=null){
             analyseIndicatorDTO.setCur_q_net_profit_atsopc_yoy(NumberUtil.format(analyseIndicatorDTO.getCur_q_net_profit_atsopc_yoy(), 3));
         }
+        if(analyseIndicatorDTO.getFixed_asset_sum_inc() !=null){
+            analyseIndicatorDTO.setFixed_asset_sum_inc(NumberUtil.format(analyseIndicatorDTO.getFixed_asset_sum_inc(), 3));
+        }
+        if(analyseIndicatorDTO.getConstruction_in_process_sum_inc() !=null){
+            analyseIndicatorDTO.setConstruction_in_process_sum_inc(NumberUtil.format(analyseIndicatorDTO.getConstruction_in_process_sum_inc(), 3));
+        }
         if(analyseIndicatorDTO.getMarket_capital() !=null){
             analyseIndicatorDTO.setMarket_capital(NumberUtil.format(analyseIndicatorDTO.getMarket_capital() /(10000 *10000), 1));
         }
@@ -178,14 +185,34 @@ public class StockIndicatorManager {
             indicatorElement.setCurBalanceDTO(balanceDTO);
         }
 
+        XueQiuStockBalanceDTO lastSamePeriodBalanceDTO = localStockDataManager.getBalanceDTO(code, year-1, typeEnum);
+        if(lastSamePeriodBalanceDTO !=null){
+            indicatorElement.setLastSamePeriodBalanceDTO(lastSamePeriodBalanceDTO);
+        }
+
+        XueQiuStockBalanceDTO lastYearBalanceDTO = localStockDataManager.getBalanceDTO(code, year-1, FinanceReportTypeEnum.ALL_YEAR);
+        if(lastYearBalanceDTO !=null){
+            indicatorElement.setLastYearBalanceDTO(lastYearBalanceDTO);
+        }
+
         XueQiuStockIncomeDTO incomeDTO = localStockDataManager.getIncomeDTO(code, year, typeEnum);
         if(incomeDTO !=null){
             indicatorElement.setCurIncomeDTO(incomeDTO);
         }
 
+        XueQiuStockIncomeDTO lastYearIncomeDTO = localStockDataManager.getIncomeDTO(code, year-1, FinanceReportTypeEnum.ALL_YEAR);
+        if(lastYearIncomeDTO !=null){
+            indicatorElement.setLastYearIncomeDTO(lastYearIncomeDTO);
+        }
+
         XueQiuStockCashFlowDTO cashFlowDTO = localStockDataManager.getCashFlowDTO(code, year, typeEnum);
         if(cashFlowDTO !=null){
             indicatorElement.setCurCashFlowDTO(cashFlowDTO);
+        }
+
+        XueQiuStockCashFlowDTO lastYearCashFlowDTO = localStockDataManager.getCashFlowDTO(code, year-1, FinanceReportTypeEnum.ALL_YEAR);
+        if(lastYearCashFlowDTO !=null){
+            indicatorElement.setLastYearCashFlowDTO(lastYearCashFlowDTO);
         }
 
         XueQiuStockIndicatorDTO indicatorDTO = localStockDataManager.getXQIndicatorDTO(code, year, typeEnum);
@@ -196,21 +223,6 @@ public class StockIndicatorManager {
         List<XueQiuStockKLineDTO> kLineDTOList = localStockDataManager.getKLineList(code, KLineTypeEnum.DAY, 1000);
         if(CollectionUtils.isNotEmpty(kLineDTOList)){
             indicatorElement.setKLineDTOList(kLineDTOList);
-        }
-
-        XueQiuStockBalanceDTO lastYearBalanceDTO = localStockDataManager.getBalanceDTO(code, year-1, FinanceReportTypeEnum.ALL_YEAR);
-        if(lastYearBalanceDTO !=null){
-            indicatorElement.setLastYearBalanceDTO(lastYearBalanceDTO);
-        }
-
-        XueQiuStockIncomeDTO lastYearIncomeDTO = localStockDataManager.getIncomeDTO(code, year-1, FinanceReportTypeEnum.ALL_YEAR);
-        if(lastYearIncomeDTO !=null){
-            indicatorElement.setLastYearIncomeDTO(lastYearIncomeDTO);
-        }
-
-        XueQiuStockCashFlowDTO lastYearCashFlowDTO = localStockDataManager.getCashFlowDTO(code, year-1, FinanceReportTypeEnum.ALL_YEAR);
-        if(lastYearCashFlowDTO !=null){
-            indicatorElement.setLastYearCashFlowDTO(lastYearCashFlowDTO);
         }
 
         List<ImmutablePair<Integer, FinanceReportTypeEnum>> immutablePairList =Lists.newArrayList();
@@ -259,7 +271,7 @@ public class StockIndicatorManager {
 
                 if(Objects.equals(quarterIncomeDTO.getReport_year(), year-1)
                         && Objects.equals(quarterIncomeDTO.getReport_type(), curQuarterType)){
-                    indicatorElement.setLastYearQuarterIncomeDTO(quarterIncomeDTO);
+                    indicatorElement.setLastSamePeriodQuarterIncomeDTO(quarterIncomeDTO);
                 }
             }
         }
@@ -342,7 +354,7 @@ public class StockIndicatorManager {
         if(indicatorDTO.getGross_margin_rate() ==null){
             Double operating_cost = indicatorDTO.getOperating_cost();
             Double revenue = indicatorDTO.getRevenue();
-            if(operating_cost !=null && revenue !=null){
+            if(operating_cost !=null && revenue !=null && revenue !=0){
                 indicatorDTO.setGross_margin_rate(1 - operating_cost /revenue);
             }
         }
@@ -350,7 +362,7 @@ public class StockIndicatorManager {
         if(indicatorDTO.getCi_oi_rate() ==null){
             Double sub_total_of_ci_from_oa = indicatorDTO.getSub_total_of_ci_from_oa();
             Double revenue = indicatorDTO.getRevenue();
-            if(sub_total_of_ci_from_oa !=null && revenue !=null){
+            if(sub_total_of_ci_from_oa !=null && revenue !=null && revenue !=0){
                 indicatorDTO.setCi_oi_rate(sub_total_of_ci_from_oa /revenue);
             }
         }
@@ -358,7 +370,7 @@ public class StockIndicatorManager {
         if(indicatorDTO.getNcf_pri_rate() ==null){
             Double ncf_from_oa = indicatorDTO.getNcf_from_oa();
             Double net_profit_atsopc = indicatorDTO.getNet_profit_atsopc();
-            if(ncf_from_oa !=null && net_profit_atsopc !=null){
+            if(ncf_from_oa !=null && net_profit_atsopc !=null && net_profit_atsopc !=0){
                 indicatorDTO.setNcf_pri_rate(ncf_from_oa /net_profit_atsopc);
             }
         }
@@ -366,7 +378,7 @@ public class StockIndicatorManager {
         if(indicatorDTO.getAp_ar_rate() ==null){
             Double bp_and_ap = indicatorDTO.getBp_and_ap();
             Double ar_and_br = indicatorDTO.getAr_and_br();
-            if(bp_and_ap !=null && ar_and_br !=null){
+            if(bp_and_ap !=null && ar_and_br !=null && ar_and_br !=0){
                 indicatorDTO.setAp_ar_rate(bp_and_ap /ar_and_br);
             }
         }
@@ -390,7 +402,7 @@ public class StockIndicatorManager {
         if(indicatorDTO.getCur_q_gross_margin_rate_change() ==null){
             Double cur_q_gross_margin_rate = indicatorDTO.getCur_q_gross_margin_rate();
             if(cur_q_gross_margin_rate !=null){
-                QuarterIncomeDTO lastYearQuarterIncomeDTO = indicatorElement.getLastYearQuarterIncomeDTO();
+                QuarterIncomeDTO lastYearQuarterIncomeDTO = indicatorElement.getLastSamePeriodQuarterIncomeDTO();
                 if(lastYearQuarterIncomeDTO !=null && lastYearQuarterIncomeDTO.getRevenue() !=null && lastYearQuarterIncomeDTO.getOperating_cost() !=null){
                     double last_year_cur_q_gross_margin_rate = 1- lastYearQuarterIncomeDTO.getOperating_cost()/lastYearQuarterIncomeDTO.getRevenue();
                     indicatorDTO.setCur_q_gross_margin_rate_change(cur_q_gross_margin_rate /last_year_cur_q_gross_margin_rate -1);
@@ -401,7 +413,7 @@ public class StockIndicatorManager {
         if(indicatorDTO.getCur_q_net_selling_rate_change() ==null){
             Double cur_q_net_selling_rate = indicatorDTO.getCur_q_net_selling_rate();
             if(cur_q_net_selling_rate !=null){
-                QuarterIncomeDTO lastYearQuarterIncomeDTO = indicatorElement.getLastYearQuarterIncomeDTO();
+                QuarterIncomeDTO lastYearQuarterIncomeDTO = indicatorElement.getLastSamePeriodQuarterIncomeDTO();
                 if(lastYearQuarterIncomeDTO !=null && lastYearQuarterIncomeDTO.getRevenue() !=null && lastYearQuarterIncomeDTO.getNet_profit() !=null){
                     double last_year_cur_q_net_selling_rate = lastYearQuarterIncomeDTO.getNet_profit()/lastYearQuarterIncomeDTO.getRevenue();
                     indicatorDTO.setCur_q_net_selling_rate_change(cur_q_net_selling_rate /last_year_cur_q_net_selling_rate -1);
@@ -411,7 +423,7 @@ public class StockIndicatorManager {
 
         if(indicatorDTO.getCur_q_operating_income_yoy() ==null){
             QuarterIncomeDTO curQuarterIncomeDTO = indicatorElement.getCurQuarterIncomeDTO();
-            QuarterIncomeDTO lastYearQuarterIncomeDTO = indicatorElement.getLastYearQuarterIncomeDTO();
+            QuarterIncomeDTO lastYearQuarterIncomeDTO = indicatorElement.getLastSamePeriodQuarterIncomeDTO();
             if(curQuarterIncomeDTO !=null && curQuarterIncomeDTO.getRevenue() !=null
                     && lastYearQuarterIncomeDTO !=null && lastYearQuarterIncomeDTO.getRevenue() !=null ){
                 indicatorDTO.setCur_q_operating_income_yoy(curQuarterIncomeDTO.getRevenue()/lastYearQuarterIncomeDTO.getRevenue() -1);
@@ -420,9 +432,25 @@ public class StockIndicatorManager {
 
         if(indicatorDTO.getCur_q_net_profit_atsopc_yoy() ==null){
             QuarterIncomeDTO curQuarterIncomeDTO = indicatorElement.getCurQuarterIncomeDTO();
-            QuarterIncomeDTO lastYearQuarterIncomeDTO = indicatorElement.getLastYearQuarterIncomeDTO();
+            QuarterIncomeDTO lastYearQuarterIncomeDTO = indicatorElement.getLastSamePeriodQuarterIncomeDTO();
             if(curQuarterIncomeDTO !=null && lastYearQuarterIncomeDTO !=null){
                 indicatorDTO.setCur_q_net_profit_atsopc_yoy(curQuarterIncomeDTO.getNet_profit()/lastYearQuarterIncomeDTO.getNet_profit() -1);
+            }
+        }
+
+        if(indicatorDTO.getFixed_asset_sum_inc() ==null){
+            XueQiuStockBalanceDTO curBalanceDTO = indicatorElement.getCurBalanceDTO();
+            XueQiuStockBalanceDTO lastSamePeriodBalanceDTO = indicatorElement.getLastSamePeriodBalanceDTO();
+            if(curBalanceDTO !=null && lastSamePeriodBalanceDTO !=null && lastSamePeriodBalanceDTO.getFixed_asset_sum() !=0){
+                indicatorDTO.setFixed_asset_sum_inc(curBalanceDTO.getFixed_asset_sum()/lastSamePeriodBalanceDTO.getFixed_asset_sum() -1);
+            }
+        }
+
+        if(indicatorDTO.getConstruction_in_process_sum_inc() ==null){
+            XueQiuStockBalanceDTO curBalanceDTO = indicatorElement.getCurBalanceDTO();
+            XueQiuStockBalanceDTO lastSamePeriodBalanceDTO = indicatorElement.getLastSamePeriodBalanceDTO();
+            if(curBalanceDTO !=null && lastSamePeriodBalanceDTO !=null && lastSamePeriodBalanceDTO.getConstruction_in_process_sum() !=0){
+                indicatorDTO.setConstruction_in_process_sum_inc(curBalanceDTO.getConstruction_in_process_sum()/lastSamePeriodBalanceDTO.getConstruction_in_process_sum() -1);
             }
         }
 
