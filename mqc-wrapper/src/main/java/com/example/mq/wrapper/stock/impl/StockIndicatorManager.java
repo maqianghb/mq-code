@@ -32,8 +32,8 @@ public class StockIndicatorManager {
         StockIndicatorManager manager =new StockIndicatorManager();
 
         LocalStockDataManager localStockDataManager =new LocalStockDataManager();
-//        List<String> stockCodeList = localStockDataManager.getStockCodeList();
-        List<String> stockCodeList = Arrays.asList("SZ002001", "SZ002415", "SZ002508", "SH600486", "SZ002507");
+        List<String> stockCodeList = localStockDataManager.getStockCodeList();
+//        List<String> stockCodeList = Arrays.asList("SZ002001", "SZ002415", "SZ002508", "SH600486", "SZ002507");
 
         List<String> indicatorList =Lists.newArrayList();
         indicatorList.add(HEADER);
@@ -441,16 +441,20 @@ public class StockIndicatorManager {
         if(indicatorDTO.getFixed_asset_sum_inc() ==null){
             XueQiuStockBalanceDTO curBalanceDTO = indicatorElement.getCurBalanceDTO();
             XueQiuStockBalanceDTO lastSamePeriodBalanceDTO = indicatorElement.getLastSamePeriodBalanceDTO();
-            if(curBalanceDTO !=null && lastSamePeriodBalanceDTO !=null && lastSamePeriodBalanceDTO.getFixed_asset_sum() !=0){
-                indicatorDTO.setFixed_asset_sum_inc(curBalanceDTO.getFixed_asset_sum()/lastSamePeriodBalanceDTO.getFixed_asset_sum() -1);
+            if(curBalanceDTO !=null && lastSamePeriodBalanceDTO !=null && curBalanceDTO.getFixed_asset_sum() !=null){
+                if(lastSamePeriodBalanceDTO.getFixed_asset_sum() !=null && lastSamePeriodBalanceDTO.getFixed_asset_sum() !=0){
+                    indicatorDTO.setFixed_asset_sum_inc(curBalanceDTO.getFixed_asset_sum()/lastSamePeriodBalanceDTO.getFixed_asset_sum() -1);
+                }
             }
         }
 
         if(indicatorDTO.getConstruction_in_process_sum_inc() ==null){
             XueQiuStockBalanceDTO curBalanceDTO = indicatorElement.getCurBalanceDTO();
             XueQiuStockBalanceDTO lastSamePeriodBalanceDTO = indicatorElement.getLastSamePeriodBalanceDTO();
-            if(curBalanceDTO !=null && lastSamePeriodBalanceDTO !=null && lastSamePeriodBalanceDTO.getConstruction_in_process_sum() !=0){
-                indicatorDTO.setConstruction_in_process_sum_inc(curBalanceDTO.getConstruction_in_process_sum()/lastSamePeriodBalanceDTO.getConstruction_in_process_sum() -1);
+            if(curBalanceDTO !=null && lastSamePeriodBalanceDTO !=null && curBalanceDTO.getConstruction_in_process_sum() !=null){
+                if(lastSamePeriodBalanceDTO.getConstruction_in_process_sum() !=null && lastSamePeriodBalanceDTO.getConstruction_in_process_sum() !=0){
+                    indicatorDTO.setConstruction_in_process_sum_inc(curBalanceDTO.getConstruction_in_process_sum()/lastSamePeriodBalanceDTO.getConstruction_in_process_sum() -1);
+                }
             }
         }
 
