@@ -24,7 +24,7 @@ public class StockIndicatorManager {
 
     private static final String HEADER ="编码,名称,资产负债率,市盈率TTM,pe分位值,市净率,pb分位值,股东权益合计,净资产收益率TTM" +
             ",营业收入,营业成本,毛利率,净利率,当季毛利率,当季净利率,当季毛利率同比,当季净利率同比" +
-            ",营收同比,净利润同比,当季营收同比,当季净利润同比,固定资产同比,在建工程同比,总市值,经营现金流入" +
+            ",营收同比,净利润同比,当季营收同比,当季净利润同比,固定资产同比,在建工程同比,商誉+无形/总资产,现金等价物/短期负债,总市值,经营现金流入" +
             ",经营现金流入/营收,经营现金净额,净利润,经营现金净额/净利润,应付票据及应付账款" +
             ",应收票据及应收账款,应付票据及应付账款/应收票据及应收账款,应收账款周转天数,存货周转天数";
 
@@ -39,7 +39,7 @@ public class StockIndicatorManager {
         indicatorList.add(HEADER);
         for(String stockCode : stockCodeList){
             try {
-                AnalyseIndicatorElement indicatorElement = manager.getIndicatorElement(stockCode, 2022, FinanceReportTypeEnum.QUARTER_3);
+                AnalyseIndicatorElement indicatorElement = manager.getIndicatorElement(stockCode, 2022, FinanceReportTypeEnum.ALL_YEAR);
                 AnalyseIndicatorDTO analyseIndicatorDTO = manager.getAnalyseIndicatorDTO(indicatorElement);
                 manager.formatAnalyseIndicatorDTO(analyseIndicatorDTO);
 
@@ -47,7 +47,7 @@ public class StockIndicatorManager {
                 JSONObject jsonObject = JSON.parseObject(JSON.toJSONString(analyseIndicatorDTO));
                 StringBuilder indicatorBuilder =new StringBuilder();
                 for(Field field : fields){
-                    Object value = jsonObject.get(field.getName());
+                    Object value = jsonObject.get(field.getName ());
                     indicatorBuilder.append(",").append(value);
                 }
                 indicatorList.add(indicatorBuilder.toString().substring(1));
@@ -137,6 +137,13 @@ public class StockIndicatorManager {
         }
         if(analyseIndicatorDTO.getConstruction_in_process_sum_inc() !=null){
             analyseIndicatorDTO.setConstruction_in_process_sum_inc(NumberUtil.format(analyseIndicatorDTO.getConstruction_in_process_sum_inc(), 3));
+        }
+        if(analyseIndicatorDTO.getGw_ia_assert_rate() !=null){
+            analyseIndicatorDTO.setGw_ia_assert_rate(NumberUtil.format(analyseIndicatorDTO.getGw_ia_assert_rate(), 3));
+        }
+        if(analyseIndicatorDTO.getCash_sl_rate() !=null){
+            double cash_sl_rate = analyseIndicatorDTO.getCash_sl_rate() <10 ? analyseIndicatorDTO.getCash_sl_rate() : 10;
+            analyseIndicatorDTO.setCash_sl_rate(NumberUtil.format(cash_sl_rate, 1));
         }
         if(analyseIndicatorDTO.getMarket_capital() !=null){
             analyseIndicatorDTO.setMarket_capital(NumberUtil.format(analyseIndicatorDTO.getMarket_capital() /(10000 *10000), 1));
@@ -458,6 +465,27 @@ public class StockIndicatorManager {
             }
         }
 
+        if(indicatorDTO.getGw_ia_assert_rate() ==null){
+            XueQiuStockBalanceDTO curBalanceDTO = indicatorElement.getCurBalanceDTO();
+            if(curBalanceDTO !=null){
+                Double goodwill = curBalanceDTO.getGoodwill() !=null ? curBalanceDTO.getGoodwill() : 0;
+                Double intangible_assets = curBalanceDTO.getIntangible_assets() !=null ? curBalanceDTO.getIntangible_assets() : 0;
+                Double total_assets = curBalanceDTO.getTotal_assets() !=null ? curBalanceDTO.getTotal_assets() : 0.01;
+                indicatorDTO.setGw_ia_assert_rate((goodwill+intangible_assets)/total_assets);
+            }
+        }
+
+        if(indicatorDTO.getCash_sl_rate() ==null){
+            XueQiuStockBalanceDTO curBalanceDTO = indicatorElement.getCurBalanceDTO();
+            if(curBalanceDTO !=null){
+                double currency_funds = curBalanceDTO.getCurrency_funds() != null ? curBalanceDTO.getCurrency_funds() : 0;
+                double tradable_fnncl_assets = curBalanceDTO.getTradable_fnncl_assets() != null ? curBalanceDTO.getTradable_fnncl_assets() : 0;
+                double st_loan = curBalanceDTO.getSt_loan() != null ? curBalanceDTO.getSt_loan() : 0.01;
+                double tradable_fnncl_liab = curBalanceDTO.getTradable_fnncl_liab() != null ? curBalanceDTO.getTradable_fnncl_liab() : 0;
+                indicatorDTO.setCash_sl_rate((currency_funds +tradable_fnncl_assets)/(st_loan + tradable_fnncl_liab));
+            }
+        }
+
     }
 
     private Double getPeP1000Value(AnalyseIndicatorDTO indicatorDTO, AnalyseIndicatorElement indicatorElement){
@@ -558,7 +586,9 @@ public class StockIndicatorManager {
             }
         }
         if(CollectionUtils.isNotEmpty(quarterIncomeDTOList) && quarterIncomeDTOList.size() ==4){
-            double sum = quarterIncomeDTOList.stream().mapToDouble(QuarterIncomeDTO::getNet_profit).sum();
+            double sum = quarterIncomeDTOList.stream()
+                    .mapToDouble(incomeDTO -> incomeDTO.getNet_profit() !=null ? incomeDTO.getNet_profit(): 0)
+                    .sum();
             return sum /indicatorDTO.getTotal_holders_equity();
         }
 

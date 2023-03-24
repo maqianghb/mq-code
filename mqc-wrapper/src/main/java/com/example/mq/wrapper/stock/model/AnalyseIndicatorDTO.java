@@ -115,6 +115,16 @@ public class AnalyseIndicatorDTO {
     private Double construction_in_process_sum_inc;
 
     /**
+     * 商誉+无形资产/总资产
+     */
+    private Double gw_ia_assert_rate;
+
+    /**
+     * 现金等价物/短期负债
+     */
+    private Double cash_sl_rate;
+
+    /**
      * 总市值
      */
     private Double market_capital;

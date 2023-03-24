@@ -29,8 +29,8 @@ public class LocalStockDataManager {
 
     public static void main(String[] args) {
         LocalStockDataManager manager =new LocalStockDataManager();
-        manager.queryAndSaveKLineList();
-//        manager.queryAndSaveFinanceList();
+//        manager.queryAndSaveKLineList();
+        manager.queryAndSaveFinanceList();
 
         System.out.println("end. ");
     }
