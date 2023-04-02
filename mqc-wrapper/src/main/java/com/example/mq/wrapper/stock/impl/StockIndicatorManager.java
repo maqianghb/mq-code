@@ -39,7 +39,8 @@ public class StockIndicatorManager {
         indicatorList.add(HEADER);
         for(String stockCode : stockCodeList){
             try {
-                AnalyseIndicatorElement indicatorElement = manager.getIndicatorElement(stockCode, 2022, FinanceReportTypeEnum.ALL_YEAR);
+                AnalyseIndicatorElement indicatorElement = manager.getIndicatorElement(StockConstant.FILE_DATE
+                        , stockCode, 2022, FinanceReportTypeEnum.ALL_YEAR);
                 AnalyseIndicatorDTO analyseIndicatorDTO = manager.getAnalyseIndicatorDTO(indicatorElement);
                 manager.formatAnalyseIndicatorDTO(analyseIndicatorDTO);
 
@@ -180,54 +181,54 @@ public class StockIndicatorManager {
         }
     }
 
-    private AnalyseIndicatorElement getIndicatorElement(String code, Integer year, FinanceReportTypeEnum typeEnum){
+    private AnalyseIndicatorElement getIndicatorElement(String fileDate, String code, Integer year, FinanceReportTypeEnum typeEnum){
         AnalyseIndicatorElement indicatorElement =new AnalyseIndicatorElement();
         indicatorElement.setCode(code);
         indicatorElement.setReportYear(year);
         indicatorElement.setReportType(typeEnum.getCode());
 
         LocalStockDataManager localStockDataManager =new LocalStockDataManager();
-        XueQiuStockBalanceDTO balanceDTO = localStockDataManager.getBalanceDTO(code, year, typeEnum);
+        XueQiuStockBalanceDTO balanceDTO = localStockDataManager.getBalanceDTO(fileDate, code, year, typeEnum);
         if(balanceDTO !=null){
             indicatorElement.setCurBalanceDTO(balanceDTO);
         }
 
-        XueQiuStockBalanceDTO lastSamePeriodBalanceDTO = localStockDataManager.getBalanceDTO(code, year-1, typeEnum);
+        XueQiuStockBalanceDTO lastSamePeriodBalanceDTO = localStockDataManager.getBalanceDTO(fileDate, code, year-1, typeEnum);
         if(lastSamePeriodBalanceDTO !=null){
             indicatorElement.setLastSamePeriodBalanceDTO(lastSamePeriodBalanceDTO);
         }
 
-        XueQiuStockBalanceDTO lastYearBalanceDTO = localStockDataManager.getBalanceDTO(code, year-1, FinanceReportTypeEnum.ALL_YEAR);
+        XueQiuStockBalanceDTO lastYearBalanceDTO = localStockDataManager.getBalanceDTO(fileDate, code, year-1, FinanceReportTypeEnum.ALL_YEAR);
         if(lastYearBalanceDTO !=null){
             indicatorElement.setLastYearBalanceDTO(lastYearBalanceDTO);
         }
 
-        XueQiuStockIncomeDTO incomeDTO = localStockDataManager.getIncomeDTO(code, year, typeEnum);
+        XueQiuStockIncomeDTO incomeDTO = localStockDataManager.getIncomeDTO(fileDate, code, year, typeEnum);
         if(incomeDTO !=null){
             indicatorElement.setCurIncomeDTO(incomeDTO);
         }
 
-        XueQiuStockIncomeDTO lastYearIncomeDTO = localStockDataManager.getIncomeDTO(code, year-1, FinanceReportTypeEnum.ALL_YEAR);
+        XueQiuStockIncomeDTO lastYearIncomeDTO = localStockDataManager.getIncomeDTO(fileDate, code, year-1, FinanceReportTypeEnum.ALL_YEAR);
         if(lastYearIncomeDTO !=null){
             indicatorElement.setLastYearIncomeDTO(lastYearIncomeDTO);
         }
 
-        XueQiuStockCashFlowDTO cashFlowDTO = localStockDataManager.getCashFlowDTO(code, year, typeEnum);
+        XueQiuStockCashFlowDTO cashFlowDTO = localStockDataManager.getCashFlowDTO(fileDate, code, year, typeEnum);
         if(cashFlowDTO !=null){
             indicatorElement.setCurCashFlowDTO(cashFlowDTO);
         }
 
-        XueQiuStockCashFlowDTO lastYearCashFlowDTO = localStockDataManager.getCashFlowDTO(code, year-1, FinanceReportTypeEnum.ALL_YEAR);
+        XueQiuStockCashFlowDTO lastYearCashFlowDTO = localStockDataManager.getCashFlowDTO(fileDate, code, year-1, FinanceReportTypeEnum.ALL_YEAR);
         if(lastYearCashFlowDTO !=null){
             indicatorElement.setLastYearCashFlowDTO(lastYearCashFlowDTO);
         }
 
-        XueQiuStockIndicatorDTO indicatorDTO = localStockDataManager.getXQIndicatorDTO(code, year, typeEnum);
+        XueQiuStockIndicatorDTO indicatorDTO = localStockDataManager.getXQIndicatorDTO(fileDate, code, year, typeEnum);
         if(indicatorDTO !=null){
             indicatorElement.setCurIndicatorDTO(indicatorDTO);
         }
 
-        List<XueQiuStockKLineDTO> kLineDTOList = localStockDataManager.getKLineList(code, KLineTypeEnum.DAY, 1000);
+        List<XueQiuStockKLineDTO> kLineDTOList = localStockDataManager.getKLineList(fileDate, code, KLineTypeEnum.DAY, 1000);
         if(CollectionUtils.isNotEmpty(kLineDTOList)){
             indicatorElement.setKLineDTOList(kLineDTOList);
         }
@@ -267,7 +268,7 @@ public class StockIndicatorManager {
                     new ImmutablePair<>(year, FinanceReportTypeEnum.SINGLE_Q_1),
                     new ImmutablePair<>(year-1, FinanceReportTypeEnum.SINGLE_Q_4));
         }
-        List<QuarterIncomeDTO> quarterIncomeDTOList = localStockDataManager.getQuarterIncomeDTO(code, immutablePairList);
+        List<QuarterIncomeDTO> quarterIncomeDTOList = localStockDataManager.getQuarterIncomeDTO(fileDate, code, immutablePairList);
         if(CollectionUtils.isNotEmpty(quarterIncomeDTOList)){
             indicatorElement.setQuarterIncomeDTOList(quarterIncomeDTOList);
             for(QuarterIncomeDTO quarterIncomeDTO : quarterIncomeDTOList){

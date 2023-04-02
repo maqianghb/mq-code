@@ -29,8 +29,9 @@ public class LocalStockDataManager {
 
     public static void main(String[] args) {
         LocalStockDataManager manager =new LocalStockDataManager();
-//        manager.queryAndSaveKLineList();
-        manager.queryAndSaveFinanceList();
+
+        manager.queryAndSaveKLineList(StockConstant.FILE_DATE);
+        manager.queryAndSaveFinanceList(StockConstant.FILE_DATE);
 
         System.out.println("end. ");
     }
@@ -38,7 +39,7 @@ public class LocalStockDataManager {
     /**
      * 查询并保存全网财务数据
      */
-    public void queryAndSaveFinanceList(){
+    public void queryAndSaveFinanceList(String fileDate){
         List<String> stockCodeList = this.getStockCodeList();
         if(CollectionUtils.isEmpty(stockCodeList)){
             return;
@@ -61,7 +62,9 @@ public class LocalStockDataManager {
                             .thenComparing(XueQiuStockBalanceDTO::getReport_year).reversed())
                     .map(balanceDTO -> JSON.toJSONString(balanceDTO))
                     .collect(Collectors.toList());
-            FileUtils.writeLines(new File(StockConstant.BALANCE_LIST), strBalanceDTOList, true);
+
+            String balanceFileName =String.format(StockConstant.BALANCE_LIST, fileDate);
+            FileUtils.writeLines(new File(balanceFileName), strBalanceDTOList, true);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -81,7 +84,9 @@ public class LocalStockDataManager {
                             .thenComparing(XueQiuStockIncomeDTO::getReport_year).reversed())
                     .map(incomeDTO -> JSON.toJSONString(incomeDTO))
                     .collect(Collectors.toList());
-            FileUtils.writeLines(new File(StockConstant.INCOME_LIST), strIncomeDTOList, true);
+
+            String incomeFileName =String.format(StockConstant.INCOME_LIST, fileDate);
+            FileUtils.writeLines(new File(incomeFileName), strIncomeDTOList, true);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -101,7 +106,9 @@ public class LocalStockDataManager {
                             .thenComparing(XueQiuStockCashFlowDTO::getReport_year).reversed())
                     .map(cashFlowDTO -> JSON.toJSONString(cashFlowDTO))
                     .collect(Collectors.toList());
-            FileUtils.writeLines(new File(StockConstant.CASH_FLOW_LIST), strCashFlowDTOList, true);
+
+            String cashFlowFileName =String.format(StockConstant.CASH_FLOW_LIST, fileDate);
+            FileUtils.writeLines(new File(cashFlowFileName), strCashFlowDTOList, true);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -121,13 +128,15 @@ public class LocalStockDataManager {
                             .thenComparing(XueQiuStockIndicatorDTO::getReport_year).reversed())
                     .map(indicatorDTO -> JSON.toJSONString(indicatorDTO))
                     .collect(Collectors.toList());
-            FileUtils.writeLines(new File(StockConstant.INDICATOR_LIST_XQ), strIndicatorDTOList, true);
+
+            String indicatorFileName =String.format(StockConstant.INDICATOR_LIST_XQ, fileDate);
+            FileUtils.writeLines(new File(indicatorFileName), strIndicatorDTOList, true);
         } catch (Exception e) {
             e.printStackTrace();
         }
 
         // 单季数据
-        this.getAndSaveQuarterIncome();
+        this.getAndSaveQuarterIncome(fileDate);
     }
 
     /**
@@ -135,7 +144,7 @@ public class LocalStockDataManager {
      *
      * @return
      */
-    public void queryAndSaveKLineList() {
+    public void queryAndSaveKLineList(String fileDate) {
         List<String> stockCodeList = this.getStockCodeList();
         if(CollectionUtils.isEmpty(stockCodeList)){
             return;
@@ -145,7 +154,7 @@ public class LocalStockDataManager {
 
         // 查询
         for(String stockCode : stockCodeList){
-            String kLineFileName =String.format(StockConstant.KLINE_LIST_DAY, stockCode);
+            String kLineFileName =String.format(StockConstant.KLINE_LIST_DAY, fileDate, stockCode);
             try {
                 List<XueQiuStockKLineDTO> tmpKLineDTOList = xueQiuStockManager.queryKLineList(stockCode, "day", System.currentTimeMillis(), 1200);
                 if(CollectionUtils.isNotEmpty(tmpKLineDTOList)){
@@ -222,9 +231,10 @@ public class LocalStockDataManager {
     /**
      * 计算并保存单季利润数据
      */
-    private void getAndSaveQuarterIncome(){
+    private void getAndSaveQuarterIncome(String fileDate){
         try {
-            List<String> strList =FileUtils.readLines(new File(StockConstant.INCOME_LIST), Charset.forName("UTF-8"));
+            String incomeFileName =String.format(StockConstant.INCOME_LIST, fileDate);
+            List<String> strList =FileUtils.readLines(new File(incomeFileName), Charset.forName("UTF-8"));
             Map<String, List<XueQiuStockIncomeDTO>> codeIncomeMap = Optional.ofNullable(strList).orElse(Lists.newArrayList()).stream()
                     .map(str -> JSON.parseObject(str, XueQiuStockIncomeDTO.class))
                     .collect(Collectors.groupingBy(XueQiuStockIncomeDTO::getCode));
@@ -280,7 +290,9 @@ public class LocalStockDataManager {
                             .thenComparing(QuarterIncomeDTO::getReport_type).reversed())
                     .map(dto -> JSON.toJSONString(dto))
                     .collect(Collectors.toList());
-            FileUtils.writeLines(new File(StockConstant.INCOME_LIST_Q), strIncomeList, true);
+
+            String quarterIncomeFileName =String.format(StockConstant.INCOME_LIST_Q, fileDate);
+            FileUtils.writeLines(new File(quarterIncomeFileName), strIncomeList, true);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -479,15 +491,17 @@ public class LocalStockDataManager {
     /**
      * 负债表指标查询
      *
+     * @param fileDate
      * @param code
      * @param year
      * @param typeEnum
      * @return
      */
-    public XueQiuStockBalanceDTO getBalanceDTO(String code, Integer year, FinanceReportTypeEnum typeEnum){
+    public XueQiuStockBalanceDTO getBalanceDTO(String fileDate, String code, Integer year, FinanceReportTypeEnum typeEnum){
         try {
             if(CollectionUtils.isEmpty(balanceDTOList)){
-                List<String> strList =FileUtils.readLines(new File(StockConstant.BALANCE_LIST), Charset.forName("UTF-8"));
+                String fileName =String.format(StockConstant.BALANCE_LIST, fileDate);
+                List<String> strList =FileUtils.readLines(new File(fileName), Charset.forName("UTF-8"));
                 balanceDTOList = Optional.ofNullable(strList).orElse(Lists.newArrayList()).stream()
                         .map(str -> JSON.parseObject(str, XueQiuStockBalanceDTO.class))
                         .collect(Collectors.toList());
@@ -515,10 +529,11 @@ public class LocalStockDataManager {
      * @param typeEnum
      * @return
      */
-    public XueQiuStockIncomeDTO getIncomeDTO(String code, Integer year, FinanceReportTypeEnum typeEnum){
+    public XueQiuStockIncomeDTO getIncomeDTO(String fileDate, String code, Integer year, FinanceReportTypeEnum typeEnum){
         try {
             if(CollectionUtils.isEmpty(incomeDTOList)){
-                List<String> strList =FileUtils.readLines(new File(StockConstant.INCOME_LIST), Charset.forName("UTF-8"));
+                String fileName =String.format(StockConstant.INCOME_LIST, fileDate);
+                List<String> strList =FileUtils.readLines(new File(fileName), Charset.forName("UTF-8"));
                 incomeDTOList = Optional.ofNullable(strList).orElse(Lists.newArrayList()).stream()
                         .map(str -> JSON.parseObject(str, XueQiuStockIncomeDTO.class))
                         .collect(Collectors.toList());
@@ -544,10 +559,11 @@ public class LocalStockDataManager {
      * @param yearAndReportTypeList
      * @return
      */
-    public List<QuarterIncomeDTO> getQuarterIncomeDTO(String code, List<ImmutablePair<Integer, FinanceReportTypeEnum>> yearAndReportTypeList){
+    public List<QuarterIncomeDTO> getQuarterIncomeDTO(String fileDate, String code, List<ImmutablePair<Integer, FinanceReportTypeEnum>> yearAndReportTypeList){
         try {
             if(CollectionUtils.isEmpty(quarterIncomeDTOList)){
-                List<String> strList =FileUtils.readLines(new File(StockConstant.INCOME_LIST_Q), Charset.forName("UTF-8"));
+                String fileName =String.format(StockConstant.INCOME_LIST_Q, fileDate);
+                List<String> strList =FileUtils.readLines(new File(fileName), Charset.forName("UTF-8"));
                 quarterIncomeDTOList = Optional.ofNullable(strList).orElse(Lists.newArrayList()).stream()
                         .map(str -> JSON.parseObject(str, QuarterIncomeDTO.class))
                         .collect(Collectors.toList());
@@ -589,10 +605,11 @@ public class LocalStockDataManager {
      * @param typeEnum
      * @return
      */
-    public XueQiuStockCashFlowDTO getCashFlowDTO(String code, Integer year, FinanceReportTypeEnum typeEnum){
+    public XueQiuStockCashFlowDTO getCashFlowDTO(String fileDate, String code, Integer year, FinanceReportTypeEnum typeEnum){
         try {
             if(CollectionUtils.isEmpty(cashFlowDTOList)){
-                List<String> strList =FileUtils.readLines(new File(StockConstant.CASH_FLOW_LIST), Charset.forName("UTF-8"));
+                String fileName =String.format(StockConstant.CASH_FLOW_LIST, fileDate);
+                List<String> strList =FileUtils.readLines(new File(fileName), Charset.forName("UTF-8"));
                 cashFlowDTOList = Optional.ofNullable(strList).orElse(Lists.newArrayList()).stream()
                         .map(str -> JSON.parseObject(str, XueQiuStockCashFlowDTO.class))
                         .collect(Collectors.toList());
@@ -619,10 +636,11 @@ public class LocalStockDataManager {
      * @param typeEnum
      * @return
      */
-    public XueQiuStockIndicatorDTO getXQIndicatorDTO(String code, Integer year, FinanceReportTypeEnum typeEnum){
+    public XueQiuStockIndicatorDTO getXQIndicatorDTO(String fileDate, String code, Integer year, FinanceReportTypeEnum typeEnum){
         try {
             if(CollectionUtils.isEmpty(xqIndicatorDTOList)){
-                List<String> strList =FileUtils.readLines(new File(StockConstant.INDICATOR_LIST_XQ), Charset.forName("UTF-8"));
+                String fileName =String.format(StockConstant.INDICATOR_LIST_XQ, fileDate);
+                List<String> strList =FileUtils.readLines(new File(fileName), Charset.forName("UTF-8"));
                 xqIndicatorDTOList = Optional.ofNullable(strList).orElse(Lists.newArrayList()).stream()
                         .map(str -> JSON.parseObject(str, XueQiuStockIndicatorDTO.class))
                         .collect(Collectors.toList());
@@ -651,10 +669,10 @@ public class LocalStockDataManager {
      * @param count
      * @return
      */
-    public List<XueQiuStockKLineDTO> getKLineList(String code, KLineTypeEnum typeEnum, Integer count){
+    public List<XueQiuStockKLineDTO> getKLineList(String fileDate, String code, KLineTypeEnum typeEnum, Integer count){
         String klineListFileName = StringUtils.EMPTY;
         if(Objects.equals(typeEnum.getCode(), KLineTypeEnum.DAY.getCode())){
-            klineListFileName = String.format(StockConstant.KLINE_LIST_DAY, code);
+            klineListFileName = String.format(StockConstant.KLINE_LIST_DAY, fileDate, code);
         }
 
         File file = new File(klineListFileName);
