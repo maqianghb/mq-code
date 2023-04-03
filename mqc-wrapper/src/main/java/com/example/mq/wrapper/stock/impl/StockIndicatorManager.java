@@ -15,14 +15,18 @@ import org.assertj.core.util.Lists;
 
 import java.io.File;
 import java.lang.reflect.Field;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 
 public class StockIndicatorManager {
 
-    private static final String HEADER ="编码,名称,资产负债率,市盈率TTM,pe分位值,市净率,pb分位值,股东权益合计,净资产收益率TTM" +
+    private static final String HEADER ="编码,名称,K线日期,1月后股价波动,3月后股价波动,半年后股价波动,1年后股价波动" +
+            ",资产负债率,市盈率TTM,pe分位值,市净率,pb分位值,股东权益合计,净资产收益率TTM" +
             ",营业收入,营业成本,毛利率,净利率,当季毛利率,当季净利率,当季毛利率同比,当季净利率同比" +
             ",营收同比,净利润同比,当季营收同比,当季净利润同比,固定资产同比,在建工程同比,商誉+无形/总资产,现金等价物/短期负债,总市值,经营现金流入" +
             ",经营现金流入/营收,经营现金净额,净利润,经营现金净额/净利润,应付票据及应付账款" +
@@ -35,12 +39,16 @@ public class StockIndicatorManager {
         List<String> stockCodeList = localStockDataManager.getStockCodeList();
 //        List<String> stockCodeList = Arrays.asList("SZ002001", "SZ002415", "SZ002508", "SH600486", "SZ002507");
 
+        String kLineDate ="20220831";
+        Integer reportYear =2022;
+        FinanceReportTypeEnum reportTypeEnum =FinanceReportTypeEnum.HALF_YEAR;
+
         List<String> indicatorList =Lists.newArrayList();
         indicatorList.add(HEADER);
         for(String stockCode : stockCodeList){
             try {
                 AnalyseIndicatorElement indicatorElement = manager.getIndicatorElement(StockConstant.FILE_DATE
-                        , stockCode, 2022, FinanceReportTypeEnum.ALL_YEAR);
+                        , stockCode, reportYear, reportTypeEnum, kLineDate);
                 AnalyseIndicatorDTO analyseIndicatorDTO = manager.getAnalyseIndicatorDTO(indicatorElement);
                 manager.formatAnalyseIndicatorDTO(analyseIndicatorDTO);
 
@@ -62,7 +70,7 @@ public class StockIndicatorManager {
             DateTimeFormatter df =DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss");
             LocalDateTime localDateTime = LocalDateTime.now();//当前时间
             String strDateTime = df.format(localDateTime);//格式化为字符串
-            String analysisListName =String.format(StockConstant.INDICATOR_LIST_ANALYSIS, strDateTime);
+            String analysisListName =String.format(StockConstant.INDICATOR_LIST_ANALYSIS, kLineDate, strDateTime);
             FileUtils.writeLines(new File(analysisListName), "UTF-8", indicatorList, true);
         } catch (Exception e) {
             e.printStackTrace();
@@ -74,6 +82,22 @@ public class StockIndicatorManager {
     private void formatAnalyseIndicatorDTO(AnalyseIndicatorDTO analyseIndicatorDTO){
         if(analyseIndicatorDTO ==null){
             return ;
+        }
+
+        if(analyseIndicatorDTO.getOne_month_price_change() !=null){
+            analyseIndicatorDTO.setOne_month_price_change(NumberUtil.format(analyseIndicatorDTO.getOne_month_price_change(), 3));
+        }
+
+        if(analyseIndicatorDTO.getThree_month_price_change() !=null){
+            analyseIndicatorDTO.setThree_month_price_change(NumberUtil.format(analyseIndicatorDTO.getThree_month_price_change(), 3));
+        }
+
+        if(analyseIndicatorDTO.getHalf_year_price_change() !=null){
+            analyseIndicatorDTO.setHalf_year_price_change(NumberUtil.format(analyseIndicatorDTO.getHalf_year_price_change(), 3));
+        }
+
+        if(analyseIndicatorDTO.getOne_year_price_change() !=null){
+            analyseIndicatorDTO.setOne_year_price_change(NumberUtil.format(analyseIndicatorDTO.getOne_year_price_change(), 3));
         }
 
         if(analyseIndicatorDTO.getAsset_liab_ratio() !=null){
@@ -181,11 +205,34 @@ public class StockIndicatorManager {
         }
     }
 
-    private AnalyseIndicatorElement getIndicatorElement(String fileDate, String code, Integer year, FinanceReportTypeEnum typeEnum){
+    private AnalyseIndicatorElement getIndicatorElement(String fileDate, String code, Integer year, FinanceReportTypeEnum typeEnum
+            , String kLineDate){
         AnalyseIndicatorElement indicatorElement =new AnalyseIndicatorElement();
         indicatorElement.setCode(code);
         indicatorElement.setReportYear(year);
         indicatorElement.setReportType(typeEnum.getCode());
+        indicatorElement.setKLineDate(kLineDate);
+
+        this.assembleFinanceElement(indicatorElement, fileDate, code, year, typeEnum);
+        this.assembleKLineElement(indicatorElement, fileDate, code, kLineDate);
+
+        return indicatorElement;
+    }
+
+    /**
+     * 财务分析源数据
+     *
+     * @param indicatorElement
+     * @param fileDate
+     * @param code
+     * @param year
+     * @param typeEnum
+     */
+    private void assembleFinanceElement(AnalyseIndicatorElement indicatorElement, String fileDate, String code
+            , Integer year, FinanceReportTypeEnum typeEnum){
+        if(indicatorElement ==null || year==null || typeEnum ==null){
+            return ;
+        }
 
         LocalStockDataManager localStockDataManager =new LocalStockDataManager();
         XueQiuStockBalanceDTO balanceDTO = localStockDataManager.getBalanceDTO(fileDate, code, year, typeEnum);
@@ -228,11 +275,6 @@ public class StockIndicatorManager {
             indicatorElement.setCurIndicatorDTO(indicatorDTO);
         }
 
-        List<XueQiuStockKLineDTO> kLineDTOList = localStockDataManager.getKLineList(fileDate, code, KLineTypeEnum.DAY, 1000);
-        if(CollectionUtils.isNotEmpty(kLineDTOList)){
-            indicatorElement.setKLineDTOList(kLineDTOList);
-        }
-
         List<ImmutablePair<Integer, FinanceReportTypeEnum>> immutablePairList =Lists.newArrayList();
         String curQuarterType =StringUtils.EMPTY;
         if(Objects.equals(typeEnum.getCode(), FinanceReportTypeEnum.QUARTER_1.getCode())){
@@ -271,6 +313,7 @@ public class StockIndicatorManager {
         List<QuarterIncomeDTO> quarterIncomeDTOList = localStockDataManager.getQuarterIncomeDTO(fileDate, code, immutablePairList);
         if(CollectionUtils.isNotEmpty(quarterIncomeDTOList)){
             indicatorElement.setQuarterIncomeDTOList(quarterIncomeDTOList);
+
             for(QuarterIncomeDTO quarterIncomeDTO : quarterIncomeDTOList){
                 if(Objects.equals(quarterIncomeDTO.getReport_year(), year)
                         && Objects.equals(quarterIncomeDTO.getReport_type(), curQuarterType)){
@@ -284,12 +327,77 @@ public class StockIndicatorManager {
             }
         }
 
-        return indicatorElement;
+    }
+
+    /**
+     * k线源数据
+     *
+     * @param indicatorElement
+     * @param fileDate
+     * @param code
+     * @param kLineDate
+     */
+    private void assembleKLineElement(AnalyseIndicatorElement indicatorElement, String fileDate, String code, String kLineDate){
+        if(indicatorElement ==null || StringUtils.isBlank(fileDate) || StringUtils.isBlank(code) || StringUtils.isBlank(kLineDate)){
+            return;
+        }
+
+        DateTimeFormatter df =DateTimeFormatter.ofPattern("yyyyMMdd");
+        LocalDateTime kLineDateTime = LocalDate.parse(kLineDate, df).atStartOfDay();
+
+        LocalStockDataManager localStockDataManager =new LocalStockDataManager();
+        List<XueQiuStockKLineDTO> kLineDTOList = localStockDataManager.getKLineList(fileDate, code, kLineDateTime, KLineTypeEnum.DAY, 1000);
+        if(CollectionUtils.isNotEmpty(kLineDTOList)){
+            indicatorElement.setKLineDTOList(kLineDTOList);
+        }
+
+
+        LocalDateTime oneMonthDateTime = kLineDateTime.plusMonths(1);
+        List<XueQiuStockKLineDTO> oneMonthKLineDTOList = localStockDataManager.getKLineList(fileDate, code, oneMonthDateTime, KLineTypeEnum.DAY, 1);
+        if(CollectionUtils.isNotEmpty(oneMonthKLineDTOList)){
+            XueQiuStockKLineDTO oneMonthKLineDTO = oneMonthKLineDTOList.get(0);
+            LocalDateTime oneMonthKLineDateTime = LocalDateTime.ofEpochSecond(oneMonthKLineDTO.getTimestamp() / 1000, 0, ZoneOffset.ofHours(8));
+            if(StringUtils.equals(oneMonthDateTime.format(df), oneMonthKLineDateTime.format(df))){
+                indicatorElement.setOneMonthKLineDTO(oneMonthKLineDTOList.get(0));
+            }
+        }
+
+        LocalDateTime threeMonthDateTime = kLineDateTime.plusMonths(3);
+        List<XueQiuStockKLineDTO> threeMonthKLineDTOList = localStockDataManager.getKLineList(fileDate, code, threeMonthDateTime, KLineTypeEnum.DAY, 1);
+        if(CollectionUtils.isNotEmpty(threeMonthKLineDTOList)){
+            XueQiuStockKLineDTO threeMonthKLineDTO = threeMonthKLineDTOList.get(0);
+            LocalDateTime threeMonthKLineDateTime = LocalDateTime.ofEpochSecond(threeMonthKLineDTO.getTimestamp() / 1000, 0, ZoneOffset.ofHours(8));
+            if(StringUtils.equals(threeMonthDateTime.format(df), threeMonthKLineDateTime.format(df))) {
+                indicatorElement.setThreeMonthKLineDTO(threeMonthKLineDTOList.get(0));
+            }
+        }
+
+        LocalDateTime halfYearDateTime = kLineDateTime.plusMonths(6);
+        List<XueQiuStockKLineDTO> halfYearKLineDTOList = localStockDataManager.getKLineList(fileDate, code, halfYearDateTime, KLineTypeEnum.DAY, 1);
+        if(CollectionUtils.isNotEmpty(halfYearKLineDTOList)){
+            XueQiuStockKLineDTO halfYearKLineDTO = halfYearKLineDTOList.get(0);
+            LocalDateTime halfYearKLineDateTime = LocalDateTime.ofEpochSecond(halfYearKLineDTO.getTimestamp() / 1000, 0, ZoneOffset.ofHours(8));
+            if(StringUtils.equals(halfYearDateTime.format(df), halfYearKLineDateTime.format(df))) {
+                indicatorElement.setHalfYearKLineDTO(halfYearKLineDTOList.get(0));
+            }
+        }
+
+        LocalDateTime oneYearDateTime = kLineDateTime.plusYears(1);
+        List<XueQiuStockKLineDTO> oneYearKLineDTOList = localStockDataManager.getKLineList(fileDate, code, oneYearDateTime, KLineTypeEnum.DAY, 1);
+        if(CollectionUtils.isNotEmpty(oneYearKLineDTOList)){
+            XueQiuStockKLineDTO oneYearKLineDTO = oneYearKLineDTOList.get(0);
+            LocalDateTime oneYearKLineDateTime = LocalDateTime.ofEpochSecond(oneYearKLineDTO.getTimestamp() / 1000, 0, ZoneOffset.ofHours(8));
+            if(StringUtils.equals(oneYearDateTime.format(df), oneYearKLineDateTime.format(df))) {
+                indicatorElement.setOneYearKLineDTO(oneYearKLineDTOList.get(0));
+            }
+        }
+
     }
 
     private AnalyseIndicatorDTO getAnalyseIndicatorDTO(AnalyseIndicatorElement indicatorElement){
         JSONObject jsonIndicator =new JSONObject();
         jsonIndicator.put("code", indicatorElement.getCode());
+        jsonIndicator.put("kLineDate", indicatorElement.getKLineDate());
 
         if(indicatorElement.getCurBalanceDTO() !=null){
             JSONObject jsonObject = JSON.parseObject(JSON.toJSONString(indicatorElement.getCurBalanceDTO()));
@@ -320,17 +428,18 @@ public class StockIndicatorManager {
         }
 
         if(CollectionUtils.isNotEmpty(indicatorElement.getKLineDTOList())){
-            XueQiuStockKLineDTO curKLineDTO = indicatorElement.getKLineDTOList().stream()
+            XueQiuStockKLineDTO queryDateKLineDTO = indicatorElement.getKLineDTOList().stream()
                     .sorted(Comparator.comparing(XueQiuStockKLineDTO::getTimestamp).reversed())
                     .collect(Collectors.toList())
                     .get(0);
-            JSONObject jsonObject = JSON.parseObject(JSON.toJSONString(curKLineDTO));
+            JSONObject jsonObject = JSON.parseObject(JSON.toJSONString(queryDateKLineDTO));
             for(String key : jsonObject.keySet()){
                 jsonIndicator.put(key, jsonObject.getString(key));
             }
         }
 
         AnalyseIndicatorDTO indicatorDTO = JSON.parseObject(JSON.toJSONString(jsonIndicator), AnalyseIndicatorDTO.class);
+
         this.assembleAnalyseIndicator(indicatorDTO, indicatorElement);
 
         System.out.println("indicatorDTO: " + JSON.toJSONString(indicatorDTO));
@@ -341,18 +450,21 @@ public class StockIndicatorManager {
         if(indicatorDTO ==null){
             return ;
         }
+
         if(indicatorDTO.getPe_p_1000() ==null){
             Double pe_p_1000 =this.getPeP1000Value(indicatorDTO, indicatorElement);
             if(pe_p_1000 !=null){
                 indicatorDTO.setPe_p_1000(pe_p_1000);
             }
         }
+
         if(indicatorDTO.getPb_p_1000() ==null){
             Double pb_p_1000 =this.getPbP1000Value(indicatorDTO, indicatorElement);
             if(pb_p_1000 !=null){
                 indicatorDTO.setPb_p_1000(pb_p_1000);
             }
         }
+
         if(indicatorDTO.getAvg_roe_ttm() ==null){
             Double avg_roe_ttm =this.getAvgRoeTtm(indicatorDTO, indicatorElement);
             if(avg_roe_ttm !=null){
@@ -484,6 +596,32 @@ public class StockIndicatorManager {
                 double st_loan = curBalanceDTO.getSt_loan() != null ? curBalanceDTO.getSt_loan() : 0.01;
                 double tradable_fnncl_liab = curBalanceDTO.getTradable_fnncl_liab() != null ? curBalanceDTO.getTradable_fnncl_liab() : 0;
                 indicatorDTO.setCash_sl_rate((currency_funds +tradable_fnncl_assets)/(st_loan + tradable_fnncl_liab));
+            }
+        }
+
+        XueQiuStockKLineDTO queryDateKLineDTO = Optional.ofNullable(indicatorElement.getKLineDTOList()).orElse(Lists.newArrayList()).stream()
+                .sorted(Comparator.comparing(XueQiuStockKLineDTO::getTimestamp).reversed())
+                .findFirst()
+                .orElse(null);
+        if(queryDateKLineDTO !=null && queryDateKLineDTO.getClose() !=null && queryDateKLineDTO.getClose() !=0){
+            XueQiuStockKLineDTO oneMonthKLineDTO = indicatorElement.getOneMonthKLineDTO();
+            if(oneMonthKLineDTO !=null && oneMonthKLineDTO.getClose() !=null){
+                indicatorDTO.setOne_month_price_change( oneMonthKLineDTO.getClose()/queryDateKLineDTO.getClose() -1);
+            }
+
+            XueQiuStockKLineDTO threeMonthKLineDTO = indicatorElement.getThreeMonthKLineDTO();
+            if(threeMonthKLineDTO !=null && threeMonthKLineDTO.getClose() !=null){
+                indicatorDTO.setThree_month_price_change( threeMonthKLineDTO.getClose()/queryDateKLineDTO.getClose() -1);
+            }
+
+            XueQiuStockKLineDTO halfYearKLineDTO = indicatorElement.getHalfYearKLineDTO();
+            if(halfYearKLineDTO !=null && halfYearKLineDTO.getClose() !=null){
+                indicatorDTO.setHalf_year_price_change( halfYearKLineDTO.getClose()/queryDateKLineDTO.getClose() -1);
+            }
+
+            XueQiuStockKLineDTO oneYearKLineDTO = indicatorElement.getOneYearKLineDTO();
+            if(oneYearKLineDTO !=null && oneYearKLineDTO.getClose() !=null){
+                indicatorDTO.setOne_year_price_change( oneYearKLineDTO.getClose()/queryDateKLineDTO.getClose() -1);
             }
         }
 

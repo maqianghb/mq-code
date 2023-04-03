@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.example.mq.common.utils.CloseableHttpClientUtil;
 import com.example.mq.wrapper.stock.constant.StockConstant;
+import com.example.mq.wrapper.stock.enums.FinanceReportTypeEnum;
 import com.example.mq.wrapper.stock.model.*;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -247,16 +248,16 @@ public class XueQiuStockManager {
         String reportType =StringUtils.EMPTY;
         switch (month){
             case 3:
-                reportType ="1季报";
+                reportType = FinanceReportTypeEnum.QUARTER_1.getCode();
                 break;
             case 6:
-                reportType ="中报";
+                reportType = FinanceReportTypeEnum.HALF_YEAR.getCode();
                 break;
             case 9:
-                reportType ="3季报";
+                reportType = FinanceReportTypeEnum.QUARTER_3.getCode();
                 break;
             case 12:
-                reportType ="年报";
+                reportType = FinanceReportTypeEnum.ALL_YEAR.getCode();
                 break;
             default:
                 break;

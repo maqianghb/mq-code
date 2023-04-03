@@ -15,6 +15,8 @@ import org.springframework.beans.BeanUtils;
 
 import java.io.File;
 import java.nio.charset.Charset;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -256,29 +258,29 @@ public class LocalStockDataManager {
                     Map<String, XueQiuStockIncomeDTO> reportTypeMap = Optional.ofNullable(yearEntry.getValue()).orElse(Lists.newArrayList()).stream()
                             .collect(Collectors.toMap(XueQiuStockIncomeDTO::getReport_type, dto -> dto, (val1, val2) -> val1));
 
-                    XueQiuStockIncomeDTO incomeDTO1 = reportTypeMap.get("1季报");
-                    XueQiuStockIncomeDTO incomeDTO2 = reportTypeMap.get("中报");
-                    XueQiuStockIncomeDTO incomeDTO3 = reportTypeMap.get("3季报");
-                    XueQiuStockIncomeDTO incomeDTO4 = reportTypeMap.get("年报");
+                    XueQiuStockIncomeDTO incomeDTO1 = reportTypeMap.get(FinanceReportTypeEnum.QUARTER_1.getCode());
+                    XueQiuStockIncomeDTO incomeDTO2 = reportTypeMap.get(FinanceReportTypeEnum.HALF_YEAR.getCode());
+                    XueQiuStockIncomeDTO incomeDTO3 = reportTypeMap.get(FinanceReportTypeEnum.QUARTER_3.getCode());
+                    XueQiuStockIncomeDTO incomeDTO4 = reportTypeMap.get(FinanceReportTypeEnum.ALL_YEAR.getCode());
                     if(incomeDTO1 !=null){
                         QuarterIncomeDTO quarterIncomeDTO =new QuarterIncomeDTO();
                         BeanUtils.copyProperties(incomeDTO1, quarterIncomeDTO);
-                        quarterIncomeDTO.setReport_type("Q1");
+                        quarterIncomeDTO.setReport_type(FinanceReportTypeEnum.SINGLE_Q_1.getCode());
                         quarterIncomeDTOList.add(quarterIncomeDTO);
                     }
                     if(incomeDTO1 !=null && incomeDTO2 !=null){
                         QuarterIncomeDTO quarterIncomeDTO = this.getQuarterIncomeDTO(incomeDTO1, incomeDTO2);
-                        quarterIncomeDTO.setReport_type("Q2");
+                        quarterIncomeDTO.setReport_type(FinanceReportTypeEnum.SINGLE_Q_2.getCode());
                         quarterIncomeDTOList.add(quarterIncomeDTO);
                     }
                     if(incomeDTO2 !=null && incomeDTO3 !=null){
                         QuarterIncomeDTO quarterIncomeDTO = this.getQuarterIncomeDTO(incomeDTO2, incomeDTO3);
-                        quarterIncomeDTO.setReport_type("Q3");
+                        quarterIncomeDTO.setReport_type(FinanceReportTypeEnum.SINGLE_Q_3.getCode());
                         quarterIncomeDTOList.add(quarterIncomeDTO);
                     }
                     if(incomeDTO3 !=null && incomeDTO4 !=null){
                         QuarterIncomeDTO quarterIncomeDTO = this.getQuarterIncomeDTO(incomeDTO3, incomeDTO4);
-                        quarterIncomeDTO.setReport_type("Q4");
+                        quarterIncomeDTO.setReport_type(FinanceReportTypeEnum.SINGLE_Q_4.getCode());
                         quarterIncomeDTOList.add(quarterIncomeDTO);
                     }
                 }
@@ -664,16 +666,20 @@ public class LocalStockDataManager {
     /**
      * K线指标查询
      *
+     * @param fileDate
      * @param code
+     * @param klineDateTime k线日期
      * @param typeEnum
-     * @param count
+     * @param count    截止到k线日期的查询数量
      * @return
      */
-    public List<XueQiuStockKLineDTO> getKLineList(String fileDate, String code, KLineTypeEnum typeEnum, Integer count){
+    public List<XueQiuStockKLineDTO> getKLineList(String fileDate, String code, LocalDateTime klineDateTime, KLineTypeEnum typeEnum, Integer count){
         String klineListFileName = StringUtils.EMPTY;
         if(Objects.equals(typeEnum.getCode(), KLineTypeEnum.DAY.getCode())){
             klineListFileName = String.format(StockConstant.KLINE_LIST_DAY, fileDate, code);
         }
+
+        long queryDateMills = klineDateTime.toInstant(ZoneOffset.of("+8")).toEpochMilli();
 
         File file = new File(klineListFileName);
         if(!file.exists()){
@@ -684,6 +690,7 @@ public class LocalStockDataManager {
             List<String> strList =FileUtils.readLines(file, Charset.forName("UTF-8"));
             List<XueQiuStockKLineDTO> kLineDTOList = Optional.ofNullable(strList).orElse(Lists.newArrayList()).stream()
                     .map(str -> JSON.parseObject(str, XueQiuStockKLineDTO.class))
+                    .filter(klineDTO -> klineDTO.getTimestamp() !=null && klineDTO.getTimestamp() <=queryDateMills)
                     .sorted(Comparator.comparing(XueQiuStockKLineDTO::getTimestamp).reversed())
                     .collect(Collectors.toList());
             if(kLineDTOList.size() <=count){

@@ -9,6 +9,16 @@ public class AnalyseIndicatorDTO {
 
     private String name;
 
+    private String kLineDate;
+
+    private Double one_month_price_change;
+
+    private Double three_month_price_change;
+
+    private Double half_year_price_change;
+
+    private Double one_year_price_change;
+
     /**
      * 资产负债率
      */

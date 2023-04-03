@@ -13,6 +13,8 @@ public class AnalyseIndicatorElement {
 
     private String reportType;
 
+    private String kLineDate;
+
     private XueQiuStockBalanceDTO curBalanceDTO;
 
     private XueQiuStockBalanceDTO lastSamePeriodBalanceDTO;
@@ -27,8 +29,6 @@ public class AnalyseIndicatorElement {
 
     private XueQiuStockCashFlowDTO lastYearCashFlowDTO;
 
-    private List<XueQiuStockKLineDTO> kLineDTOList;
-
     private XueQiuStockIndicatorDTO curIndicatorDTO;
 
     private List<QuarterIncomeDTO> quarterIncomeDTOList;
@@ -36,5 +36,15 @@ public class AnalyseIndicatorElement {
     private QuarterIncomeDTO curQuarterIncomeDTO;
 
     private QuarterIncomeDTO lastSamePeriodQuarterIncomeDTO;
+
+    private List<XueQiuStockKLineDTO> kLineDTOList;
+
+    private XueQiuStockKLineDTO oneMonthKLineDTO;
+
+    private XueQiuStockKLineDTO threeMonthKLineDTO;
+
+    private XueQiuStockKLineDTO halfYearKLineDTO;
+
+    private XueQiuStockKLineDTO oneYearKLineDTO;
 
 }
