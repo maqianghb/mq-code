@@ -22,7 +22,7 @@ public class StockConstant {
     public static final String SZ_STOCK_CODE_LIST ="E:/stock_data/stock_code_2_sz.txt";
     public static final String CYB_STOCK_CODE_LIST ="E:/stock_data/stock_code_3_cyb.txt";
 
-    public static final String INDICATOR_LIST_ANALYSIS ="E:/stock_data/indicator_list_analysis_%s_%s.csv";
+    public static final String INDICATOR_LIST_ANALYSIS ="E:/stock_data/analysis_%s_%s.csv";
 
     public static final String KLINE_LIST_DAY ="E:/stock_data/xq_k_line_%s/k_line_list_day_%s.txt";
 
