@@ -86,6 +86,4 @@ public class XueQiuStockKLineDTO {
      */
     private Double market_capital;
 
-
-
 }

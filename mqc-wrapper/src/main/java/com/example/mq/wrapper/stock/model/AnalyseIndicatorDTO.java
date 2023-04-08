@@ -125,7 +125,7 @@ public class AnalyseIndicatorDTO {
     private Double construction_in_process_sum_inc;
 
     /**
-     * 商誉+无形资产/总资产
+     * 商誉+无形资产/净资产
      */
     private Double gw_ia_assert_rate;
 

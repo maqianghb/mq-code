@@ -38,9 +38,9 @@ public class StockIndicatorManager {
         List<String> stockCodeList = localStockDataManager.getStockCodeList();
 //        List<String> stockCodeList = Arrays.asList("SZ002001", "SZ002415", "SZ002508", "SH600486", "SZ002507");
 
-        String kLineDate ="20221031";
+        String kLineDate ="20220831";
         Integer reportYear =2022;
-        FinanceReportTypeEnum reportTypeEnum =FinanceReportTypeEnum.QUARTER_3;
+        FinanceReportTypeEnum reportTypeEnum =FinanceReportTypeEnum.HALF_YEAR;
 
         // 获取全部指标数据
         List<AnalyseIndicatorDTO> allIndicatorDTOList =Lists.newArrayList();
@@ -108,9 +108,10 @@ public class StockIndicatorManager {
                 .filter(indicatorDTO -> StringUtils.isNoneBlank(indicatorDTO.getName()) && !indicatorDTO.getName().contains("ST"))
                 .filter(indicatorDTO -> indicatorDTO.getRevenue() !=null)
                 .filter(indicatorDTO -> indicatorDTO.getPb_p_1000() !=null && indicatorDTO.getPb_p_1000() <=0.3)
-                .filter(indicatorDTO -> indicatorDTO.getAvg_roe_ttm() !=null && indicatorDTO.getAvg_roe_ttm() >=0.09)
+                .filter(indicatorDTO -> indicatorDTO.getAvg_roe_ttm() !=null && indicatorDTO.getAvg_roe_ttm() >=0.09 && indicatorDTO.getAvg_roe_ttm() <0.5)
                 .filter(indicatorDTO -> indicatorDTO.getGross_margin_rate() !=null && indicatorDTO.getGross_margin_rate() >=0.1)
                 .filter(indicatorDTO -> indicatorDTO.getNet_selling_rate() !=null && indicatorDTO.getNet_selling_rate() >=0.05)
+                .filter(indicatorDTO -> indicatorDTO.getOperating_income_yoy() !=null && indicatorDTO.getOperating_income_yoy() <=2)
                 .filter(indicatorDTO -> indicatorDTO.getGw_ia_assert_rate() !=null && indicatorDTO.getGw_ia_assert_rate() <=0.3)
                 .filter(indicatorDTO -> indicatorDTO.getReceivable_turnover_days() !=null && indicatorDTO.getReceivable_turnover_days() <=300)
                 .filter(indicatorDTO -> indicatorDTO.getInventory_turnover_days() !=null && indicatorDTO.getInventory_turnover_days() <=1500)
@@ -135,7 +136,7 @@ public class StockIndicatorManager {
                         matchNum ++;
                     }
 
-                    return matchNum >=2;
+                    return matchNum >=1;
                 })
                 .collect(Collectors.toList());
     }
@@ -649,8 +650,8 @@ public class StockIndicatorManager {
             if(curBalanceDTO !=null){
                 Double goodwill = curBalanceDTO.getGoodwill() !=null ? curBalanceDTO.getGoodwill() : 0;
                 Double intangible_assets = curBalanceDTO.getIntangible_assets() !=null ? curBalanceDTO.getIntangible_assets() : 0;
-                Double total_assets = curBalanceDTO.getTotal_assets() !=null ? curBalanceDTO.getTotal_assets() : 0.01;
-                indicatorDTO.setGw_ia_assert_rate((goodwill+intangible_assets)/total_assets);
+                Double total_holders_equity = curBalanceDTO.getTotal_holders_equity() !=null ? curBalanceDTO.getTotal_holders_equity() : 0.01;
+                indicatorDTO.setGw_ia_assert_rate((goodwill+intangible_assets)/total_holders_equity);
             }
         }
 
