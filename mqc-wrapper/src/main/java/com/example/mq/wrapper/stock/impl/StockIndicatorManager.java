@@ -27,7 +27,7 @@ public class StockIndicatorManager {
     private static final String HEADER ="编码,名称,K线日期,1月后股价波动,3月后股价波动,半年后股价波动,1年后股价波动" +
             ",资产负债率,市盈率TTM,pe分位值,市净率,pb分位值,股东权益合计,净资产收益率TTM" +
             ",营业收入,营业成本,毛利率,净利率,当季毛利率,当季净利率,当季毛利率同比,当季净利率同比" +
-            ",营收同比,净利润同比,当季营收同比,当季净利润同比,固定资产同比,在建工程同比,商誉+无形/总资产,现金等价物/短期负债,总市值,经营现金流入" +
+            ",营收同比,净利润同比,当季营收同比,当季净利润同比,固定资产同比,在建工程同比,商誉+无形/净资产,现金等价物/短期负债,总市值,经营现金流入" +
             ",经营现金流入/营收,经营现金净额,净利润,经营现金净额/净利润,应付票据及应付账款" +
             ",应收票据及应收账款,应付票据及应付账款/应收票据及应收账款,应收账款周转天数,存货周转天数";
 
@@ -38,18 +38,23 @@ public class StockIndicatorManager {
         List<String> stockCodeList = localStockDataManager.getStockCodeList();
 //        List<String> stockCodeList = Arrays.asList("SZ002001", "SZ002415", "SZ002508", "SH600486", "SZ002507");
 
-        String kLineDate ="20220831";
-        Integer reportYear =2022;
-        FinanceReportTypeEnum reportTypeEnum =FinanceReportTypeEnum.HALF_YEAR;
+        String kLineDate = "20221031";
+        Integer reportYear = 2022;
+        FinanceReportTypeEnum reportTypeEnum =FinanceReportTypeEnum.QUARTER_3;
+        manager.getAndSaveAllAnalysisDTO(stockCodeList, kLineDate, reportYear, reportTypeEnum);
 
+        manager.filterAndSaveAnalysisDTO(stockCodeList, kLineDate, reportYear, reportTypeEnum);
+    }
+
+    private void filterAndSaveAnalysisDTO(List<String> stockCodeList, String kLineDate, Integer reportYear, FinanceReportTypeEnum reportTypeEnum){
         // 获取全部指标数据
         List<AnalyseIndicatorDTO> allIndicatorDTOList =Lists.newArrayList();
         for(String stockCode : stockCodeList){
             try {
-                AnalyseIndicatorElement indicatorElement = manager.getIndicatorElement(StockConstant.FILE_DATE
+                AnalyseIndicatorElement indicatorElement = this.getIndicatorElement(StockConstant.FILE_DATE
                         , stockCode, reportYear, reportTypeEnum, kLineDate);
-                AnalyseIndicatorDTO analyseIndicatorDTO = manager.getAnalyseIndicatorDTO(indicatorElement);
-                manager.formatAnalyseIndicatorDTO(analyseIndicatorDTO);
+                AnalyseIndicatorDTO analyseIndicatorDTO = this.getAnalyseIndicatorDTO(indicatorElement);
+                this.formatAnalyseIndicatorDTO(analyseIndicatorDTO);
 
                 allIndicatorDTOList.add(analyseIndicatorDTO);
             } catch (Exception e) {
@@ -59,12 +64,282 @@ public class StockIndicatorManager {
         }
 
         // 筛选合适的数据
-        List<AnalyseIndicatorDTO> filterIndicatorDTOList = manager.filterByIndicator(allIndicatorDTOList);
+        List<AnalyseIndicatorDTO> filterIndicatorDTOList = this.filterByIndicator(allIndicatorDTOList);
+        filterIndicatorDTOList =Optional.ofNullable(filterIndicatorDTOList).orElse(Lists.newArrayList()).stream()
+                .sorted(Comparator.comparing(AnalyseIndicatorDTO::getPb_p_1000))
+                .collect(Collectors.toList());
 
         // 生成结果
         List<String> strIndicatorList =Lists.newArrayList();
         strIndicatorList.add(HEADER);
         for(AnalyseIndicatorDTO indicatorDTO : filterIndicatorDTOList){
+            try {
+                Field[] fields = AnalyseIndicatorDTO.class.getDeclaredFields();
+                JSONObject jsonObject = JSON.parseObject(JSON.toJSONString(indicatorDTO));
+                StringBuilder indicatorBuilder =new StringBuilder();
+                for(Field field : fields){
+                    Object value = jsonObject.get(field.getName ());
+                    indicatorBuilder.append(",").append(value);
+                }
+                strIndicatorList.add(indicatorBuilder.toString().substring(1));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        // 记录结果
+        try {
+            DateTimeFormatter df =DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss");
+            LocalDateTime localDateTime = LocalDateTime.now();//当前时间
+            String strDateTime = df.format(localDateTime);//格式化为字符串
+            String filterListName =String.format(StockConstant.INDICATOR_LIST_FILTER, kLineDate, strDateTime);
+            FileUtils.writeLines(new File(filterListName), "UTF-8", strIndicatorList, true);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        System.out.println("indicatorList: "+ JSON.toJSONString(strIndicatorList));
+    }
+
+    /**
+     * 筛选数据
+     *
+     * @param indicatorDTOList
+     * @return
+     */
+    private void getAndSaveIndicatorDTOPercent(String kLineDate, List<AnalyseIndicatorDTO> indicatorDTOList) {
+        if(StringUtils.isBlank(kLineDate) || CollectionUtils.isEmpty(indicatorDTOList)){
+            return ;
+        }
+
+        String header ="指标,10分位,25分位,50分位,75分位,90分位";
+        List<String> strPercentList =Lists.newArrayList();
+        strPercentList.add(header);
+
+        List<Double> avg_roe_ttm_list = indicatorDTOList.stream()
+                .filter(indicatorDTO -> indicatorDTO.getAvg_roe_ttm() !=null)
+                .sorted(Comparator.comparing(AnalyseIndicatorDTO::getAvg_roe_ttm))
+                .map(AnalyseIndicatorDTO::getAvg_roe_ttm)
+                .collect(Collectors.toList());
+        int totalSize =avg_roe_ttm_list.size();
+        String msg = new StringBuilder().append("ROE_TTM")
+                .append(",").append(avg_roe_ttm_list.get(totalSize*10/100))
+                .append(",").append(avg_roe_ttm_list.get(totalSize*25/100))
+                .append(",").append(avg_roe_ttm_list.get(totalSize*50/100))
+                .append(",").append(avg_roe_ttm_list.get(totalSize*75/100))
+                .append(",").append(avg_roe_ttm_list.get(totalSize*90/100))
+                .toString();
+        strPercentList.add(msg);
+
+        List<Double> gross_margin_rate_list = indicatorDTOList.stream()
+                .filter(indicatorDTO -> indicatorDTO.getGross_margin_rate() !=null)
+                .sorted(Comparator.comparing(AnalyseIndicatorDTO::getGross_margin_rate))
+                .map(AnalyseIndicatorDTO::getGross_margin_rate)
+                .collect(Collectors.toList());
+        totalSize =gross_margin_rate_list.size();
+        msg = new StringBuilder().append("毛利率")
+                .append(",").append(gross_margin_rate_list.get(totalSize*10/100))
+                .append(",").append(gross_margin_rate_list.get(totalSize*25/100))
+                .append(",").append(gross_margin_rate_list.get(totalSize*50/100))
+                .append(",").append(gross_margin_rate_list.get(totalSize*75/100))
+                .append(",").append(gross_margin_rate_list.get(totalSize*90/100))
+                .toString();
+        strPercentList.add(msg);
+
+        List<Double> net_selling_rate_list = indicatorDTOList.stream()
+                .filter(indicatorDTO -> indicatorDTO.getNet_selling_rate() !=null)
+                .sorted(Comparator.comparing(AnalyseIndicatorDTO::getNet_selling_rate))
+                .map(AnalyseIndicatorDTO::getNet_selling_rate)
+                .collect(Collectors.toList());
+        totalSize =net_selling_rate_list.size();
+        msg = new StringBuilder().append("净利率")
+                .append(",").append(net_selling_rate_list.get(totalSize*10/100))
+                .append(",").append(net_selling_rate_list.get(totalSize*25/100))
+                .append(",").append(net_selling_rate_list.get(totalSize*50/100))
+                .append(",").append(net_selling_rate_list.get(totalSize*75/100))
+                .append(",").append(net_selling_rate_list.get(totalSize*90/100))
+                .toString();
+        strPercentList.add(msg);
+
+        List<Double> operating_income_yoy_list = indicatorDTOList.stream()
+                .filter(indicatorDTO -> indicatorDTO.getOperating_income_yoy() !=null)
+                .sorted(Comparator.comparing(AnalyseIndicatorDTO::getOperating_income_yoy))
+                .map(AnalyseIndicatorDTO::getOperating_income_yoy)
+                .collect(Collectors.toList());
+        totalSize =operating_income_yoy_list.size();
+        msg = new StringBuilder().append("营收同比")
+                .append(",").append(operating_income_yoy_list.get(totalSize*10/100))
+                .append(",").append(operating_income_yoy_list.get(totalSize*25/100))
+                .append(",").append(operating_income_yoy_list.get(totalSize*50/100))
+                .append(",").append(operating_income_yoy_list.get(totalSize*75/100))
+                .append(",").append(operating_income_yoy_list.get(totalSize*90/100))
+                .toString();
+        strPercentList.add(msg);
+
+        List<Double> net_profit_atsopc_yoy_list = indicatorDTOList.stream()
+                .filter(indicatorDTO -> indicatorDTO.getNet_profit_atsopc_yoy() !=null)
+                .sorted(Comparator.comparing(AnalyseIndicatorDTO::getNet_profit_atsopc_yoy))
+                .map(AnalyseIndicatorDTO::getNet_profit_atsopc_yoy)
+                .collect(Collectors.toList());
+        totalSize =net_profit_atsopc_yoy_list.size();
+        msg = new StringBuilder().append("净利润同比")
+                .append(",").append(net_profit_atsopc_yoy_list.get(totalSize*10/100))
+                .append(",").append(net_profit_atsopc_yoy_list.get(totalSize*25/100))
+                .append(",").append(net_profit_atsopc_yoy_list.get(totalSize*50/100))
+                .append(",").append(net_profit_atsopc_yoy_list.get(totalSize*75/100))
+                .append(",").append(net_profit_atsopc_yoy_list.get(totalSize*90/100))
+                .toString();
+        strPercentList.add(msg);
+
+        List<Double> cur_q_gross_margin_rate_list = indicatorDTOList.stream()
+                .filter(indicatorDTO -> indicatorDTO.getCur_q_gross_margin_rate() !=null)
+                .sorted(Comparator.comparing(AnalyseIndicatorDTO::getCur_q_gross_margin_rate))
+                .map(AnalyseIndicatorDTO::getCur_q_gross_margin_rate)
+                .collect(Collectors.toList());
+        totalSize =gross_margin_rate_list.size();
+        msg = new StringBuilder().append("当季毛利率")
+                .append(",").append(cur_q_gross_margin_rate_list.get(totalSize*10/100))
+                .append(",").append(cur_q_gross_margin_rate_list.get(totalSize*25/100))
+                .append(",").append(cur_q_gross_margin_rate_list.get(totalSize*50/100))
+                .append(",").append(cur_q_gross_margin_rate_list.get(totalSize*75/100))
+                .append(",").append(cur_q_gross_margin_rate_list.get(totalSize*90/100))
+                .toString();
+        strPercentList.add(msg);
+
+        List<Double> cur_q_net_selling_rate_list = indicatorDTOList.stream()
+                .filter(indicatorDTO -> indicatorDTO.getCur_q_net_selling_rate() !=null)
+                .sorted(Comparator.comparing(AnalyseIndicatorDTO::getCur_q_net_selling_rate))
+                .map(AnalyseIndicatorDTO::getCur_q_net_selling_rate)
+                .collect(Collectors.toList());
+        totalSize =cur_q_net_selling_rate_list.size();
+        msg = new StringBuilder().append("当季净利率")
+                .append(",").append(cur_q_net_selling_rate_list.get(totalSize*10/100))
+                .append(",").append(cur_q_net_selling_rate_list.get(totalSize*25/100))
+                .append(",").append(cur_q_net_selling_rate_list.get(totalSize*50/100))
+                .append(",").append(cur_q_net_selling_rate_list.get(totalSize*75/100))
+                .append(",").append(cur_q_net_selling_rate_list.get(totalSize*90/100))
+                .toString();
+        strPercentList.add(msg);
+
+        List<Double> cur_q_operating_income_yoy_list = indicatorDTOList.stream()
+                .filter(indicatorDTO -> indicatorDTO.getCur_q_operating_income_yoy() !=null)
+                .sorted(Comparator.comparing(AnalyseIndicatorDTO::getCur_q_operating_income_yoy))
+                .map(AnalyseIndicatorDTO::getCur_q_operating_income_yoy)
+                .collect(Collectors.toList());
+        totalSize =cur_q_operating_income_yoy_list.size();
+        msg = new StringBuilder().append("当季营收同比")
+                .append(",").append(cur_q_operating_income_yoy_list.get(totalSize*10/100))
+                .append(",").append(cur_q_operating_income_yoy_list.get(totalSize*25/100))
+                .append(",").append(cur_q_operating_income_yoy_list.get(totalSize*50/100))
+                .append(",").append(cur_q_operating_income_yoy_list.get(totalSize*75/100))
+                .append(",").append(cur_q_operating_income_yoy_list.get(totalSize*90/100))
+                .toString();
+        strPercentList.add(msg);
+
+        List<Double> cur_q_net_profit_atsopc_yoy_list = indicatorDTOList.stream()
+                .filter(indicatorDTO -> indicatorDTO.getCur_q_net_profit_atsopc_yoy() !=null)
+                .sorted(Comparator.comparing(AnalyseIndicatorDTO::getCur_q_net_profit_atsopc_yoy))
+                .map(AnalyseIndicatorDTO::getCur_q_net_profit_atsopc_yoy)
+                .collect(Collectors.toList());
+        totalSize =cur_q_net_profit_atsopc_yoy_list.size();
+        msg = new StringBuilder().append("当季净利润同比")
+                .append(",").append(cur_q_net_profit_atsopc_yoy_list.get(totalSize*10/100))
+                .append(",").append(cur_q_net_profit_atsopc_yoy_list.get(totalSize*25/100))
+                .append(",").append(cur_q_net_profit_atsopc_yoy_list.get(totalSize*50/100))
+                .append(",").append(cur_q_net_profit_atsopc_yoy_list.get(totalSize*75/100))
+                .append(",").append(cur_q_net_profit_atsopc_yoy_list.get(totalSize*90/100))
+                .toString();
+        strPercentList.add(msg);
+
+        // 记录结果
+        try {
+            DateTimeFormatter df =DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss");
+            LocalDateTime localDateTime = LocalDateTime.now();//当前时间
+            String strDateTime = df.format(localDateTime);//格式化为字符串
+            String percentListName =String.format(StockConstant.INDICATOR_LIST_PERCENT, kLineDate, strDateTime);
+            FileUtils.writeLines(new File(percentListName), "UTF-8", strPercentList, true);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    /**
+     * 筛选数据
+     *
+     * @param indicatorDTOList
+     * @return
+     */
+    private List<AnalyseIndicatorDTO> filterByIndicator(List<AnalyseIndicatorDTO> indicatorDTOList){
+        if(CollectionUtils.isEmpty(indicatorDTOList)){
+            return Lists.newArrayList();
+        }
+
+        return indicatorDTOList.stream()
+                .filter(indicatorDTO -> StringUtils.isNoneBlank(indicatorDTO.getName()) && !indicatorDTO.getName().contains("ST"))
+                .filter(indicatorDTO -> indicatorDTO.getRevenue() !=null)
+                .filter(indicatorDTO -> indicatorDTO.getPb_p_1000() !=null && indicatorDTO.getPb_p_1000() <=0.25)
+                .filter(indicatorDTO -> indicatorDTO.getAvg_roe_ttm() !=null && indicatorDTO.getAvg_roe_ttm() >=0.08 && indicatorDTO.getAvg_roe_ttm() <0.5)
+                .filter(indicatorDTO -> indicatorDTO.getGross_margin_rate() !=null && indicatorDTO.getGross_margin_rate() >=0.1)
+                .filter(indicatorDTO -> indicatorDTO.getNet_selling_rate() !=null && indicatorDTO.getNet_selling_rate() >=0.05)
+                .filter(indicatorDTO -> indicatorDTO.getOperating_income_yoy() !=null && indicatorDTO.getOperating_income_yoy() <=2)
+                .filter(indicatorDTO -> indicatorDTO.getGw_ia_assert_rate() !=null && indicatorDTO.getGw_ia_assert_rate() <=0.3)
+                .filter(indicatorDTO -> indicatorDTO.getReceivable_turnover_days() !=null && indicatorDTO.getReceivable_turnover_days() <=300)
+                .filter(indicatorDTO -> indicatorDTO.getInventory_turnover_days() !=null && indicatorDTO.getInventory_turnover_days() <=1500)
+                .filter(indicatorDTO -> {
+                    int matchNum =0;
+
+                    //ROE指标
+                    if(indicatorDTO.getAvg_roe_ttm() >=0.18){
+                        matchNum ++;
+                    }else if(indicatorDTO.getAvg_roe_ttm() >=0.12 && indicatorDTO.getAsset_liab_ratio() !=null && indicatorDTO.getAsset_liab_ratio() <=0.25){
+                        matchNum ++;
+                    }
+
+                    // 毛利率和净利率指标
+                    if(indicatorDTO.getGross_margin_rate() >=0.35 && indicatorDTO.getNet_selling_rate() >=0.15){
+                        matchNum ++;
+                    }
+
+                    // 营收和利润增长指标
+                    if(indicatorDTO.getOperating_income_yoy() !=null && indicatorDTO.getOperating_income_yoy() >=0.15
+                            && indicatorDTO.getNet_profit_atsopc_yoy() !=null && indicatorDTO.getNet_profit_atsopc_yoy() >=0.15){
+                        matchNum ++;
+                    }
+
+                    return matchNum >=1;
+                })
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * 全量的分析数据
+     *
+     * @param kLineDate
+     * @param reportYear
+     * @param reportTypeEnum
+     */
+    private void getAndSaveAllAnalysisDTO(List<String> stockCodeList, String kLineDate, Integer reportYear, FinanceReportTypeEnum reportTypeEnum){
+        // 获取全部指标数据
+        List<AnalyseIndicatorDTO> allIndicatorDTOList =Lists.newArrayList();
+        for(String stockCode : stockCodeList){
+            try {
+                AnalyseIndicatorElement indicatorElement = this.getIndicatorElement(StockConstant.FILE_DATE
+                        , stockCode, reportYear, reportTypeEnum, kLineDate);
+                AnalyseIndicatorDTO analyseIndicatorDTO = this.getAnalyseIndicatorDTO(indicatorElement);
+                this.formatAnalyseIndicatorDTO(analyseIndicatorDTO);
+
+                allIndicatorDTOList.add(analyseIndicatorDTO);
+            } catch (Exception e) {
+                System.out.println("errCode: " + stockCode);
+                e.printStackTrace();
+            }
+        }
+
+        // 生成结果
+        List<String> strIndicatorList =Lists.newArrayList();
+        strIndicatorList.add(HEADER);
+        for(AnalyseIndicatorDTO indicatorDTO : allIndicatorDTOList){
             try {
                 Field[] fields = AnalyseIndicatorDTO.class.getDeclaredFields();
                 JSONObject jsonObject = JSON.parseObject(JSON.toJSONString(indicatorDTO));
@@ -90,55 +365,10 @@ public class StockIndicatorManager {
             e.printStackTrace();
         }
 
+        // 统计百分位数据
+        this.getAndSaveIndicatorDTOPercent(kLineDate, allIndicatorDTOList);
+
         System.out.println("indicatorList: "+ JSON.toJSONString(strIndicatorList));
-    }
-
-    /**
-     * 筛选数据
-     *
-     * @param indicatorDTOList
-     * @return
-     */
-    private List<AnalyseIndicatorDTO> filterByIndicator(List<AnalyseIndicatorDTO> indicatorDTOList){
-        if(CollectionUtils.isEmpty(indicatorDTOList)){
-            return Lists.newArrayList();
-        }
-
-        return indicatorDTOList.stream()
-                .filter(indicatorDTO -> StringUtils.isNoneBlank(indicatorDTO.getName()) && !indicatorDTO.getName().contains("ST"))
-                .filter(indicatorDTO -> indicatorDTO.getRevenue() !=null)
-                .filter(indicatorDTO -> indicatorDTO.getPb_p_1000() !=null && indicatorDTO.getPb_p_1000() <=0.3)
-                .filter(indicatorDTO -> indicatorDTO.getAvg_roe_ttm() !=null && indicatorDTO.getAvg_roe_ttm() >=0.09 && indicatorDTO.getAvg_roe_ttm() <0.5)
-                .filter(indicatorDTO -> indicatorDTO.getGross_margin_rate() !=null && indicatorDTO.getGross_margin_rate() >=0.1)
-                .filter(indicatorDTO -> indicatorDTO.getNet_selling_rate() !=null && indicatorDTO.getNet_selling_rate() >=0.05)
-                .filter(indicatorDTO -> indicatorDTO.getOperating_income_yoy() !=null && indicatorDTO.getOperating_income_yoy() <=2)
-                .filter(indicatorDTO -> indicatorDTO.getGw_ia_assert_rate() !=null && indicatorDTO.getGw_ia_assert_rate() <=0.3)
-                .filter(indicatorDTO -> indicatorDTO.getReceivable_turnover_days() !=null && indicatorDTO.getReceivable_turnover_days() <=300)
-                .filter(indicatorDTO -> indicatorDTO.getInventory_turnover_days() !=null && indicatorDTO.getInventory_turnover_days() <=1500)
-                .filter(indicatorDTO -> {
-                    int matchNum =0;
-
-                    //ROE指标
-                    if(indicatorDTO.getAvg_roe_ttm() >=0.18){
-                        matchNum ++;
-                    }else if(indicatorDTO.getAvg_roe_ttm() >=0.12 && indicatorDTO.getAsset_liab_ratio() !=null && indicatorDTO.getAsset_liab_ratio() <=0.25){
-                        matchNum ++;
-                    }
-
-                    // 毛利率和净利率指标
-                    if(indicatorDTO.getGross_margin_rate() >=0.25 && indicatorDTO.getNet_selling_rate() >=0.15){
-                        matchNum ++;
-                    }
-
-                    // 营收和利润增长指标
-                    if(indicatorDTO.getOperating_income_yoy() !=null && indicatorDTO.getOperating_income_yoy() >=0.15
-                            && indicatorDTO.getNet_profit_atsopc_yoy() !=null && indicatorDTO.getNet_profit_atsopc_yoy() >=0.15){
-                        matchNum ++;
-                    }
-
-                    return matchNum >=1;
-                })
-                .collect(Collectors.toList());
     }
 
     /**
