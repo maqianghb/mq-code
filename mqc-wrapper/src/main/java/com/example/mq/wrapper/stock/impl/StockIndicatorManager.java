@@ -25,9 +25,9 @@ import java.util.stream.Collectors;
 public class StockIndicatorManager {
 
     private static final String HEADER ="编码,名称,K线日期,1月后股价波动,3月后股价波动,半年后股价波动,1年后股价波动" +
-            ",资产负债率,市盈率TTM,pe分位值,市净率,pb分位值,股东权益合计,净资产收益率TTM" +
+            ",总市值,资产负债率,市盈率TTM,pe分位值,市净率,pb分位值,股东权益合计,净资产收益率TTM" +
             ",营业收入,营业成本,毛利率,净利率,当季毛利率,当季净利率,当季毛利率同比,当季净利率同比" +
-            ",营收同比,净利润同比,当季营收同比,当季净利润同比,固定资产同比,在建工程同比,商誉+无形/净资产,现金等价物/短期负债,总市值,经营现金流入" +
+            ",营收同比,净利润同比,当季营收同比,当季净利润同比,固定资产同比,在建工程同比,商誉+无形/净资产,现金等价物/短期负债,经营现金流入" +
             ",经营现金流入/营收,经营现金净额,净利润,经营现金净额/净利润,应付票据及应付账款" +
             ",应收票据及应收账款,应付票据及应付账款/应收票据及应收账款,应收账款周转天数,存货周转天数";
 
@@ -43,9 +43,8 @@ public class StockIndicatorManager {
         FinanceReportTypeEnum reportTypeEnum =FinanceReportTypeEnum.QUARTER_1;
 
 //        manager.saveAndStatisticsAllAnalysisDTO(stockCodeList, kLineDate, reportYear, reportTypeEnum);
-
-        int matchNum =1;
-        manager.filterAndSaveAnalysisDTO(stockCodeList, kLineDate, reportYear, reportTypeEnum, matchNum);
+//        manager.filterAndSaveAnalysisDTO(stockCodeList, kLineDate, reportYear, reportTypeEnum, 1);
+        manager.filterAndSaveAnalysisDTO(stockCodeList, kLineDate, reportYear, reportTypeEnum, 2);
     }
 
     private void filterAndSaveAnalysisDTO(List<String> stockCodeList, String kLineDate, Integer reportYear, FinanceReportTypeEnum reportTypeEnum
