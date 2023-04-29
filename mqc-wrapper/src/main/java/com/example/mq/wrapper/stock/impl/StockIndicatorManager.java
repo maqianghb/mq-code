@@ -38,15 +38,18 @@ public class StockIndicatorManager {
         List<String> stockCodeList = localStockDataManager.getStockCodeList();
 //        List<String> stockCodeList = Arrays.asList("SZ002001", "SZ002415", "SZ002508", "SH600486", "SZ002507");
 
-        String kLineDate = "20221031";
-        Integer reportYear = 2022;
-        FinanceReportTypeEnum reportTypeEnum =FinanceReportTypeEnum.QUARTER_3;
-        manager.getAndSaveAllAnalysisDTO(stockCodeList, kLineDate, reportYear, reportTypeEnum);
+        String kLineDate = "20230428";
+        Integer reportYear = 2023;
+        FinanceReportTypeEnum reportTypeEnum =FinanceReportTypeEnum.QUARTER_1;
 
-        manager.filterAndSaveAnalysisDTO(stockCodeList, kLineDate, reportYear, reportTypeEnum);
+//        manager.saveAndStatisticsAllAnalysisDTO(stockCodeList, kLineDate, reportYear, reportTypeEnum);
+
+        int matchNum =1;
+        manager.filterAndSaveAnalysisDTO(stockCodeList, kLineDate, reportYear, reportTypeEnum, matchNum);
     }
 
-    private void filterAndSaveAnalysisDTO(List<String> stockCodeList, String kLineDate, Integer reportYear, FinanceReportTypeEnum reportTypeEnum){
+    private void filterAndSaveAnalysisDTO(List<String> stockCodeList, String kLineDate, Integer reportYear, FinanceReportTypeEnum reportTypeEnum
+            , int matchNum){
         // 获取全部指标数据
         List<AnalyseIndicatorDTO> allIndicatorDTOList =Lists.newArrayList();
         for(String stockCode : stockCodeList){
@@ -64,7 +67,7 @@ public class StockIndicatorManager {
         }
 
         // 筛选合适的数据
-        List<AnalyseIndicatorDTO> filterIndicatorDTOList = this.filterByIndicator(allIndicatorDTOList);
+        List<AnalyseIndicatorDTO> filterIndicatorDTOList = this.filterByIndicator(allIndicatorDTOList, matchNum);
         filterIndicatorDTOList =Optional.ofNullable(filterIndicatorDTOList).orElse(Lists.newArrayList()).stream()
                 .sorted(Comparator.comparing(AnalyseIndicatorDTO::getPb_p_1000))
                 .collect(Collectors.toList());
@@ -251,6 +254,36 @@ public class StockIndicatorManager {
                 .toString();
         strPercentList.add(msg);
 
+        List<Double> receivable_turnover_days_list = indicatorDTOList.stream()
+                .filter(indicatorDTO -> indicatorDTO.getReceivable_turnover_days() !=null)
+                .sorted(Comparator.comparing(AnalyseIndicatorDTO::getReceivable_turnover_days))
+                .map(AnalyseIndicatorDTO::getReceivable_turnover_days)
+                .collect(Collectors.toList());
+        totalSize =receivable_turnover_days_list.size();
+        msg = new StringBuilder().append("应收周转天数")
+                .append(",").append(receivable_turnover_days_list.get(totalSize*10/100))
+                .append(",").append(receivable_turnover_days_list.get(totalSize*25/100))
+                .append(",").append(receivable_turnover_days_list.get(totalSize*50/100))
+                .append(",").append(receivable_turnover_days_list.get(totalSize*75/100))
+                .append(",").append(receivable_turnover_days_list.get(totalSize*90/100))
+                .toString();
+        strPercentList.add(msg);
+
+        List<Double> inventory_turnover_days_list = indicatorDTOList.stream()
+                .filter(indicatorDTO -> indicatorDTO.getInventory_turnover_days() !=null)
+                .sorted(Comparator.comparing(AnalyseIndicatorDTO::getInventory_turnover_days))
+                .map(AnalyseIndicatorDTO::getInventory_turnover_days)
+                .collect(Collectors.toList());
+        totalSize =inventory_turnover_days_list.size();
+        msg = new StringBuilder().append("存货周转天数")
+                .append(",").append(inventory_turnover_days_list.get(totalSize*10/100))
+                .append(",").append(inventory_turnover_days_list.get(totalSize*25/100))
+                .append(",").append(inventory_turnover_days_list.get(totalSize*50/100))
+                .append(",").append(inventory_turnover_days_list.get(totalSize*75/100))
+                .append(",").append(inventory_turnover_days_list.get(totalSize*90/100))
+                .toString();
+        strPercentList.add(msg);
+
         // 记录结果
         try {
             DateTimeFormatter df =DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss");
@@ -270,7 +303,7 @@ public class StockIndicatorManager {
      * @param indicatorDTOList
      * @return
      */
-    private List<AnalyseIndicatorDTO> filterByIndicator(List<AnalyseIndicatorDTO> indicatorDTOList){
+    private List<AnalyseIndicatorDTO> filterByIndicator(List<AnalyseIndicatorDTO> indicatorDTOList, int matchNum){
         if(CollectionUtils.isEmpty(indicatorDTOList)){
             return Lists.newArrayList();
         }
@@ -284,30 +317,34 @@ public class StockIndicatorManager {
                 .filter(indicatorDTO -> indicatorDTO.getNet_selling_rate() !=null && indicatorDTO.getNet_selling_rate() >=0.05)
                 .filter(indicatorDTO -> indicatorDTO.getOperating_income_yoy() !=null && indicatorDTO.getOperating_income_yoy() <=2)
                 .filter(indicatorDTO -> indicatorDTO.getGw_ia_assert_rate() !=null && indicatorDTO.getGw_ia_assert_rate() <=0.3)
-                .filter(indicatorDTO -> indicatorDTO.getReceivable_turnover_days() !=null && indicatorDTO.getReceivable_turnover_days() <=300)
-                .filter(indicatorDTO -> indicatorDTO.getInventory_turnover_days() !=null && indicatorDTO.getInventory_turnover_days() <=1500)
                 .filter(indicatorDTO -> {
-                    int matchNum =0;
+                    boolean result1 = indicatorDTO.getReceivable_turnover_days() !=null && indicatorDTO.getReceivable_turnover_days() <=200;
+                    boolean result2 = indicatorDTO.getInventory_turnover_days() !=null && indicatorDTO.getInventory_turnover_days() <=300;
+                    return result1 || result2;
+                })
+                .filter(indicatorDTO -> {
+                    int curMatchNum =0;
 
                     //ROE指标
-                    if(indicatorDTO.getAvg_roe_ttm() >=0.18){
-                        matchNum ++;
-                    }else if(indicatorDTO.getAvg_roe_ttm() >=0.12 && indicatorDTO.getAsset_liab_ratio() !=null && indicatorDTO.getAsset_liab_ratio() <=0.25){
-                        matchNum ++;
+                    if(indicatorDTO.getAvg_roe_ttm() >=0.16){
+                        curMatchNum ++;
+                    }else if(indicatorDTO.getAvg_roe_ttm() >=0.10
+                            && indicatorDTO.getAsset_liab_ratio() !=null && indicatorDTO.getAsset_liab_ratio() <=0.25){
+                        curMatchNum ++;
                     }
 
                     // 毛利率和净利率指标
-                    if(indicatorDTO.getGross_margin_rate() >=0.35 && indicatorDTO.getNet_selling_rate() >=0.15){
-                        matchNum ++;
+                    if(indicatorDTO.getGross_margin_rate() >=0.35 && indicatorDTO.getNet_selling_rate() >=0.12){
+                        curMatchNum ++;
                     }
 
                     // 营收和利润增长指标
                     if(indicatorDTO.getOperating_income_yoy() !=null && indicatorDTO.getOperating_income_yoy() >=0.15
                             && indicatorDTO.getNet_profit_atsopc_yoy() !=null && indicatorDTO.getNet_profit_atsopc_yoy() >=0.15){
-                        matchNum ++;
+                        curMatchNum ++;
                     }
 
-                    return matchNum >=1;
+                    return curMatchNum >=matchNum;
                 })
                 .collect(Collectors.toList());
     }
@@ -319,7 +356,7 @@ public class StockIndicatorManager {
      * @param reportYear
      * @param reportTypeEnum
      */
-    private void getAndSaveAllAnalysisDTO(List<String> stockCodeList, String kLineDate, Integer reportYear, FinanceReportTypeEnum reportTypeEnum){
+    private void saveAndStatisticsAllAnalysisDTO(List<String> stockCodeList, String kLineDate, Integer reportYear, FinanceReportTypeEnum reportTypeEnum){
         // 获取全部指标数据
         List<AnalyseIndicatorDTO> allIndicatorDTOList =Lists.newArrayList();
         for(String stockCode : stockCodeList){
@@ -833,7 +870,9 @@ public class StockIndicatorManager {
                 QuarterIncomeDTO lastYearQuarterIncomeDTO = indicatorElement.getLastSamePeriodQuarterIncomeDTO();
                 if(lastYearQuarterIncomeDTO !=null && lastYearQuarterIncomeDTO.getRevenue() !=null && lastYearQuarterIncomeDTO.getNet_profit() !=null){
                     double last_year_cur_q_net_selling_rate = lastYearQuarterIncomeDTO.getNet_profit()/lastYearQuarterIncomeDTO.getRevenue();
-                    indicatorDTO.setCur_q_net_selling_rate_change(cur_q_net_selling_rate /last_year_cur_q_net_selling_rate -1);
+                    double cur_q_net_selling_rate_change =(cur_q_net_selling_rate - cur_q_net_selling_rate)
+                            /Math.abs(last_year_cur_q_net_selling_rate);
+                    indicatorDTO.setCur_q_net_selling_rate_change(cur_q_net_selling_rate_change);
                 }
             }
         }
@@ -851,7 +890,9 @@ public class StockIndicatorManager {
             QuarterIncomeDTO curQuarterIncomeDTO = indicatorElement.getCurQuarterIncomeDTO();
             QuarterIncomeDTO lastYearQuarterIncomeDTO = indicatorElement.getLastSamePeriodQuarterIncomeDTO();
             if(curQuarterIncomeDTO !=null && lastYearQuarterIncomeDTO !=null){
-                indicatorDTO.setCur_q_net_profit_atsopc_yoy(curQuarterIncomeDTO.getNet_profit()/lastYearQuarterIncomeDTO.getNet_profit() -1);
+                double cur_q_net_profit_atsopc_yoy = (curQuarterIncomeDTO.getNet_profit()-lastYearQuarterIncomeDTO.getNet_profit())
+                        /Math.abs(lastYearQuarterIncomeDTO.getNet_profit());
+                indicatorDTO.setCur_q_net_profit_atsopc_yoy(cur_q_net_profit_atsopc_yoy);
             }
         }
 
