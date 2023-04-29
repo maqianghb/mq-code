@@ -870,7 +870,7 @@ public class StockIndicatorManager {
                 QuarterIncomeDTO lastYearQuarterIncomeDTO = indicatorElement.getLastSamePeriodQuarterIncomeDTO();
                 if(lastYearQuarterIncomeDTO !=null && lastYearQuarterIncomeDTO.getRevenue() !=null && lastYearQuarterIncomeDTO.getNet_profit() !=null){
                     double last_year_cur_q_net_selling_rate = lastYearQuarterIncomeDTO.getNet_profit()/lastYearQuarterIncomeDTO.getRevenue();
-                    double cur_q_net_selling_rate_change =(cur_q_net_selling_rate - cur_q_net_selling_rate)
+                    double cur_q_net_selling_rate_change =(cur_q_net_selling_rate - last_year_cur_q_net_selling_rate)
                             /Math.abs(last_year_cur_q_net_selling_rate);
                     indicatorDTO.setCur_q_net_selling_rate_change(cur_q_net_selling_rate_change);
                 }
