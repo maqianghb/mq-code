@@ -5,10 +5,6 @@ import lombok.Data;
 @Data
 public class AnalyseIndicatorDTO {
 
-    private String code;
-
-    private String name;
-
     private String kLineDate;
 
     private Double one_month_price_change;
@@ -18,6 +14,40 @@ public class AnalyseIndicatorDTO {
     private Double half_year_price_change;
 
     private Double one_year_price_change;
+
+    /**
+     * 股东权益合计
+     */
+    private Double total_holders_equity;
+
+    /**
+     * 营业收入
+     */
+    private Double revenue;
+
+    /**
+     * 营业成本
+     */
+    private Double operating_cost;
+
+    /**
+     * 经营活动现金流入小计
+     */
+    private Double sub_total_of_ci_from_oa;
+
+    /**
+     * 经营活动产生的现金流量净额
+     */
+    private Double ncf_from_oa;
+
+    /**
+     * 净利润
+     */
+    private Double net_profit_atsopc;
+
+    private String code;
+
+    private String name;
 
     /**
      * 总市值
@@ -50,24 +80,9 @@ public class AnalyseIndicatorDTO {
     private Double pb_p_1000;
 
     /**
-     * 股东权益合计
-     */
-    private Double total_holders_equity;
-
-    /**
      * 净资产收益率TTM
      */
     private Double avg_roe_ttm;
-
-    /**
-     * 营业收入
-     */
-    private Double revenue;
-
-    /**
-     * 营业成本
-     */
-    private Double operating_cost;
 
     /**
      * 销售毛利率
@@ -140,24 +155,9 @@ public class AnalyseIndicatorDTO {
     private Double cash_sl_rate;
 
     /**
-     * 经营活动现金流入小计
-     */
-    private Double sub_total_of_ci_from_oa;
-
-    /**
      * 经营活动现金流入小计/营业收入
      */
     private Double ci_oi_rate;
-
-    /**
-     * 经营活动产生的现金流量净额
-     */
-    private Double ncf_from_oa;
-
-    /**
-     * 净利润
-     */
-    private Double net_profit_atsopc;
 
     /**
      * 经营活动产生的现金流量净额/净利润
