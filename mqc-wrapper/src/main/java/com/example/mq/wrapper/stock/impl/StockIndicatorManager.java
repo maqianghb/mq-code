@@ -43,13 +43,14 @@ public class StockIndicatorManager {
         Integer reportYear = 2023;
         FinanceReportTypeEnum reportTypeEnum =FinanceReportTypeEnum.QUARTER_1;
 
-        manager.saveAndStatisticsAllAnalysisDTO(stockCodeList, kLineDate, reportYear, reportTypeEnum);
-        manager.filterAndSaveAnalysisDTO(stockCodeList, kLineDate, reportYear, reportTypeEnum, 1);
-        manager.filterAndSaveAnalysisDTO(stockCodeList, kLineDate, reportYear, reportTypeEnum, 2);
+        manager.saveAndStatisticsAllAnalysisDTO(kLineDate, stockCodeList, reportYear, reportTypeEnum);
     }
 
-    private void filterAndSaveAnalysisDTO(List<String> stockCodeList, String kLineDate, Integer reportYear, FinanceReportTypeEnum reportTypeEnum
-            , int matchNum){
+    /**
+     * 全量的分析数据
+     *
+     */
+    private void saveAndStatisticsAllAnalysisDTO(String kLineDate, List<String> stockCodeList, Integer reportYear, FinanceReportTypeEnum reportTypeEnum){
         // 获取全部指标数据
         List<AnalyseIndicatorDTO> allIndicatorDTOList =Lists.newArrayList();
         for(String stockCode : stockCodeList){
@@ -66,16 +67,10 @@ public class StockIndicatorManager {
             }
         }
 
-        // 筛选合适的数据
-        List<AnalyseIndicatorDTO> filterIndicatorDTOList = this.filterByIndicator(allIndicatorDTOList, matchNum);
-        filterIndicatorDTOList =Optional.ofNullable(filterIndicatorDTOList).orElse(Lists.newArrayList()).stream()
-                .sorted(Comparator.comparing(AnalyseIndicatorDTO::getPb_p_1000))
-                .collect(Collectors.toList());
-
         // 生成结果
         List<String> strIndicatorList =Lists.newArrayList();
         strIndicatorList.add(HEADER);
-        for(AnalyseIndicatorDTO indicatorDTO : filterIndicatorDTOList){
+        for(AnalyseIndicatorDTO indicatorDTO : allIndicatorDTOList){
             try {
                 Field[] fields = AnalyseIndicatorDTO.class.getDeclaredFields();
                 JSONObject jsonObject = JSON.parseObject(JSON.toJSONString(indicatorDTO));
@@ -95,13 +90,20 @@ public class StockIndicatorManager {
             DateTimeFormatter df =DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss");
             LocalDateTime localDateTime = LocalDateTime.now();//当前时间
             String strDateTime = df.format(localDateTime);//格式化为字符串
-            String filterListName =String.format(StockConstant.INDICATOR_LIST_FILTER, kLineDate, strDateTime);
-            FileUtils.writeLines(new File(filterListName), "UTF-8", strIndicatorList, true);
+            String analysisListName =String.format(StockConstant.INDICATOR_LIST_ANALYSIS, kLineDate, strDateTime);
+            FileUtils.writeLines(new File(analysisListName), "UTF-8", strIndicatorList, true);
         } catch (Exception e) {
             e.printStackTrace();
         }
 
         System.out.println("indicatorList: "+ JSON.toJSONString(strIndicatorList));
+
+        // 统计百分位数据
+        this.getAndSaveIndicatorDTOPercent(kLineDate, allIndicatorDTOList);
+
+        // 按指标筛选数据
+        this.filterAndSaveAnalysisDTO(kLineDate, allIndicatorDTOList, 1);
+        this.filterAndSaveAnalysisDTO(kLineDate, allIndicatorDTOList, 2);
     }
 
     /**
@@ -297,6 +299,45 @@ public class StockIndicatorManager {
 
     }
 
+    private void filterAndSaveAnalysisDTO(String kLineDate, List<AnalyseIndicatorDTO> allIndicatorDTOList, int matchNum){
+        // 筛选合适的数据
+        List<AnalyseIndicatorDTO> filterIndicatorDTOList = this.filterByIndicator(allIndicatorDTOList, matchNum);
+        filterIndicatorDTOList =Optional.ofNullable(filterIndicatorDTOList).orElse(Lists.newArrayList()).stream()
+                .sorted(Comparator.comparing(AnalyseIndicatorDTO::getPb_p_1000))
+                .collect(Collectors.toList());
+
+        // 生成结果
+        List<String> strIndicatorList =Lists.newArrayList();
+        strIndicatorList.add(HEADER);
+        for(AnalyseIndicatorDTO indicatorDTO : filterIndicatorDTOList){
+            try {
+                Field[] fields = AnalyseIndicatorDTO.class.getDeclaredFields();
+                JSONObject jsonObject = JSON.parseObject(JSON.toJSONString(indicatorDTO));
+                StringBuilder indicatorBuilder =new StringBuilder();
+                for(Field field : fields){
+                    Object value = jsonObject.get(field.getName ());
+                    indicatorBuilder.append(",").append(value);
+                }
+                strIndicatorList.add(indicatorBuilder.toString().substring(1));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        // 记录结果
+        try {
+            DateTimeFormatter df =DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss");
+            LocalDateTime localDateTime = LocalDateTime.now();//当前时间
+            String strDateTime = df.format(localDateTime);//格式化为字符串
+            String filterListName =String.format(StockConstant.INDICATOR_LIST_FILTER, kLineDate, matchNum, strDateTime);
+            FileUtils.writeLines(new File(filterListName), "UTF-8", strIndicatorList, true);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        System.out.println("indicatorList: "+ JSON.toJSONString(strIndicatorList));
+    }
+
     /**
      * 筛选数据
      *
@@ -347,65 +388,6 @@ public class StockIndicatorManager {
                     return curMatchNum >=matchNum;
                 })
                 .collect(Collectors.toList());
-    }
-
-    /**
-     * 全量的分析数据
-     *
-     * @param kLineDate
-     * @param reportYear
-     * @param reportTypeEnum
-     */
-    private void saveAndStatisticsAllAnalysisDTO(List<String> stockCodeList, String kLineDate, Integer reportYear, FinanceReportTypeEnum reportTypeEnum){
-        // 获取全部指标数据
-        List<AnalyseIndicatorDTO> allIndicatorDTOList =Lists.newArrayList();
-        for(String stockCode : stockCodeList){
-            try {
-                AnalyseIndicatorElement indicatorElement = this.getIndicatorElement(StockConstant.FILE_DATE
-                        , stockCode, reportYear, reportTypeEnum, kLineDate);
-                AnalyseIndicatorDTO analyseIndicatorDTO = this.getAnalyseIndicatorDTO(indicatorElement);
-                this.formatAnalyseIndicatorDTO(analyseIndicatorDTO);
-
-                allIndicatorDTOList.add(analyseIndicatorDTO);
-            } catch (Exception e) {
-                System.out.println("errCode: " + stockCode);
-                e.printStackTrace();
-            }
-        }
-
-        // 生成结果
-        List<String> strIndicatorList =Lists.newArrayList();
-        strIndicatorList.add(HEADER);
-        for(AnalyseIndicatorDTO indicatorDTO : allIndicatorDTOList){
-            try {
-                Field[] fields = AnalyseIndicatorDTO.class.getDeclaredFields();
-                JSONObject jsonObject = JSON.parseObject(JSON.toJSONString(indicatorDTO));
-                StringBuilder indicatorBuilder =new StringBuilder();
-                for(Field field : fields){
-                    Object value = jsonObject.get(field.getName ());
-                    indicatorBuilder.append(",").append(value);
-                }
-                strIndicatorList.add(indicatorBuilder.toString().substring(1));
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-
-        // 记录结果
-        try {
-            DateTimeFormatter df =DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss");
-            LocalDateTime localDateTime = LocalDateTime.now();//当前时间
-            String strDateTime = df.format(localDateTime);//格式化为字符串
-            String analysisListName =String.format(StockConstant.INDICATOR_LIST_ANALYSIS, kLineDate, strDateTime);
-            FileUtils.writeLines(new File(analysisListName), "UTF-8", strIndicatorList, true);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        // 统计百分位数据
-        this.getAndSaveIndicatorDTOPercent(kLineDate, allIndicatorDTOList);
-
-        System.out.println("indicatorList: "+ JSON.toJSONString(strIndicatorList));
     }
 
     /**

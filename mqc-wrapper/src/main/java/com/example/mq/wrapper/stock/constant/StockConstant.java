@@ -33,7 +33,7 @@ public class StockConstant {
 
     public static final String INDICATOR_LIST_ANALYSIS ="E:/stock_data/analysis_%s_%s.csv";
     public static final String INDICATOR_LIST_PERCENT ="E:/stock_data/percent_%s_%s.csv";
-    public static final String INDICATOR_LIST_FILTER ="E:/stock_data/filter_%s_%s.csv";
+    public static final String INDICATOR_LIST_FILTER ="E:/stock_data/filter_%s_%d_%s.csv";
 
     public static final String KLINE_LIST_DAY ="E:/stock_data/xq_k_line_%s/k_line_list_day_%s.txt";
 
