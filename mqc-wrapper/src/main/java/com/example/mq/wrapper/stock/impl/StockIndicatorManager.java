@@ -351,6 +351,7 @@ public class StockIndicatorManager {
 
         return indicatorDTOList.stream()
                 .filter(indicatorDTO -> StringUtils.isNoneBlank(indicatorDTO.getName()) && !indicatorDTO.getName().contains("ST"))
+                .filter(indicatorDTO -> indicatorDTO.getMarket_capital() !=null && indicatorDTO.getMarket_capital() > (30* 10000* 10000))
                 .filter(indicatorDTO -> indicatorDTO.getRevenue() !=null)
                 .filter(indicatorDTO -> indicatorDTO.getPb_p_1000() !=null && indicatorDTO.getPb_p_1000() <=0.25)
                 .filter(indicatorDTO -> indicatorDTO.getAvg_roe_ttm() !=null && indicatorDTO.getAvg_roe_ttm() >=0.08 && indicatorDTO.getAvg_roe_ttm() <0.5)
@@ -966,7 +967,7 @@ public class StockIndicatorManager {
                         String str_net_profit_rate = NumberUtil.format(net_profit_rate*100, 1) + "%";
                         builder.append(str_net_profit_rate);
                     }
-                    builder.append(";");
+                    builder.append("; ");
                 }
                 indicatorDTO.setGross_net_rate_5_quarter(builder.toString());
             }
