@@ -25,7 +25,7 @@ import java.util.stream.Collectors;
 public class StockIndicatorManager {
 
     private static final String HEADER ="K线日期,1月后股价波动,3月后股价波动,半年后股价波动,1年后股价波动" +
-            ",股东权益合计,营业收入,营业成本,经营现金流入,经营现金净额,净利润"+
+            ",股东权益合计,营业收入,营业成本,经营现金流入,经营现金净额,净利润,K线数量"+
             ",近5季度的毛利率和净利率,编码,名称,总市值,资产负债率,市盈率TTM,pe分位值,市净率,pb分位值,净资产收益率TTM" +
             ",毛利率,净利率,当季毛利率,当季净利率,当季毛利率同比,当季净利率同比" +
             ",营收同比,净利润同比,当季营收同比,当季净利润同比,固定资产同比,在建工程同比,商誉+无形/净资产,现金等价物/短期负债" +
@@ -351,6 +351,7 @@ public class StockIndicatorManager {
 
         return indicatorDTOList.stream()
                 .filter(indicatorDTO -> StringUtils.isNoneBlank(indicatorDTO.getName()) && !indicatorDTO.getName().contains("ST"))
+                .filter(indicatorDTO -> indicatorDTO.getKLineSize() !=null && indicatorDTO.getKLineSize() > 400)
                 .filter(indicatorDTO -> indicatorDTO.getMarket_capital() !=null && indicatorDTO.getMarket_capital() > (30* 10000* 10000))
                 .filter(indicatorDTO -> indicatorDTO.getRevenue() !=null)
                 .filter(indicatorDTO -> indicatorDTO.getPb_p_1000() !=null && indicatorDTO.getPb_p_1000() <=0.25)
@@ -971,6 +972,11 @@ public class StockIndicatorManager {
                 }
                 indicatorDTO.setGross_net_rate_5_quarter(builder.toString());
             }
+        }
+
+        if(indicatorDTO.getKLineSize() ==null){
+            int klineSize = CollectionUtils.isNotEmpty(indicatorElement.getKLineDTOList()) ? indicatorElement.getKLineDTOList().size() : 0;
+            indicatorDTO.setKLineSize(klineSize);
         }
 
     }

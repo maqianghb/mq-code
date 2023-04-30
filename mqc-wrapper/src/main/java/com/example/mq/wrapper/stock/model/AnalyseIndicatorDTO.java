@@ -46,6 +46,11 @@ public class AnalyseIndicatorDTO {
     private Double net_profit_atsopc;
 
     /**
+     * KLine数量
+     */
+    private Integer kLineSize;
+
+    /**
      * 过去5个季度的毛利率和净利率
      */
     private String gross_net_rate_5_quarter;
