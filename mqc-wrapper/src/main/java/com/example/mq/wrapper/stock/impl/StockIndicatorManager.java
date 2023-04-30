@@ -26,11 +26,11 @@ public class StockIndicatorManager {
 
     private static final String HEADER ="K线日期,1月后股价波动,3月后股价波动,半年后股价波动,1年后股价波动" +
             ",股东权益合计,营业收入,营业成本,经营现金流入,经营现金净额,净利润,K线数量"+
-            ",近5季度的毛利率和净利率,编码,名称,总市值,资产负债率,市盈率TTM,pe分位值,市净率,pb分位值,净资产收益率TTM" +
+            ",编码,名称,总市值,资产负债率,市盈率TTM,pe分位值,市净率,pb分位值,净资产收益率TTM" +
             ",毛利率,净利率,当季毛利率,当季净利率,当季毛利率同比,当季净利率同比" +
             ",营收同比,净利润同比,当季营收同比,当季净利润同比,固定资产同比,在建工程同比,商誉+无形/净资产,现金等价物/短期负债" +
             ",经营现金流入/营收,经营现金净额/净利润,应付票据及应付账款" +
-            ",应收票据及应收账款,应付票据及应付账款/应收票据及应收账款,应收账款周转天数,存货周转天数";
+            ",应收票据及应收账款,应付票据及应付账款/应收票据及应收账款,应收账款周转天数,存货周转天数,近5季度的毛利率和净利率";
 
     public static void main(String[] args) {
         StockIndicatorManager manager =new StockIndicatorManager();
@@ -39,9 +39,9 @@ public class StockIndicatorManager {
         List<String> stockCodeList = localStockDataManager.getStockCodeList();
 //        List<String> stockCodeList = Arrays.asList("SZ002001", "SZ002415", "SZ002508", "SH600486", "SZ002507");
 
-        String kLineDate = "20230428";
-        Integer reportYear = 2023;
-        FinanceReportTypeEnum reportTypeEnum =FinanceReportTypeEnum.QUARTER_1;
+        String kLineDate = "20220831";
+        Integer reportYear = 2022;
+        FinanceReportTypeEnum reportTypeEnum =FinanceReportTypeEnum.HALF_YEAR;
 
         manager.saveAndStatisticsAllAnalysisDTO(kLineDate, stockCodeList, reportYear, reportTypeEnum);
     }
@@ -102,6 +102,7 @@ public class StockIndicatorManager {
         this.getAndSaveIndicatorDTOPercent(kLineDate, allIndicatorDTOList);
 
         // 按指标筛选数据
+        this.filterAndSaveAnalysisDTO(kLineDate, allIndicatorDTOList, 0);
         this.filterAndSaveAnalysisDTO(kLineDate, allIndicatorDTOList, 1);
         this.filterAndSaveAnalysisDTO(kLineDate, allIndicatorDTOList, 2);
     }
@@ -286,6 +287,21 @@ public class StockIndicatorManager {
                 .toString();
         strPercentList.add(msg);
 
+        List<Double> market_capital_list = indicatorDTOList.stream()
+                .filter(indicatorDTO -> indicatorDTO.getMarket_capital() !=null)
+                .sorted(Comparator.comparing(AnalyseIndicatorDTO::getMarket_capital))
+                .map(AnalyseIndicatorDTO::getMarket_capital)
+                .collect(Collectors.toList());
+        totalSize =market_capital_list.size();
+        msg = new StringBuilder().append("市值")
+                .append(",").append(market_capital_list.get(totalSize*10/100))
+                .append(",").append(inventory_turnover_days_list.get(totalSize*25/100))
+                .append(",").append(inventory_turnover_days_list.get(totalSize*50/100))
+                .append(",").append(inventory_turnover_days_list.get(totalSize*75/100))
+                .append(",").append(inventory_turnover_days_list.get(totalSize*90/100))
+                .toString();
+        strPercentList.add(msg);
+
         // 记录结果
         try {
             DateTimeFormatter df =DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss");
@@ -351,10 +367,10 @@ public class StockIndicatorManager {
 
         return indicatorDTOList.stream()
                 .filter(indicatorDTO -> StringUtils.isNoneBlank(indicatorDTO.getName()) && !indicatorDTO.getName().contains("ST"))
-                .filter(indicatorDTO -> indicatorDTO.getKLineSize() !=null && indicatorDTO.getKLineSize() > 400)
-                .filter(indicatorDTO -> indicatorDTO.getMarket_capital() !=null && indicatorDTO.getMarket_capital() > (30* 10000* 10000))
+                .filter(indicatorDTO -> indicatorDTO.getKLineSize() !=null && indicatorDTO.getKLineSize() > 500)
+                .filter(indicatorDTO -> indicatorDTO.getMarket_capital() !=null && indicatorDTO.getMarket_capital() >=20)
                 .filter(indicatorDTO -> indicatorDTO.getRevenue() !=null)
-                .filter(indicatorDTO -> indicatorDTO.getPb_p_1000() !=null && indicatorDTO.getPb_p_1000() <=0.25)
+                .filter(indicatorDTO -> indicatorDTO.getPb_p_1000() !=null && indicatorDTO.getPb_p_1000() <=0.3)
                 .filter(indicatorDTO -> indicatorDTO.getAvg_roe_ttm() !=null && indicatorDTO.getAvg_roe_ttm() >=0.08 && indicatorDTO.getAvg_roe_ttm() <0.5)
                 .filter(indicatorDTO -> indicatorDTO.getGross_margin_rate() !=null && indicatorDTO.getGross_margin_rate() >=0.1)
                 .filter(indicatorDTO -> indicatorDTO.getNet_selling_rate() !=null && indicatorDTO.getNet_selling_rate() >=0.05)

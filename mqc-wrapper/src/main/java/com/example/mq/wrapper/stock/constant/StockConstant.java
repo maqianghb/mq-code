@@ -31,6 +31,9 @@ public class StockConstant {
     public static final String SZ_STOCK_CODE_LIST ="E:/stock_data/stock_code_2_sz.txt";
     public static final String CYB_STOCK_CODE_LIST ="E:/stock_data/stock_code_3_cyb.txt";
 
+    public static final String STOCK_LIST_WHITE ="E:/stock_data/stock_list_white.txt";
+    public static final String STOCK_LIST_BLACK ="E:/stock_data/stock_list_black.txt";
+
     public static final String INDICATOR_LIST_ANALYSIS ="E:/stock_data/analysis_%s_%s.csv";
     public static final String INDICATOR_LIST_PERCENT ="E:/stock_data/percent_%s_%s.csv";
     public static final String INDICATOR_LIST_FILTER ="E:/stock_data/filter_%s_%d_%s.csv";

@@ -50,11 +50,6 @@ public class AnalyseIndicatorDTO {
      */
     private Integer kLineSize;
 
-    /**
-     * 过去5个季度的毛利率和净利率
-     */
-    private String gross_net_rate_5_quarter;
-
     private String code;
 
     private String name;
@@ -198,5 +193,10 @@ public class AnalyseIndicatorDTO {
      * 存货周转天数
      */
     private Double inventory_turnover_days;
+
+    /**
+     * 过去5个季度的毛利率和净利率
+     */
+    private String gross_net_rate_5_quarter;
 
 }
