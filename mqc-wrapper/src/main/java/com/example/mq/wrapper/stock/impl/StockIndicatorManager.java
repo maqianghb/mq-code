@@ -26,7 +26,7 @@ public class StockIndicatorManager {
 
     private static final String HEADER ="K线日期,1月后股价波动,3月后股价波动,半年后股价波动,1年后股价波动" +
             ",股东权益合计,营业收入,营业成本,经营现金流入,经营现金净额,净利润"+
-            ",编码,名称,总市值,资产负债率,市盈率TTM,pe分位值,市净率,pb分位值,净资产收益率TTM" +
+            ",编码,名称,近5季度的毛利率和净利率,总市值,资产负债率,市盈率TTM,pe分位值,市净率,pb分位值,净资产收益率TTM" +
             ",毛利率,净利率,当季毛利率,当季净利率,当季毛利率同比,当季净利率同比" +
             ",营收同比,净利润同比,当季营收同比,当季净利润同比,固定资产同比,在建工程同比,商誉+无形/净资产,现金等价物/短期负债" +
             ",经营现金流入/营收,经营现金净额/净利润,应付票据及应付账款" +
@@ -942,6 +942,33 @@ public class StockIndicatorManager {
             XueQiuStockKLineDTO oneYearKLineDTO = indicatorElement.getOneYearKLineDTO();
             if(oneYearKLineDTO !=null && oneYearKLineDTO.getClose() !=null){
                 indicatorDTO.setOne_year_price_change( oneYearKLineDTO.getClose()/queryDateKLineDTO.getClose() -1);
+            }
+        }
+
+        if(StringUtils.isBlank(indicatorDTO.getGross_net_rate_5_quarter())){
+            List<QuarterIncomeDTO> quarterIncomeDTOList = indicatorElement.getQuarterIncomeDTOList();
+            if(CollectionUtils.isNotEmpty(quarterIncomeDTOList)){
+                List<QuarterIncomeDTO> sortedQuarterDTOList = quarterIncomeDTOList.stream()
+                        .sorted(Comparator.comparing(QuarterIncomeDTO::getReport_year)
+                                .thenComparing(QuarterIncomeDTO::getReport_type).reversed())
+                        .collect(Collectors.toList());
+
+                StringBuilder builder =new StringBuilder();
+                for(QuarterIncomeDTO quarterIncomeDTO : sortedQuarterDTOList){
+                    if(quarterIncomeDTO.getTotal_revenue() !=null && quarterIncomeDTO.getOperating_cost() !=null){
+                        double gross_rate = 1- quarterIncomeDTO.getOperating_cost()/quarterIncomeDTO.getTotal_revenue();
+                        String str_gross_rate = NumberUtil.format(gross_rate*100, 1) + "%";
+                        builder.append(str_gross_rate);
+                    }
+                    builder.append("/");
+                    if(quarterIncomeDTO.getTotal_revenue() !=null && quarterIncomeDTO.getNet_profit() !=null){
+                        double net_profit_rate = quarterIncomeDTO.getNet_profit()/quarterIncomeDTO.getTotal_revenue();
+                        String str_net_profit_rate = NumberUtil.format(net_profit_rate*100, 1) + "%";
+                        builder.append(str_net_profit_rate);
+                    }
+                    builder.append(";");
+                }
+                indicatorDTO.setGross_net_rate_5_quarter(builder.toString());
             }
         }
 

@@ -50,6 +50,11 @@ public class AnalyseIndicatorDTO {
     private String name;
 
     /**
+     * 过去5个季度的毛利率和净利率
+     */
+    private String gross_net_rate_5_quarter;
+
+    /**
      * 总市值
      */
     private Double market_capital;

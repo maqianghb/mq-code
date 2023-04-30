@@ -31,6 +31,9 @@ public class AnalyseIndicatorElement {
 
     private XueQiuStockIndicatorDTO curIndicatorDTO;
 
+    /**
+     * 过去5个季度的单季利润数据
+     */
     private List<QuarterIncomeDTO> quarterIncomeDTOList;
 
     private QuarterIncomeDTO curQuarterIncomeDTO;
