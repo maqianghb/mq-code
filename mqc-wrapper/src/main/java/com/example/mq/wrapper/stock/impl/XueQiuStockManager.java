@@ -109,9 +109,9 @@ public class XueQiuStockManager {
                 })
                 .collect(Collectors.toList());
         balanceDTOList.forEach(balanceDTO -> {
-                    balanceDTO.setCode(code);
-                    balanceDTO.setName(stockName);
-                });
+            balanceDTO.setCode(code);
+            balanceDTO.setName(stockName);
+        });
         return balanceDTOList;
     }
 
@@ -227,6 +227,44 @@ public class XueQiuStockManager {
         });
 
         return indicatorDTOList;
+    }
+
+    /**
+     * 查询指标数据
+     *
+     * @param code 编码
+     * @return
+     */
+    public CompanyDTO queryCompanyDTO(String code) {
+        String url =new StringBuilder().append(StockConstant.COMPANY_URL)
+                .append("?symbol=").append(code)
+                .toString();
+
+        String strResult = CloseableHttpClientUtil.doGet(url, StockConstant.COOKIE);
+        String stockName =this.getStockName(strResult);
+
+        String ind_name = Optional.ofNullable(JSONObject.parseObject(strResult))
+                .map(jsonResult -> jsonResult.getJSONObject("data"))
+                .map(data -> data.getString("company"))
+                .map(strCompany -> JSON.parseObject(strCompany))
+                .map(jsonCompany -> jsonCompany.getJSONObject("affiliate_industry"))
+                .map(jsonIndustry -> jsonIndustry.getString("ind_name"))
+                .orElse(StringUtils.EMPTY);
+
+        String provincial_name = Optional.ofNullable(JSONObject.parseObject(strResult))
+                .map(jsonResult -> jsonResult.getJSONObject("data"))
+                .map(data -> data.getString("company"))
+                .map(strCompany -> JSON.parseObject(strCompany))
+                .map(jsonCompany -> jsonCompany.getString("provincial_name"))
+                .orElse(StringUtils.EMPTY);
+
+        CompanyDTO companyDTO =new CompanyDTO();
+        companyDTO.setCode(code);
+        companyDTO.setName(stockName);
+        companyDTO.setInd_name(ind_name);
+        companyDTO.setProvincial_name(provincial_name);
+
+        return companyDTO;
     }
 
     private String getStockName(String strResult){

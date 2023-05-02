@@ -15,6 +15,8 @@ public class AnalyseIndicatorElement {
 
     private String kLineDate;
 
+    private CompanyDTO companyDTO;
+
     private XueQiuStockBalanceDTO curBalanceDTO;
 
     private XueQiuStockBalanceDTO lastSamePeriodBalanceDTO;

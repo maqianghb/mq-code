@@ -55,6 +55,16 @@ public class AnalyseIndicatorDTO {
     private String name;
 
     /**
+     * 行业名称
+     */
+    private String ind_name;
+
+    /**
+     * 省份
+     */
+    private String provincial_name;
+
+    /**
      * 总市值
      */
     private Double market_capital;
@@ -88,6 +98,11 @@ public class AnalyseIndicatorDTO {
      * 净资产收益率TTM
      */
     private Double avg_roe_ttm;
+
+    /**
+     * 去掉现金后的ROE
+     */
+    private Double avg_roe_ttm_v1;
 
     /**
      * 销售毛利率

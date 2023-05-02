@@ -27,6 +27,7 @@ public class LocalStockDataManager {
     private static List<XueQiuStockCashFlowDTO> cashFlowDTOList =Lists.newArrayList();
     private static List<XueQiuStockIndicatorDTO> xqIndicatorDTOList =Lists.newArrayList();
     private static List<QuarterIncomeDTO> quarterIncomeDTOList =Lists.newArrayList();
+    private static List<CompanyDTO> companyDTOList =Lists.newArrayList();
 
 
     public static void main(String[] args) {
@@ -34,6 +35,8 @@ public class LocalStockDataManager {
 
         manager.queryAndSaveKLineList(StockConstant.FILE_DATE);
         manager.queryAndSaveFinanceList(StockConstant.FILE_DATE);
+
+//        manager.queryAndSaveCompanyDTO();
 
         System.out.println("end. ");
     }
@@ -143,7 +146,6 @@ public class LocalStockDataManager {
 
     /**
      * 查询并保存全网K线数据
-     *
      * @return
      */
     public void queryAndSaveKLineList(String fileDate) {
@@ -462,6 +464,39 @@ public class LocalStockDataManager {
     }
 
     /**
+     * 获取并保存公司信息
+     */
+    private void queryAndSaveCompanyDTO(){
+        List<String> stockCodeList = this.getStockCodeList();
+        if(CollectionUtils.isEmpty(stockCodeList)){
+            return;
+        }
+
+        XueQiuStockManager xueQiuStockManager =new XueQiuStockManager();
+
+        // 资产负债数据
+        try {
+            List<CompanyDTO> companyDTOList = Lists.newArrayList();
+            for(String stockCode : stockCodeList) {
+                CompanyDTO companyDTO = xueQiuStockManager.queryCompanyDTO(stockCode);
+                if (companyDTO !=null) {
+                    companyDTOList.add(companyDTO);
+                }
+            }
+
+            List<String> strCompanyDTOList = companyDTOList.stream()
+                    .sorted(Comparator.comparing(CompanyDTO::getCode))
+                    .map(balanceDTO -> JSON.toJSONString(balanceDTO))
+                    .collect(Collectors.toList());
+
+            String companyFileName =String.format(StockConstant.COMPANY_LIST);
+            FileUtils.writeLines(new File(companyFileName), strCompanyDTOList, true);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
      * 获取全部编码
      *
      * @return
@@ -703,6 +738,36 @@ public class LocalStockDataManager {
         }
 
         return Lists.newArrayList();
+    }
+
+
+    /**
+     * 公司信息查询
+     *
+     * @param code
+     * @return
+     */
+    public CompanyDTO getCompanyDTO(String code){
+        try {
+            if(CollectionUtils.isEmpty(companyDTOList)){
+                String fileName =String.format(StockConstant.COMPANY_LIST);
+                List<String> strList =FileUtils.readLines(new File(fileName), Charset.forName("UTF-8"));
+                companyDTOList = Optional.ofNullable(strList).orElse(Lists.newArrayList()).stream()
+                        .map(str -> JSON.parseObject(str, CompanyDTO.class))
+                        .collect(Collectors.toList());
+            }
+
+            CompanyDTO companyDTO = Optional.ofNullable(companyDTOList).orElse(Lists.newArrayList()).stream()
+                    .filter(val -> Objects.equals(val.getCode(), code))
+                    .findFirst()
+                    .orElse(null);
+
+            return companyDTO;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return null;
     }
 
 }
