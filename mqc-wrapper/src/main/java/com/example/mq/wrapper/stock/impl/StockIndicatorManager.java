@@ -152,6 +152,66 @@ public class StockIndicatorManager {
                 .toString();
         strPercentList.add(msg);
 
+        List<Double> pe_list = indicatorDTOList.stream()
+                .filter(indicatorDTO -> indicatorDTO.getPe() !=null)
+                .sorted(Comparator.comparing(AnalyseIndicatorDTO::getPe))
+                .map(AnalyseIndicatorDTO::getPe)
+                .collect(Collectors.toList());
+        totalSize =pe_list.size();
+        msg = new StringBuilder().append("pe")
+                .append(",").append(pe_list.get(totalSize*10/100))
+                .append(",").append(pe_list.get(totalSize*25/100))
+                .append(",").append(pe_list.get(totalSize*50/100))
+                .append(",").append(pe_list.get(totalSize*75/100))
+                .append(",").append(pe_list.get(totalSize*90/100))
+                .toString();
+        strPercentList.add(msg);
+
+        List<Double> pe_p_1000_list = indicatorDTOList.stream()
+                .filter(indicatorDTO -> indicatorDTO.getPe_p_1000() !=null)
+                .sorted(Comparator.comparing(AnalyseIndicatorDTO::getPe_p_1000))
+                .map(AnalyseIndicatorDTO::getPe_p_1000)
+                .collect(Collectors.toList());
+        totalSize =pe_p_1000_list.size();
+        msg = new StringBuilder().append("pe_p_1000")
+                .append(",").append(pe_p_1000_list.get(totalSize*10/100))
+                .append(",").append(pe_p_1000_list.get(totalSize*25/100))
+                .append(",").append(pe_p_1000_list.get(totalSize*50/100))
+                .append(",").append(pe_p_1000_list.get(totalSize*75/100))
+                .append(",").append(pe_p_1000_list.get(totalSize*90/100))
+                .toString();
+        strPercentList.add(msg);
+
+        List<Double> pb_list = indicatorDTOList.stream()
+                .filter(indicatorDTO -> indicatorDTO.getPb() !=null)
+                .sorted(Comparator.comparing(AnalyseIndicatorDTO::getPb))
+                .map(AnalyseIndicatorDTO::getPb)
+                .collect(Collectors.toList());
+        totalSize =pb_list.size();
+        msg = new StringBuilder().append("pb")
+                .append(",").append(pb_list.get(totalSize*10/100))
+                .append(",").append(pb_list.get(totalSize*25/100))
+                .append(",").append(pb_list.get(totalSize*50/100))
+                .append(",").append(pb_list.get(totalSize*75/100))
+                .append(",").append(pb_list.get(totalSize*90/100))
+                .toString();
+        strPercentList.add(msg);
+
+        List<Double> pb_p_1000_list = indicatorDTOList.stream()
+                .filter(indicatorDTO -> indicatorDTO.getPb_p_1000() !=null)
+                .sorted(Comparator.comparing(AnalyseIndicatorDTO::getPb_p_1000))
+                .map(AnalyseIndicatorDTO::getPb_p_1000)
+                .collect(Collectors.toList());
+        totalSize =pb_p_1000_list.size();
+        msg = new StringBuilder().append("pb_p_100")
+                .append(",").append(pb_p_1000_list.get(totalSize*10/100))
+                .append(",").append(pb_p_1000_list.get(totalSize*25/100))
+                .append(",").append(pb_p_1000_list.get(totalSize*50/100))
+                .append(",").append(pb_p_1000_list.get(totalSize*75/100))
+                .append(",").append(pb_p_1000_list.get(totalSize*90/100))
+                .toString();
+        strPercentList.add(msg);
+
         List<Double> gross_margin_rate_list = indicatorDTOList.stream()
                 .filter(indicatorDTO -> indicatorDTO.getGross_margin_rate() !=null)
                 .sorted(Comparator.comparing(AnalyseIndicatorDTO::getGross_margin_rate))
