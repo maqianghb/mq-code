@@ -102,9 +102,9 @@ public class StockIndicatorManager {
         this.getAndSaveIndicatorDTOPercent(kLineDate, allIndicatorDTOList);
 
         // 按指标筛选数据
-        this.filterAndSaveAnalysisDTO(kLineDate, allIndicatorDTOList, 0);
-        this.filterAndSaveAnalysisDTO(kLineDate, allIndicatorDTOList, 1);
-        this.filterAndSaveAnalysisDTO(kLineDate, allIndicatorDTOList, 2);
+        this.filterAndSaveIndicatorDTO(kLineDate, allIndicatorDTOList);
+        this.filterAndSaveIndicatorDTO(kLineDate, allIndicatorDTOList, 1);
+        this.filterAndSaveIndicatorDTO(kLineDate, allIndicatorDTOList, 2);
     }
 
     /**
@@ -401,7 +401,62 @@ public class StockIndicatorManager {
         return msg;
     }
 
-    private void filterAndSaveAnalysisDTO(String kLineDate, List<AnalyseIndicatorDTO> allIndicatorDTOList, int matchNum){
+    /**
+     * 大范围筛选数据
+     *
+     * @param kLineDate
+     * @param allIndicatorDTOList
+     */
+    private void filterAndSaveIndicatorDTO(String kLineDate, List<AnalyseIndicatorDTO> allIndicatorDTOList){
+        // 筛选合适的数据
+        List<AnalyseIndicatorDTO> filterIndicatorDTOList = this.filterByIndicator(allIndicatorDTOList, 0);
+
+        // FIXME： 增加白名单数据和去掉黑名单数据
+
+        // 生成结果
+        List<String> strIndicatorList =Lists.newArrayList();
+        strIndicatorList.add(HEADER);
+
+        filterIndicatorDTOList =Optional.ofNullable(filterIndicatorDTOList).orElse(Lists.newArrayList()).stream()
+                .sorted(Comparator.comparing(AnalyseIndicatorDTO::getPb_p_1000))
+                .collect(Collectors.toList());
+        for(AnalyseIndicatorDTO indicatorDTO : filterIndicatorDTOList){
+            try {
+                Field[] fields = AnalyseIndicatorDTO.class.getDeclaredFields();
+                JSONObject jsonObject = JSON.parseObject(JSON.toJSONString(indicatorDTO));
+                StringBuilder indicatorBuilder =new StringBuilder();
+                for(Field field : fields){
+                    Object value = jsonObject.get(field.getName ());
+                    indicatorBuilder.append(",").append(value);
+                }
+                strIndicatorList.add(indicatorBuilder.toString().substring(1));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        // 记录结果
+        try {
+            DateTimeFormatter df =DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss");
+            LocalDateTime localDateTime = LocalDateTime.now();//当前时间
+            String strDateTime = df.format(localDateTime);//格式化为字符串
+            String filterListName =String.format(StockConstant.INDICATOR_LIST_FILTER, kLineDate, 0, strDateTime);
+            FileUtils.writeLines(new File(filterListName), "UTF-8", strIndicatorList, true);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        System.out.println("indicatorList: "+ JSON.toJSONString(strIndicatorList));
+    }
+
+    /**
+     * 筛选并保存数据
+     *
+     * @param kLineDate
+     * @param allIndicatorDTOList
+     * @param matchNum
+     */
+    private void filterAndSaveIndicatorDTO(String kLineDate, List<AnalyseIndicatorDTO> allIndicatorDTOList, int matchNum){
         // 筛选合适的数据
         List<AnalyseIndicatorDTO> filterIndicatorDTOList = this.filterByIndicator(allIndicatorDTOList, matchNum);
         filterIndicatorDTOList =Optional.ofNullable(filterIndicatorDTOList).orElse(Lists.newArrayList()).stream()
