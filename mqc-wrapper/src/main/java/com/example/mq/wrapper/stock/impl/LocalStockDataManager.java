@@ -526,6 +526,22 @@ public class LocalStockDataManager {
     }
 
     /**
+     * 获取黑名单的编码列表
+     * @return
+     */
+    public List<String> getBlackStockCodeList(){
+        return Lists.newArrayList();
+    }
+
+    /**
+     * 获取白名单的编码列表
+     * @return
+     */
+    public List<String> getWhiteStockCodeList(){
+        return Lists.newArrayList();
+    }
+
+    /**
      * 负债表指标查询
      *
      * @param fileDate
@@ -556,7 +572,6 @@ public class LocalStockDataManager {
 
         return null;
     }
-
 
     /**
      * 利润表指标查询
@@ -739,7 +754,6 @@ public class LocalStockDataManager {
 
         return Lists.newArrayList();
     }
-
 
     /**
      * 公司信息查询

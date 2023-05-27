@@ -23,7 +23,6 @@ public class StatisticsCodeManager {
         DateTimeFormatter df =DateTimeFormatter.ofPattern("yyyyMMdd");
         LocalDateTime localDateTime = LocalDateTime.now();//当前时间
         String queryDate = df.format(localDateTime);//格式化为字符串
-//        String queryDate ="20230324";
 
         List<String> msgList =Lists.newArrayList();
         for(ImmutablePair<String, String> pair : StockConstant.STATISTICS_CODE_LIST){
@@ -31,7 +30,8 @@ public class StatisticsCodeManager {
             String statisticsName =pair.getRight();
             Double percentValue = statisticsCodeManager.queryMa1000Percent(statisticsCode, queryDate, 2000);
             String msg =new StringBuilder()
-                    .append("code:").append(statisticsCode)
+                    .append("queryDate:").append(queryDate)
+                    .append(", code:").append(statisticsCode)
                     .append(", name:").append(statisticsName)
                     .append(", percentValue:").append(percentValue)
                     .append(";")

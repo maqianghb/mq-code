@@ -506,54 +506,68 @@ public class StockIndicatorManager {
             return Lists.newArrayList();
         }
 
-        return indicatorDTOList.stream()
+        List<AnalyseIndicatorDTO> analyseIndicatorDTOList = indicatorDTOList.stream()
                 .filter(indicatorDTO -> StringUtils.isNoneBlank(indicatorDTO.getName()) && !indicatorDTO.getName().contains("ST"))
-                .filter(indicatorDTO -> indicatorDTO.getKLineSize() !=null && indicatorDTO.getKLineSize() > 500)
-                .filter(indicatorDTO -> indicatorDTO.getMarket_capital() !=null && indicatorDTO.getMarket_capital() >=20)
-                .filter(indicatorDTO -> indicatorDTO.getRevenue() !=null)
-                .filter(indicatorDTO -> indicatorDTO.getPb_p_1000() !=null && indicatorDTO.getPb_p_1000() <=0.3)
-                .filter(indicatorDTO -> indicatorDTO.getAvg_roe_ttm_v1() !=null && indicatorDTO.getAvg_roe_ttm_v1() >=0.12 && indicatorDTO.getAvg_roe_ttm_v1() <2)
-                .filter(indicatorDTO -> indicatorDTO.getGross_margin_rate() !=null && indicatorDTO.getGross_margin_rate() >=0.1)
-                .filter(indicatorDTO -> indicatorDTO.getNet_selling_rate() !=null && indicatorDTO.getNet_selling_rate() >=0.05)
-                .filter(indicatorDTO -> indicatorDTO.getOperating_income_yoy() !=null && indicatorDTO.getOperating_income_yoy() <=2)
-                .filter(indicatorDTO -> indicatorDTO.getGw_ia_assert_rate() !=null && indicatorDTO.getGw_ia_assert_rate() <=0.3)
-                .filter(indicatorDTO -> indicatorDTO.getReceivable_turnover_days() !=null && indicatorDTO.getReceivable_turnover_days() <=250)
+                .filter(indicatorDTO -> indicatorDTO.getKLineSize() != null && indicatorDTO.getKLineSize() > 500)
+                .filter(indicatorDTO -> indicatorDTO.getMarket_capital() != null && indicatorDTO.getMarket_capital() >= 20)
+                .filter(indicatorDTO -> indicatorDTO.getRevenue() != null)
+                .filter(indicatorDTO -> indicatorDTO.getPb_p_1000() != null && indicatorDTO.getPb_p_1000() <= 0.3)
+                .filter(indicatorDTO -> indicatorDTO.getAvg_roe_ttm_v1() != null && indicatorDTO.getAvg_roe_ttm_v1() >= 0.12 && indicatorDTO.getAvg_roe_ttm_v1() < 2)
+                .filter(indicatorDTO -> indicatorDTO.getGross_margin_rate() != null && indicatorDTO.getGross_margin_rate() >= 0.1)
+                .filter(indicatorDTO -> indicatorDTO.getNet_selling_rate() != null && indicatorDTO.getNet_selling_rate() >= 0.05)
+                .filter(indicatorDTO -> indicatorDTO.getOperating_income_yoy() != null && indicatorDTO.getOperating_income_yoy() <= 2)
+                .filter(indicatorDTO -> indicatorDTO.getGw_ia_assert_rate() != null && indicatorDTO.getGw_ia_assert_rate() <= 0.3)
+                .filter(indicatorDTO -> indicatorDTO.getReceivable_turnover_days() != null && indicatorDTO.getReceivable_turnover_days() <= 250)
                 .filter(indicatorDTO -> {
-                    boolean result1 = indicatorDTO.getReceivable_turnover_days() !=null && indicatorDTO.getReceivable_turnover_days() <=150;
-                    boolean result2 = indicatorDTO.getInventory_turnover_days() !=null && indicatorDTO.getInventory_turnover_days() <=350;
+                    boolean result1 = indicatorDTO.getReceivable_turnover_days() != null && indicatorDTO.getReceivable_turnover_days() <= 150;
+                    boolean result2 = indicatorDTO.getInventory_turnover_days() != null && indicatorDTO.getInventory_turnover_days() <= 350;
                     return result1 || result2;
                 })
                 .filter(indicatorDTO -> {
-                    if(indicatorDTO.getMarket_capital() >=50){
+                    if (indicatorDTO.getMarket_capital() <= 50) {
+                        int curMatchNum = 0;
+
+                        // 毛利率和净利率指标
+                        if (indicatorDTO.getCur_q_gross_margin_rate() >= 0.30 && indicatorDTO.getCur_q_net_selling_rate() >= 0.15) {
+                            curMatchNum++;
+                        }
+
+                        // 营收和利润增长指标
+                        if (indicatorDTO.getCur_q_operating_income_yoy() != null && indicatorDTO.getCur_q_operating_income_yoy() >= 0.10
+                                && indicatorDTO.getCur_q_net_profit_atsopc_yoy() != null && indicatorDTO.getCur_q_net_profit_atsopc_yoy() >= 0.15) {
+                            curMatchNum++;
+                        }
+
+                        // 市值50亿以下的， 要求高利润/高增长
+                        return curMatchNum >= 1;
+                    } else {
                         return true;
                     }
-
-                    // 市值50亿以下的， 要求高利润和高增长
-                    return indicatorDTO.getCur_q_gross_margin_rate() >=0.30 && indicatorDTO.getCur_q_net_selling_rate() >=0.20
-                            && indicatorDTO.getCur_q_operating_income_yoy() >=0.15 && indicatorDTO.getCur_q_net_profit_atsopc_yoy()  >=0.15;
                 })
                 .filter(indicatorDTO -> {
-                    int curMatchNum =0;
+                    int curMatchNum = 0;
 
                     //ROE指标
-                    if(indicatorDTO.getAvg_roe_ttm() >=0.12 || indicatorDTO.getAvg_roe_ttm_v1() >=0.16){
-                        curMatchNum ++;
+                    if (indicatorDTO.getAvg_roe_ttm() >= 0.12 || indicatorDTO.getAvg_roe_ttm_v1() >= 0.16) {
+                        curMatchNum++;
                     }
 
                     // 毛利率和净利率指标
-                    if(indicatorDTO.getCur_q_gross_margin_rate() >=0.35 && indicatorDTO.getCur_q_net_selling_rate() >=0.12){
-                        curMatchNum ++;
+                    if (indicatorDTO.getCur_q_gross_margin_rate() >= 0.30 && indicatorDTO.getCur_q_net_selling_rate() >= 0.15) {
+                        curMatchNum++;
                     }
 
                     // 营收和利润增长指标
-                    if(indicatorDTO.getCur_q_operating_income_yoy() !=null && indicatorDTO.getCur_q_operating_income_yoy() >=0.15
-                            && indicatorDTO.getCur_q_net_profit_atsopc_yoy() !=null && indicatorDTO.getCur_q_net_profit_atsopc_yoy() >=0.15){
-                        curMatchNum ++;
+                    if (indicatorDTO.getCur_q_operating_income_yoy() != null && indicatorDTO.getCur_q_operating_income_yoy() >= 0.10
+                            && indicatorDTO.getCur_q_net_profit_atsopc_yoy() != null && indicatorDTO.getCur_q_net_profit_atsopc_yoy() >= 0.15) {
+                        curMatchNum++;
                     }
 
-                    return curMatchNum >=matchNum;
+                    return curMatchNum >= matchNum;
                 })
                 .collect(Collectors.toList());
+
+        return analyseIndicatorDTOList;
     }
 
     /**
