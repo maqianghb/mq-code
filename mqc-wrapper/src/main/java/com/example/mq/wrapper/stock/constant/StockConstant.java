@@ -22,7 +22,7 @@ public class StockConstant {
             new ImmutablePair<>("SZ399673", "创业板50"));
 
     public static final Integer COUNT =30;
-    public static final String FILE_DATE ="20230428";
+    public static final String FILE_DATE ="20230610";
 
     public static final String SH_STOCK_LIST ="E:/stock_data/stock_list_1_sh.txt";
     public static final String SZ_STOCK_LIST ="E:/stock_data/stock_list_2_sz.txt";

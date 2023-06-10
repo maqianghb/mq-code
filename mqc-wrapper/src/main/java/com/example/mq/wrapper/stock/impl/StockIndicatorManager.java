@@ -39,7 +39,7 @@ public class StockIndicatorManager {
         List<String> stockCodeList = localStockDataManager.getStockCodeList();
 //        List<String> stockCodeList = Arrays.asList("SZ002001", "SZ002415", "SZ002508", "SH600486", "SZ002507");
 
-        String kLineDate = "20230428";
+        String kLineDate = "20230610";
         Integer reportYear = 2023;
         FinanceReportTypeEnum reportTypeEnum =FinanceReportTypeEnum.QUARTER_1;
 
@@ -52,7 +52,7 @@ public class StockIndicatorManager {
      */
     private void saveAndStatisticsAllAnalysisDTO(String kLineDate, List<String> stockCodeList, Integer reportYear, FinanceReportTypeEnum reportTypeEnum){
         // 获取全部指标数据
-        List<AnalyseIndicatorDTO> allIndicatorDTOList =Lists.newArrayList();
+        List<AnalyseIndicatorDTO> allIndicatorDTOList = Lists.newArrayList();
         for(String stockCode : stockCodeList){
             try {
                 AnalyseIndicatorElement indicatorElement = this.getIndicatorElement(StockConstant.FILE_DATE
@@ -509,12 +509,12 @@ public class StockIndicatorManager {
         List<AnalyseIndicatorDTO> analyseIndicatorDTOList = indicatorDTOList.stream()
                 .filter(indicatorDTO -> StringUtils.isNoneBlank(indicatorDTO.getName()) && !indicatorDTO.getName().contains("ST"))
                 .filter(indicatorDTO -> indicatorDTO.getKLineSize() != null && indicatorDTO.getKLineSize() > 500)
-                .filter(indicatorDTO -> indicatorDTO.getMarket_capital() != null && indicatorDTO.getMarket_capital() >= 20)
+                .filter(indicatorDTO -> indicatorDTO.getMarket_capital() != null && indicatorDTO.getMarket_capital() >= 30)
                 .filter(indicatorDTO -> indicatorDTO.getRevenue() != null)
                 .filter(indicatorDTO -> indicatorDTO.getPb_p_1000() != null && indicatorDTO.getPb_p_1000() <= 0.3)
                 .filter(indicatorDTO -> indicatorDTO.getAvg_roe_ttm_v1() != null && indicatorDTO.getAvg_roe_ttm_v1() >= 0.12 && indicatorDTO.getAvg_roe_ttm_v1() < 2)
-                .filter(indicatorDTO -> indicatorDTO.getGross_margin_rate() != null && indicatorDTO.getGross_margin_rate() >= 0.1)
-                .filter(indicatorDTO -> indicatorDTO.getNet_selling_rate() != null && indicatorDTO.getNet_selling_rate() >= 0.05)
+                .filter(indicatorDTO -> indicatorDTO.getGross_margin_rate() != null && indicatorDTO.getGross_margin_rate() >= 0.15)
+                .filter(indicatorDTO -> indicatorDTO.getNet_selling_rate() != null && indicatorDTO.getNet_selling_rate() >= 0.07)
                 .filter(indicatorDTO -> indicatorDTO.getOperating_income_yoy() != null && indicatorDTO.getOperating_income_yoy() <= 2)
                 .filter(indicatorDTO -> indicatorDTO.getGw_ia_assert_rate() != null && indicatorDTO.getGw_ia_assert_rate() <= 0.3)
                 .filter(indicatorDTO -> indicatorDTO.getReceivable_turnover_days() != null && indicatorDTO.getReceivable_turnover_days() <= 250)
