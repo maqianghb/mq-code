@@ -512,7 +512,7 @@ public class StockIndicatorManager {
                 .filter(indicatorDTO -> indicatorDTO.getMarket_capital() != null && indicatorDTO.getMarket_capital() >= 30)
                 .filter(indicatorDTO -> indicatorDTO.getRevenue() != null)
                 .filter(indicatorDTO -> indicatorDTO.getPb_p_1000() != null && indicatorDTO.getPb_p_1000() <= 0.3)
-                .filter(indicatorDTO -> indicatorDTO.getAvg_roe_ttm_v1() != null && indicatorDTO.getAvg_roe_ttm_v1() >= 0.12 && indicatorDTO.getAvg_roe_ttm_v1() < 2)
+                .filter(indicatorDTO -> indicatorDTO.getAvg_roe_ttm_v1() != null && indicatorDTO.getAvg_roe_ttm_v1() >= 0.15 && indicatorDTO.getAvg_roe_ttm_v1() < 2)
                 .filter(indicatorDTO -> indicatorDTO.getGross_margin_rate() != null && indicatorDTO.getGross_margin_rate() >= 0.15)
                 .filter(indicatorDTO -> indicatorDTO.getNet_selling_rate() != null && indicatorDTO.getNet_selling_rate() >= 0.07)
                 .filter(indicatorDTO -> indicatorDTO.getOperating_income_yoy() != null && indicatorDTO.getOperating_income_yoy() <= 2)
