@@ -135,6 +135,16 @@ public class AnalyseIndicatorDTO {
     private Double cur_q_net_selling_rate_change;
 
     /**
+     * 当季销售毛利率环比
+     */
+    private Double cur_q_gross_margin_rate_q_chg;
+
+    /**
+     * 当季销售净利率环比
+     */
+    private Double cur_q_net_selling_rate_q_chg;
+
+    /**
      * 营业收入同比增长
      */
     private Double operating_income_yoy;
@@ -223,5 +233,10 @@ public class AnalyseIndicatorDTO {
      * 过去5个季度的毛利率和净利率
      */
     private String gross_net_rate_5_quarter;
+
+    /**
+     * 过去5个季度的营收和净利润
+     */
+    private String oi_net_5_quarter;
 
 }

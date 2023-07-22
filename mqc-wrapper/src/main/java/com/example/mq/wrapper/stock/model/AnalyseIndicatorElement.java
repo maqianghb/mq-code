@@ -38,9 +38,20 @@ public class AnalyseIndicatorElement {
      */
     private List<QuarterIncomeDTO> quarterIncomeDTOList;
 
+    /**
+     * 当前季度利润数据
+     */
     private QuarterIncomeDTO curQuarterIncomeDTO;
 
-    private QuarterIncomeDTO lastSamePeriodQuarterIncomeDTO;
+    /**
+     * 去年同期单季利润数据
+     */
+    private QuarterIncomeDTO lastYearQuarterIncomeDTO;
+
+    /**
+     * 上一季度单季利润数据
+     */
+    private QuarterIncomeDTO lastPeriodQuarterIncomeDTO;
 
     private List<XueQiuStockKLineDTO> kLineDTOList;
 

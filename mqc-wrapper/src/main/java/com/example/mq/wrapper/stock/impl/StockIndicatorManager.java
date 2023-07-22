@@ -27,10 +27,10 @@ public class StockIndicatorManager {
     private static final String HEADER ="K线日期,1月后股价波动,3月后股价波动,半年后股价波动,1年后股价波动" +
             ",股东权益合计,营业收入,营业成本,经营现金流入,经营现金净额,净利润,K线数量"+
             ",编码,名称,行业,省市,总市值,资产负债率,市盈率TTM,pe分位值,市净率,pb分位值,净资产收益率TTM,去掉现金后的ROE" +
-            ",毛利率,净利率,当季毛利率,当季净利率,当季毛利率同比,当季净利率同比" +
+            ",毛利率,净利率,当季毛利率,当季净利率,当季毛利率同比,当季净利率同比,当季毛利率环比,当季净利率环比" +
             ",营收同比,净利润同比,当季营收同比,当季净利润同比,固定资产同比,在建工程同比,商誉+无形/净资产,固定资产/净资产,在建工程/净资产" +
             ",现金等价物/短期负债,经营现金流入/营收,经营现金净额/净利润,应付票据及应付账款" +
-            ",应收票据及应收账款,应付票据及应付账款/应收票据及应收账款,应收账款周转天数,存货周转天数,近5季度的毛利率和净利率";
+            ",应收票据及应收账款,应付票据及应付账款/应收票据及应收账款,应收账款周转天数,存货周转天数,近5季度的毛利率和净利率,近5季度的营收和利润(亿)";
 
     public static void main(String[] args) {
         StockIndicatorManager manager =new StockIndicatorManager();
@@ -39,7 +39,7 @@ public class StockIndicatorManager {
         List<String> stockCodeList = localStockDataManager.getStockCodeList();
 //        List<String> stockCodeList = Arrays.asList("SZ002001", "SZ002415", "SZ002508", "SH600486", "SZ002507");
 
-        String kLineDate = "20230610";
+        String kLineDate = "20230708";
         Integer reportYear = 2023;
         FinanceReportTypeEnum reportTypeEnum =FinanceReportTypeEnum.QUARTER_1;
 
@@ -644,6 +644,12 @@ public class StockIndicatorManager {
         if(analyseIndicatorDTO.getCur_q_net_selling_rate_change() !=null){
             analyseIndicatorDTO.setCur_q_net_selling_rate_change(NumberUtil.format(analyseIndicatorDTO.getCur_q_net_selling_rate_change(), 3));
         }
+        if(analyseIndicatorDTO.getCur_q_gross_margin_rate_q_chg() !=null){
+            analyseIndicatorDTO.setCur_q_gross_margin_rate_q_chg(NumberUtil.format(analyseIndicatorDTO.getCur_q_gross_margin_rate_q_chg(), 3));
+        }
+        if(analyseIndicatorDTO.getCur_q_net_selling_rate_q_chg() !=null){
+            analyseIndicatorDTO.setCur_q_net_selling_rate_q_chg(NumberUtil.format(analyseIndicatorDTO.getCur_q_net_selling_rate_q_chg(), 3));
+        }
         if(analyseIndicatorDTO.getOperating_income_yoy() !=null){
             analyseIndicatorDTO.setOperating_income_yoy(NumberUtil.format(analyseIndicatorDTO.getOperating_income_yoy()/100, 3));
         }
@@ -786,8 +792,13 @@ public class StockIndicatorManager {
 
         List<ImmutablePair<Integer, FinanceReportTypeEnum>> immutablePairList =Lists.newArrayList();
         String curQuarterType =StringUtils.EMPTY;
+        Integer lastQuarterYear =0;
+        String lastQuarterType =StringUtils.EMPTY;
         if(Objects.equals(typeEnum.getCode(), FinanceReportTypeEnum.QUARTER_1.getCode())){
             curQuarterType =FinanceReportTypeEnum.SINGLE_Q_1.getCode();
+            lastQuarterYear =year-1;
+            lastQuarterType =FinanceReportTypeEnum.SINGLE_Q_4.getCode();
+
             immutablePairList =Arrays.asList(
                     new ImmutablePair<>(year, FinanceReportTypeEnum.SINGLE_Q_1),
                     new ImmutablePair<>(year-1, FinanceReportTypeEnum.SINGLE_Q_4),
@@ -796,6 +807,9 @@ public class StockIndicatorManager {
                     new ImmutablePair<>(year-1, FinanceReportTypeEnum.SINGLE_Q_1));
         }else if(Objects.equals(typeEnum.getCode(), FinanceReportTypeEnum.HALF_YEAR.getCode())){
             curQuarterType =FinanceReportTypeEnum.SINGLE_Q_2.getCode();
+            lastQuarterYear =year;
+            lastQuarterType =FinanceReportTypeEnum.SINGLE_Q_1.getCode();
+
             immutablePairList =Arrays.asList(
                     new ImmutablePair<>(year, FinanceReportTypeEnum.SINGLE_Q_2),
                     new ImmutablePair<>(year, FinanceReportTypeEnum.SINGLE_Q_1),
@@ -804,6 +818,9 @@ public class StockIndicatorManager {
                     new ImmutablePair<>(year-1, FinanceReportTypeEnum.SINGLE_Q_2));
         }else if(Objects.equals(typeEnum.getCode(), FinanceReportTypeEnum.QUARTER_3.getCode())){
             curQuarterType =FinanceReportTypeEnum.SINGLE_Q_3.getCode();
+            lastQuarterYear =year;
+            lastQuarterType =FinanceReportTypeEnum.SINGLE_Q_2.getCode();
+
             immutablePairList =Arrays.asList(
                     new ImmutablePair<>(year, FinanceReportTypeEnum.SINGLE_Q_3),
                     new ImmutablePair<>(year, FinanceReportTypeEnum.SINGLE_Q_2),
@@ -812,6 +829,9 @@ public class StockIndicatorManager {
                     new ImmutablePair<>(year-1, FinanceReportTypeEnum.SINGLE_Q_3));
         }else if(Objects.equals(typeEnum.getCode(), FinanceReportTypeEnum.ALL_YEAR.getCode())){
             curQuarterType =FinanceReportTypeEnum.SINGLE_Q_4.getCode();
+            lastQuarterYear =year;
+            lastQuarterType =FinanceReportTypeEnum.SINGLE_Q_3.getCode();
+
             immutablePairList =Arrays.asList(
                     new ImmutablePair<>(year, FinanceReportTypeEnum.SINGLE_Q_4),
                     new ImmutablePair<>(year, FinanceReportTypeEnum.SINGLE_Q_3),
@@ -819,6 +839,7 @@ public class StockIndicatorManager {
                     new ImmutablePair<>(year, FinanceReportTypeEnum.SINGLE_Q_1),
                     new ImmutablePair<>(year-1, FinanceReportTypeEnum.SINGLE_Q_4));
         }
+
         List<QuarterIncomeDTO> quarterIncomeDTOList = localStockDataManager.getQuarterIncomeDTO(fileDate, code, immutablePairList);
         if(CollectionUtils.isNotEmpty(quarterIncomeDTOList)){
             indicatorElement.setQuarterIncomeDTOList(quarterIncomeDTOList);
@@ -831,7 +852,12 @@ public class StockIndicatorManager {
 
                 if(Objects.equals(quarterIncomeDTO.getReport_year(), year-1)
                         && Objects.equals(quarterIncomeDTO.getReport_type(), curQuarterType)){
-                    indicatorElement.setLastSamePeriodQuarterIncomeDTO(quarterIncomeDTO);
+                    indicatorElement.setLastYearQuarterIncomeDTO(quarterIncomeDTO);
+                }
+
+                if(Objects.equals(quarterIncomeDTO.getReport_year(), lastQuarterYear)
+                        && Objects.equals(quarterIncomeDTO.getReport_type(), lastQuarterType)){
+                    indicatorElement.setLastPeriodQuarterIncomeDTO(quarterIncomeDTO);
                 }
             }
         }
@@ -1044,7 +1070,7 @@ public class StockIndicatorManager {
         if(indicatorDTO.getCur_q_gross_margin_rate_change() ==null){
             Double cur_q_gross_margin_rate = indicatorDTO.getCur_q_gross_margin_rate();
             if(cur_q_gross_margin_rate !=null){
-                QuarterIncomeDTO lastYearQuarterIncomeDTO = indicatorElement.getLastSamePeriodQuarterIncomeDTO();
+                QuarterIncomeDTO lastYearQuarterIncomeDTO = indicatorElement.getLastYearQuarterIncomeDTO();
                 if(lastYearQuarterIncomeDTO !=null && lastYearQuarterIncomeDTO.getRevenue() !=null && lastYearQuarterIncomeDTO.getOperating_cost() !=null){
                     double last_year_cur_q_gross_margin_rate = 1- lastYearQuarterIncomeDTO.getOperating_cost()/lastYearQuarterIncomeDTO.getRevenue();
                     indicatorDTO.setCur_q_gross_margin_rate_change(cur_q_gross_margin_rate /last_year_cur_q_gross_margin_rate -1);
@@ -1055,7 +1081,7 @@ public class StockIndicatorManager {
         if(indicatorDTO.getCur_q_net_selling_rate_change() ==null){
             Double cur_q_net_selling_rate = indicatorDTO.getCur_q_net_selling_rate();
             if(cur_q_net_selling_rate !=null){
-                QuarterIncomeDTO lastYearQuarterIncomeDTO = indicatorElement.getLastSamePeriodQuarterIncomeDTO();
+                QuarterIncomeDTO lastYearQuarterIncomeDTO = indicatorElement.getLastYearQuarterIncomeDTO();
                 if(lastYearQuarterIncomeDTO !=null && lastYearQuarterIncomeDTO.getRevenue() !=null && lastYearQuarterIncomeDTO.getNet_profit() !=null){
                     double last_year_cur_q_net_selling_rate = lastYearQuarterIncomeDTO.getNet_profit()/lastYearQuarterIncomeDTO.getRevenue();
                     double cur_q_net_selling_rate_change =(cur_q_net_selling_rate - last_year_cur_q_net_selling_rate)
@@ -1065,9 +1091,33 @@ public class StockIndicatorManager {
             }
         }
 
+        if(indicatorDTO.getCur_q_gross_margin_rate_q_chg() ==null){
+            Double cur_q_gross_margin_rate = indicatorDTO.getCur_q_gross_margin_rate();
+            if(cur_q_gross_margin_rate !=null){
+                QuarterIncomeDTO lastPeriodQuarterIncomeDTO = indicatorElement.getLastPeriodQuarterIncomeDTO();
+                if(lastPeriodQuarterIncomeDTO !=null && lastPeriodQuarterIncomeDTO.getRevenue() !=null && lastPeriodQuarterIncomeDTO.getOperating_cost() !=null){
+                    double last_period_cur_q_gross_margin_rate = 1- lastPeriodQuarterIncomeDTO.getOperating_cost()/lastPeriodQuarterIncomeDTO.getRevenue();
+                    indicatorDTO.setCur_q_gross_margin_rate_q_chg(cur_q_gross_margin_rate /last_period_cur_q_gross_margin_rate -1);
+                }
+            }
+        }
+
+        if(indicatorDTO.getCur_q_net_selling_rate_q_chg() ==null){
+            Double cur_q_net_selling_rate = indicatorDTO.getCur_q_net_selling_rate();
+            if(cur_q_net_selling_rate !=null){
+                QuarterIncomeDTO lastPeriodQuarterIncomeDTO = indicatorElement.getLastPeriodQuarterIncomeDTO();
+                if(lastPeriodQuarterIncomeDTO !=null && lastPeriodQuarterIncomeDTO.getRevenue() !=null && lastPeriodQuarterIncomeDTO.getNet_profit() !=null){
+                    double last_period_cur_q_net_selling_rate = lastPeriodQuarterIncomeDTO.getNet_profit()/lastPeriodQuarterIncomeDTO.getRevenue();
+                    double cur_q_net_selling_rate_q_chg =(cur_q_net_selling_rate - last_period_cur_q_net_selling_rate)
+                            /Math.abs(last_period_cur_q_net_selling_rate);
+                    indicatorDTO.setCur_q_net_selling_rate_q_chg(cur_q_net_selling_rate_q_chg);
+                }
+            }
+        }
+
         if(indicatorDTO.getCur_q_operating_income_yoy() ==null){
             QuarterIncomeDTO curQuarterIncomeDTO = indicatorElement.getCurQuarterIncomeDTO();
-            QuarterIncomeDTO lastYearQuarterIncomeDTO = indicatorElement.getLastSamePeriodQuarterIncomeDTO();
+            QuarterIncomeDTO lastYearQuarterIncomeDTO = indicatorElement.getLastYearQuarterIncomeDTO();
             if(curQuarterIncomeDTO !=null && curQuarterIncomeDTO.getRevenue() !=null
                     && lastYearQuarterIncomeDTO !=null && lastYearQuarterIncomeDTO.getRevenue() !=null ){
                 indicatorDTO.setCur_q_operating_income_yoy(curQuarterIncomeDTO.getRevenue()/lastYearQuarterIncomeDTO.getRevenue() -1);
@@ -1076,7 +1126,7 @@ public class StockIndicatorManager {
 
         if(indicatorDTO.getCur_q_net_profit_atsopc_yoy() ==null){
             QuarterIncomeDTO curQuarterIncomeDTO = indicatorElement.getCurQuarterIncomeDTO();
-            QuarterIncomeDTO lastYearQuarterIncomeDTO = indicatorElement.getLastSamePeriodQuarterIncomeDTO();
+            QuarterIncomeDTO lastYearQuarterIncomeDTO = indicatorElement.getLastYearQuarterIncomeDTO();
             if(curQuarterIncomeDTO !=null && lastYearQuarterIncomeDTO !=null){
                 double cur_q_net_profit_atsopc_yoy = (curQuarterIncomeDTO.getNet_profit()-lastYearQuarterIncomeDTO.getNet_profit())
                         /Math.abs(lastYearQuarterIncomeDTO.getNet_profit());
@@ -1193,6 +1243,33 @@ public class StockIndicatorManager {
                     builder.append("; ");
                 }
                 indicatorDTO.setGross_net_rate_5_quarter(builder.toString());
+            }
+        }
+
+        if(StringUtils.isBlank(indicatorDTO.getOi_net_5_quarter())){
+            List<QuarterIncomeDTO> quarterIncomeDTOList = indicatorElement.getQuarterIncomeDTOList();
+            if(CollectionUtils.isNotEmpty(quarterIncomeDTOList)){
+                List<QuarterIncomeDTO> sortedQuarterDTOList = quarterIncomeDTOList.stream()
+                        .sorted(Comparator.comparing(QuarterIncomeDTO::getReport_year)
+                                .thenComparing(QuarterIncomeDTO::getReport_type).reversed())
+                        .collect(Collectors.toList());
+
+                StringBuilder builder =new StringBuilder();
+                for(QuarterIncomeDTO quarterIncomeDTO : sortedQuarterDTOList){
+                    if(quarterIncomeDTO.getTotal_revenue() !=null ){
+                        double total_revenue = quarterIncomeDTO.getTotal_revenue() / (1.0 * 10000 * 10000);
+                        String str_total_revenue = NumberUtil.format(total_revenue, 1) +"";
+                        builder.append(str_total_revenue);
+                    }
+                    builder.append("/");
+                    if(quarterIncomeDTO.getNet_profit() !=null){
+                        double net_profit = quarterIncomeDTO.getNet_profit() / (1.0 * 10000 * 10000);
+                        String str_net_profit = NumberUtil.format(net_profit, 1)+"";
+                        builder.append(str_net_profit);
+                    }
+                    builder.append("; ");
+                }
+                indicatorDTO.setOi_net_5_quarter(builder.toString());
             }
         }
 
