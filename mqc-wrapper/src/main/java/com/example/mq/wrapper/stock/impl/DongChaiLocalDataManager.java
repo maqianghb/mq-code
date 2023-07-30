@@ -5,9 +5,8 @@ import com.alibaba.fastjson.JSONObject;
 import com.example.mq.common.utils.CloseableHttpClientUtil;
 import com.example.mq.common.utils.NumberUtil;
 import com.example.mq.wrapper.stock.constant.StockConstant;
-import com.example.mq.wrapper.stock.model.AnalyseIndicatorDTO;
-import com.example.mq.wrapper.stock.model.DongChaiFinanceNoticeDTO;
-import com.example.mq.wrapper.stock.model.DongChaiHolderIncreaseDTO;
+import com.example.mq.wrapper.stock.enums.FinanceReportTypeEnum;
+import com.example.mq.wrapper.stock.model.*;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -15,14 +14,21 @@ import org.assertj.core.util.Lists;
 
 import java.io.File;
 import java.lang.reflect.Field;
+import java.nio.charset.Charset;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 
 public class DongChaiLocalDataManager {
+
+    private static List<DongChaiHolderIncreaseDTO> holderIncreaseDTOList =Lists.newArrayList();
+    private static List<DongChaiFreeShareDTO> freeShareDTOList =Lists.newArrayList();
 
     private static final String NOTICE_HEADER ="编码,名称,预告时间,报告期,预告指标,预告类型,预告值(亿),预告值(亿),同比变动,同比变动," +
             "环比变动,环比变动,上年同期值(亿),变动原因";
@@ -32,12 +38,15 @@ public class DongChaiLocalDataManager {
     public static void main(String[] args) {
         DongChaiLocalDataManager manager =new DongChaiLocalDataManager();
 
-        String reportDate ="2023-06-30";
-        List<DongChaiFinanceNoticeDTO> noticeDTOList = manager.queryAndSaveFinanceNotice(reportDate);
-        System.out.println("noticeDTOList: " + JSON.toJSONString(noticeDTOList));
+//        String reportDate ="2023-06-30";
+//        List<DongChaiFinanceNoticeDTO> noticeDTOList = manager.queryAndSaveFinanceNotice(reportDate);
+//        System.out.println("noticeDTOList: " + JSON.toJSONString(noticeDTOList));
+//
+//        List<DongChaiHolderIncreaseDTO> increaseDTOList = manager.queryAndSaveHolderIncreaseList();
+//        System.out.println("increaseDTOList: " + JSON.toJSONString(increaseDTOList));
 
-        List<DongChaiHolderIncreaseDTO> increaseDTOList = manager.queryHolderIncreaseList();
-        System.out.println("increaseDTOList: " + JSON.toJSONString(increaseDTOList));
+        List<DongChaiFreeShareDTO> freeShareDTOList = manager.queryFreeShareDTOList();
+        System.out.println("freeShareDTOList: " + JSON.toJSONString(freeShareDTOList));
 
         System.out.println("end.");
     }
@@ -87,7 +96,13 @@ public class DongChaiLocalDataManager {
                         JSONObject jsonColumn = JSON.parseObject(strColumn);
                         DongChaiFinanceNoticeDTO noticeDTO = new DongChaiFinanceNoticeDTO();
                         if (StringUtils.isNotBlank(jsonColumn.getString("SECURITY_CODE"))) {
-                            noticeDTO.setCode(jsonColumn.getString("SECURITY_CODE"));
+                            String code =jsonColumn.getString("SECURITY_CODE");
+                            if(code.startsWith("6")){
+                                code ="SH" + code;
+                            }else if(code.startsWith("0") || code.startsWith("3")){
+                                code ="SZ" + code;
+                            }
+                            noticeDTO.setCode(code);
                         }
                         if (StringUtils.isNotBlank(jsonColumn.getString("SECURITY_NAME_ABBR"))) {
                             noticeDTO.setName(jsonColumn.getString("SECURITY_NAME_ABBR"));
@@ -146,9 +161,6 @@ public class DongChaiLocalDataManager {
 
         LocalStockDataManager localStockDataManager =new LocalStockDataManager();
         List<String> stockCodeList = localStockDataManager.getStockCodeList();
-        stockCodeList = Optional.ofNullable(stockCodeList).orElse(Lists.newArrayList()).stream()
-                .map(tmpStockCode -> tmpStockCode.substring(2))
-                .collect(Collectors.toList());
         if(CollectionUtils.isEmpty(stockCodeList)){
             return Lists.newArrayList();
         }
@@ -212,6 +224,48 @@ public class DongChaiLocalDataManager {
                 .orElse(0);
     }
 
+    /**
+     * 查询并保存股东增减持数据
+     *
+     * @return
+     */
+    public List<DongChaiHolderIncreaseDTO> queryAndSaveHolderIncreaseList() {
+        List<DongChaiHolderIncreaseDTO> increaseDTOList = this.queryHolderIncreaseList();
+        if(CollectionUtils.isEmpty(increaseDTOList)){
+            return Lists.newArrayList();
+        }
+
+        List<String> strIncreaseList =Lists.newArrayList();
+        strIncreaseList.add(HOLDER_INCREASE_HEADER);
+        for(DongChaiHolderIncreaseDTO increaseDTO : increaseDTOList){
+            try {
+                Field[] fields = DongChaiHolderIncreaseDTO.class.getDeclaredFields();
+                JSONObject jsonObject = JSON.parseObject(JSON.toJSONString(increaseDTO));
+                StringBuilder increaseBuilder =new StringBuilder();
+                for(Field field : fields){
+                    Object value = jsonObject.get(field.getName ());
+                    increaseBuilder.append(",").append(value);
+                }
+                strIncreaseList.add(increaseBuilder.toString().substring(1));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        // 记录结果
+        try {
+            DateTimeFormatter df =DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss");
+            LocalDateTime localDateTime = LocalDateTime.now();//当前时间
+            String strDateTime = df.format(localDateTime);//格式化为字符串
+            String filterListName =String.format(StockConstant.HOLDER_INCREASE_LIST, strDateTime);
+            FileUtils.writeLines(new File(filterListName), "UTF-8", strIncreaseList, true);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return increaseDTOList;
+    }
+
 
     /**
      * 查询股东增减持条数
@@ -255,13 +309,18 @@ public class DongChaiLocalDataManager {
                 break;
             }
 
-
             List<DongChaiHolderIncreaseDTO> tmpIncreaseDTOList = columnList.stream()
                     .map(strColumn -> {
                         JSONObject jsonColumn = JSON.parseObject(strColumn);
                         DongChaiHolderIncreaseDTO increaseDTO = new DongChaiHolderIncreaseDTO();
                         if (StringUtils.isNotBlank(jsonColumn.getString("SECURITY_CODE"))) {
-                            increaseDTO.setCode(jsonColumn.getString("SECURITY_CODE"));
+                            String code =jsonColumn.getString("SECURITY_CODE");
+                            if(code.startsWith("6")){
+                                code ="SH" + code;
+                            }else if(code.startsWith("0") || code.startsWith("3")){
+                                code ="SZ" + code;
+                            }
+                            increaseDTO.setCode(code);
                         }
                         if (StringUtils.isNotBlank(jsonColumn.getString("SECURITY_NAME_ABBR"))) {
                             increaseDTO.setName(jsonColumn.getString("SECURITY_NAME_ABBR"));
@@ -297,46 +356,166 @@ public class DongChaiLocalDataManager {
 
         LocalStockDataManager localStockDataManager =new LocalStockDataManager();
         List<String> stockCodeList = localStockDataManager.getStockCodeList();
-        stockCodeList = Optional.ofNullable(stockCodeList).orElse(Lists.newArrayList()).stream()
-                .map(tmpStockCode -> tmpStockCode.substring(2))
-                .collect(Collectors.toList());
         if(CollectionUtils.isEmpty(stockCodeList)){
             return Lists.newArrayList();
         }
 
-        List<String> strIncreaseList =Lists.newArrayList();
-        strIncreaseList.add(HOLDER_INCREASE_HEADER);
+        List<DongChaiHolderIncreaseDTO> resultIncreaseDTOList =Lists.newArrayList();
         for(DongChaiHolderIncreaseDTO increaseDTO : increaseDTOList){
-            if(!stockCodeList.contains(increaseDTO.getCode())){
-                continue;
-            }
-
-            try {
-                Field[] fields = DongChaiHolderIncreaseDTO.class.getDeclaredFields();
-                JSONObject jsonObject = JSON.parseObject(JSON.toJSONString(increaseDTO));
-                StringBuilder increaseBuilder =new StringBuilder();
-                for(Field field : fields){
-                    Object value = jsonObject.get(field.getName ());
-                    increaseBuilder.append(",").append(value);
-                }
-                strIncreaseList.add(increaseBuilder.toString().substring(1));
-            } catch (Exception e) {
-                e.printStackTrace();
+            if(stockCodeList.contains(increaseDTO.getCode())){
+                resultIncreaseDTOList.add(increaseDTO);
             }
         }
 
-        // 记录结果
+        return increaseDTOList;
+    }
+
+    /**
+     * 查询解禁信息
+     *
+     * @return
+     */
+    private List<DongChaiFreeShareDTO> queryFreeShareDTOList(){
+        int totalNum =5000;
+        LocalDate nowLocalDate = LocalDate.now();
+        String startDate =nowLocalDate.plusMonths(-6).format(DateTimeFormatter.ISO_DATE);
+        String endDate =nowLocalDate.plusMonths(6).format(DateTimeFormatter.ISO_DATE);
+
+        List<DongChaiFreeShareDTO> freeShareDTOList =Lists.newArrayList();
+        for(int pageNum =1; ; pageNum++) {
+            int currentIndex = (pageNum - 1) * StockConstant.DONG_CHAI_MAX_LIMIT;
+            if (currentIndex >= totalNum) {
+                break;
+            }
+
+            int currentPageSize = totalNum - currentIndex < StockConstant.DONG_CHAI_MAX_LIMIT
+                    ? totalNum - currentIndex : StockConstant.DONG_CHAI_MAX_LIMIT;
+
+            String url = new StringBuilder().append(StockConstant.DONG_CHAI_URL)
+//                .append("?callback=").append("jQuery1123093599956891065_1689992754007")
+                    .append("?sortColumns=").append("FREE_DATE%2CCURRENT_FREE_SHARES")
+                    .append("&sortTypes=").append("-1%2C-1")
+                    .append("&pageSize=").append(currentPageSize)
+                    .append("&pageNumber=").append(pageNum)
+                    .append("&reportName=").append("RPT_LIFT_STAGE")
+                    .append("&columns=").append("ALL")
+                    .append("&source=").append("WEB")
+                    .append("&client=").append("WEB")
+                    .append("&filter=").append("(FREE_DATE%3E%3D%27")
+                    .append(startDate).append("%27)(FREE_DATE%3C%3D%27")
+                    .append(endDate).append("%27)")
+                    .toString();
+
+            String strResult = CloseableHttpClientUtil.doGet(url, StringUtils.EMPTY);
+            List<String> columnList = Optional.ofNullable(JSONObject.parseObject(strResult))
+                    .map(jsonResult -> jsonResult.getJSONObject("result"))
+                    .map(jsonResult -> JSON.parseArray(jsonResult.getString("data"), String.class))
+                    .orElse(Lists.newArrayList());
+            if(CollectionUtils.isEmpty(columnList)){
+                break;
+            }
+
+            List<DongChaiFreeShareDTO> tmpFreeShareDTOList = columnList.stream()
+                    .map(strColumn -> {
+                        JSONObject jsonColumn = JSON.parseObject(strColumn);
+                        DongChaiFreeShareDTO freeShareDTO = new DongChaiFreeShareDTO();
+                        if (StringUtils.isNotBlank(jsonColumn.getString("SECURITY_CODE"))) {
+                            String code =jsonColumn.getString("SECURITY_CODE");
+                            if(code.startsWith("6")){
+                                code ="SH" + code;
+                            }else if(code.startsWith("0") || code.startsWith("3")){
+                                code ="SZ" + code;
+                            }
+                            freeShareDTO.setCode(code);
+                        }
+                        if (StringUtils.isNotBlank(jsonColumn.getString("SECURITY_NAME_ABBR"))) {
+                            freeShareDTO.setName(jsonColumn.getString("SECURITY_NAME_ABBR"));
+                        }
+                        if (StringUtils.isNotBlank(jsonColumn.getString("FREE_DATE"))) {
+                            freeShareDTO.setFree_date(jsonColumn.getString("FREE_DATE"));
+                        }
+                        if (StringUtils.isNotBlank(jsonColumn.getString("FREE_SHARES_TYPE"))) {
+                            freeShareDTO.setFree_type(jsonColumn.getString("FREE_SHARES_TYPE"));
+                        }
+                        if (jsonColumn.getDouble("ABLE_FREE_SHARES") != null) {
+                            freeShareDTO.setFree_share_num(NumberUtil.format(jsonColumn.getDouble("ABLE_FREE_SHARES"), 1));
+                        }
+                        if (jsonColumn.getDouble("FREE_RATIO") != null) {
+                            freeShareDTO.setFree_ratio(NumberUtil.format(jsonColumn.getDouble("FREE_RATIO"), 2));
+                        }
+
+                        return freeShareDTO;
+                    })
+                    .collect(Collectors.toList());
+
+            freeShareDTOList.addAll(tmpFreeShareDTOList);
+        }
+
+        LocalStockDataManager localStockDataManager =new LocalStockDataManager();
+        List<String> stockCodeList = localStockDataManager.getStockCodeList();
+        if(CollectionUtils.isEmpty(stockCodeList)){
+            return Lists.newArrayList();
+        }
+
+        List<DongChaiFreeShareDTO> resultFreeShareDTOList =Lists.newArrayList();
+        for(DongChaiFreeShareDTO freeShareDTO : freeShareDTOList){
+            if(stockCodeList.contains(freeShareDTO.getCode())){
+                resultFreeShareDTOList.add(freeShareDTO);
+            }
+        }
+
+        return resultFreeShareDTOList;
+    }
+
+    /**
+     * 增减持信息
+     *
+     * @param code
+     * @return
+     */
+    public DongChaiHolderIncreaseDTO getHolderIncreaseDTO(String code){
         try {
-            DateTimeFormatter df =DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss");
-            LocalDateTime localDateTime = LocalDateTime.now();//当前时间
-            String strDateTime = df.format(localDateTime);//格式化为字符串
-            String filterListName =String.format(StockConstant.HOLDER_INCREASE_LIST, strDateTime);
-            FileUtils.writeLines(new File(filterListName), "UTF-8", strIncreaseList, true);
+            if(CollectionUtils.isEmpty(holderIncreaseDTOList)){
+                holderIncreaseDTOList = this.queryHolderIncreaseList();
+            }
+
+            return Optional.ofNullable(holderIncreaseDTOList).orElse(Lists.newArrayList()).stream()
+                    .filter(balanceDTO -> Objects.equals(balanceDTO.getCode(), code))
+                    .filter(balanceDTO -> balanceDTO.getChange_num() >50 || balanceDTO.getAfter_change_rate() >0.05)
+                    .sorted(Comparator.comparing(DongChaiHolderIncreaseDTO::getNotice_date).reversed())
+                    .findFirst()
+                    .orElse(null);
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-        return increaseDTOList;
+        return null;
+    }
+
+
+    /**
+     * 解禁信息
+     *
+     * @param code
+     * @return
+     */
+    public DongChaiFreeShareDTO getFreeShareDTO(String code){
+        try {
+            if(CollectionUtils.isEmpty(freeShareDTOList)){
+                freeShareDTOList = this.queryFreeShareDTOList();
+            }
+
+            return Optional.ofNullable(freeShareDTOList).orElse(Lists.newArrayList()).stream()
+                    .filter(balanceDTO -> Objects.equals(balanceDTO.getCode(), code))
+                    .filter(balanceDTO -> balanceDTO.getFree_share_num() >100 || balanceDTO.getFree_ratio() >1)
+                    .sorted(Comparator.comparing(DongChaiFreeShareDTO::getFree_date).reversed())
+                    .findFirst()
+                    .orElse(null);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return null;
     }
 
 }

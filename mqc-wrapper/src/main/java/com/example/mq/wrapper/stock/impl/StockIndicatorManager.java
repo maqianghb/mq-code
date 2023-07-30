@@ -30,13 +30,15 @@ public class StockIndicatorManager {
             ",毛利率,净利率,当季毛利率,当季净利率,当季毛利率同比,当季净利率同比,当季毛利率环比,当季净利率环比" +
             ",营收同比,净利润同比,当季营收同比,当季净利润同比,固定资产同比,在建工程同比,商誉+无形/净资产,固定资产/净资产,在建工程/净资产" +
             ",现金等价物/短期负债,经营现金流入/营收,经营现金净额/净利润,应付票据及应付账款" +
-            ",应收票据及应收账款,应付票据及应付账款/应收票据及应收账款,应收账款周转天数,存货周转天数,近5季度的毛利率和净利率,近5季度的营收和利润(亿)";
+            ",应收票据及应收账款,应付票据及应付账款/应收票据及应收账款,应收账款周转天数,存货周转天数,近5季度的毛利率和净利率,近5季度的营收和利润(亿)" +
+            ",增减持类型,变动比例(%),解禁时间,解禁数量(万股),占流通市值的比例(%)";
 
     public static void main(String[] args) {
         StockIndicatorManager manager =new StockIndicatorManager();
 
         LocalStockDataManager localStockDataManager =new LocalStockDataManager();
         List<String> stockCodeList = localStockDataManager.getStockCodeList();
+//        List<String> stockCodeList =StockConstant.TEST_STOCK_CODE_LIST;
 
         String kLineDate = "20230729";
         Integer reportYear = 2023;
@@ -745,7 +747,12 @@ public class StockIndicatorManager {
         indicatorElement.setCompanyDTO(companyDTO);
 
         this.assembleFinanceElement(indicatorElement, fileDate, code, year, typeEnum);
+
         this.assembleKLineElement(indicatorElement, fileDate, code, kLineDate);
+
+        this.assembleHolderIncreaseElement(indicatorElement, code);
+
+        this.assembleFreeShareElement(indicatorElement, code);
 
         return indicatorElement;
     }
@@ -945,6 +952,42 @@ public class StockIndicatorManager {
 
     }
 
+    /**
+     * 增减持数据
+     *
+     * @param indicatorElement
+     * @param code
+     */
+    private void assembleHolderIncreaseElement(AnalyseIndicatorElement indicatorElement, String code){
+        if(indicatorElement ==null || StringUtils.isBlank(code)){
+            return;
+        }
+
+        DongChaiLocalDataManager manager =new DongChaiLocalDataManager();
+        DongChaiHolderIncreaseDTO holderIncreaseDTO = manager.getHolderIncreaseDTO(code);
+        if(holderIncreaseDTO !=null){
+            indicatorElement.setHolderIncreaseDTO(holderIncreaseDTO);
+        }
+    }
+
+    /**
+     * 解禁数据
+     *
+     * @param indicatorElement
+     * @param code
+     */
+    private void assembleFreeShareElement(AnalyseIndicatorElement indicatorElement, String code){
+        if(indicatorElement ==null || StringUtils.isBlank(code)){
+            return;
+        }
+
+        DongChaiLocalDataManager manager =new DongChaiLocalDataManager();
+        DongChaiFreeShareDTO freeShareDTO = manager.getFreeShareDTO(code);
+        if(freeShareDTO !=null){
+            indicatorElement.setFreeShareDTO(freeShareDTO);
+        }
+    }
+
     private AnalyseIndicatorDTO getAnalyseIndicatorDTO(AnalyseIndicatorElement indicatorElement){
         JSONObject jsonIndicator =new JSONObject();
         jsonIndicator.put("code", indicatorElement.getCode());
@@ -991,6 +1034,20 @@ public class StockIndicatorManager {
                     .collect(Collectors.toList())
                     .get(0);
             JSONObject jsonObject = JSON.parseObject(JSON.toJSONString(queryDateKLineDTO));
+            for(String key : jsonObject.keySet()){
+                jsonIndicator.put(key, jsonObject.getString(key));
+            }
+        }
+
+        if(indicatorElement.getHolderIncreaseDTO() !=null){
+            JSONObject jsonObject = JSON.parseObject(JSON.toJSONString(indicatorElement.getHolderIncreaseDTO()));
+            for(String key : jsonObject.keySet()){
+                jsonIndicator.put(key, jsonObject.getString(key));
+            }
+        }
+
+        if(indicatorElement.getFreeShareDTO() !=null){
+            JSONObject jsonObject = JSON.parseObject(JSON.toJSONString(indicatorElement.getFreeShareDTO()));
             for(String key : jsonObject.keySet()){
                 jsonIndicator.put(key, jsonObject.getString(key));
             }

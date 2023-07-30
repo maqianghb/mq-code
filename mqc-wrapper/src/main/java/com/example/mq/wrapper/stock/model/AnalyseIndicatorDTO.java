@@ -254,4 +254,29 @@ public class AnalyseIndicatorDTO {
      */
     private String oi_net_5_quarter;
 
+    /**
+     * 增减持类型
+     */
+    private String direction;
+
+    /**
+     * 变动比例(%)
+     */
+    private Double after_change_rate;
+
+    /**
+     * 解禁时间
+     */
+    private String free_date;
+
+    /**
+     * 解禁数量(万股)
+     */
+    private Double free_share_num;
+
+    /**
+     * 占流通市值的比例(%)
+     */
+    private Double free_ratio;
+
 }

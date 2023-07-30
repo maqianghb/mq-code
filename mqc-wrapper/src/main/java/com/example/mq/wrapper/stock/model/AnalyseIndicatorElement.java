@@ -66,4 +66,14 @@ public class AnalyseIndicatorElement {
 
     private XueQiuStockKLineDTO oneYearKLineDTO;
 
+    /**
+     * 最新的增减持信息
+     */
+    private DongChaiHolderIncreaseDTO holderIncreaseDTO;
+
+    /**
+     * 解禁信息
+     */
+    private DongChaiFreeShareDTO freeShareDTO;
+
 }

@@ -15,7 +15,7 @@ public class DongChaiHolderIncreaseDTO {
     private String notice_date;
 
     /**
-     * 增减类型
+     * 增减持类型
      */
     private String direction;
 
