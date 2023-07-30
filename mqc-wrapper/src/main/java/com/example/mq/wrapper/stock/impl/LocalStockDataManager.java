@@ -1,6 +1,7 @@
 package com.example.mq.wrapper.stock.impl;
 
 import com.alibaba.fastjson.JSON;
+import com.example.mq.common.utils.NumberUtil;
 import com.example.mq.wrapper.stock.constant.StockConstant;
 import com.example.mq.wrapper.stock.enums.FinanceReportTypeEnum;
 import com.example.mq.wrapper.stock.enums.KLineTypeEnum;
@@ -60,7 +61,7 @@ public class LocalStockDataManager {
         try {
             List<XueQiuStockBalanceDTO> balanceDTOList = Lists.newArrayList();
             for(String stockCode : stockCodeList) {
-                List<XueQiuStockBalanceDTO> tmpBalanceDTOList = xueQiuStockManager.queryBalanceList(stockCode, StockConstant.COUNT);
+                List<XueQiuStockBalanceDTO> tmpBalanceDTOList = xueQiuStockManager.queryBalanceList(stockCode, StockConstant.FINANCE_REPORT_COUNT);
                 if (CollectionUtils.isNotEmpty(tmpBalanceDTOList)) {
                     balanceDTOList.addAll(tmpBalanceDTOList);
                 }
@@ -82,7 +83,7 @@ public class LocalStockDataManager {
         try {
             List<XueQiuStockIncomeDTO> incomeDTOList = Lists.newArrayList();
             for(String stockCode : stockCodeList) {
-                List<XueQiuStockIncomeDTO> tmpIncomeDTOList = xueQiuStockManager.queryIncomeList(stockCode, StockConstant.COUNT);
+                List<XueQiuStockIncomeDTO> tmpIncomeDTOList = xueQiuStockManager.queryIncomeList(stockCode, StockConstant.FINANCE_REPORT_COUNT);
                 if (CollectionUtils.isNotEmpty(tmpIncomeDTOList)) {
                     incomeDTOList.addAll(tmpIncomeDTOList);
                 }
@@ -104,7 +105,7 @@ public class LocalStockDataManager {
         try {
             List<XueQiuStockCashFlowDTO> cashFlowDTOList = Lists.newArrayList();
             for(String stockCode : stockCodeList) {
-                List<XueQiuStockCashFlowDTO> tmpCashFlowDTOList = xueQiuStockManager.queryCashFlowList(stockCode, StockConstant.COUNT);
+                List<XueQiuStockCashFlowDTO> tmpCashFlowDTOList = xueQiuStockManager.queryCashFlowList(stockCode, StockConstant.FINANCE_REPORT_COUNT);
                 if (CollectionUtils.isNotEmpty(tmpCashFlowDTOList)) {
                     cashFlowDTOList.addAll(tmpCashFlowDTOList);
                 }
@@ -126,7 +127,7 @@ public class LocalStockDataManager {
         try {
             List<XueQiuStockIndicatorDTO> indicatorDTOList = Lists.newArrayList();
             for(String stockCode : stockCodeList) {
-                List<XueQiuStockIndicatorDTO> tmpIndicatorDTOList = xueQiuStockManager.queryIndicatorList(stockCode, StockConstant.COUNT);
+                List<XueQiuStockIndicatorDTO> tmpIndicatorDTOList = xueQiuStockManager.queryIndicatorList(stockCode, StockConstant.FINANCE_REPORT_COUNT);
                 if (CollectionUtils.isNotEmpty(tmpIndicatorDTOList)) {
                     indicatorDTOList.addAll(tmpIndicatorDTOList);
                 }
@@ -164,7 +165,18 @@ public class LocalStockDataManager {
         for(String stockCode : stockCodeList){
             String kLineFileName =String.format(StockConstant.KLINE_LIST_DAY, fileDate, stockCode);
             try {
-                List<XueQiuStockKLineDTO> tmpKLineDTOList = xueQiuStockManager.queryKLineList(stockCode, "day", System.currentTimeMillis(), 1200);
+                List<XueQiuStockKLineDTO> tmpKLineDTOList = xueQiuStockManager.queryKLineList(stockCode, "day"
+                        , System.currentTimeMillis(), StockConstant.KLINE_DAY_COUNT);
+
+                // 补全Ma20指标
+                this.assembleMa20Value(tmpKLineDTOList);
+                // 补全Ma60指标
+                this.assembleMa60Value(tmpKLineDTOList);
+                // 补全Ma250指标
+                this.assembleMa250Value(tmpKLineDTOList);
+                // 补全Ma1000指标
+                this.assembleMa1000Value(tmpKLineDTOList);
+
                 if(CollectionUtils.isNotEmpty(tmpKLineDTOList)){
                     List<String> strKLineList = tmpKLineDTOList.stream()
                             .sorted(Comparator.comparing(XueQiuStockKLineDTO::getTimestamp).reversed())
@@ -175,6 +187,96 @@ public class LocalStockDataManager {
             } catch (Exception e) {
                 e.printStackTrace();
             }
+        }
+    }
+
+    /**
+     * 补全Ma20Value数据
+     *
+     * @param kLineDTOList
+     */
+    private void assembleMa20Value(List<XueQiuStockKLineDTO> kLineDTOList){
+        if(CollectionUtils.isEmpty(kLineDTOList) || kLineDTOList.size() < 20){
+            return ;
+        }
+
+        List<XueQiuStockKLineDTO> sortedKLinetDTOList = kLineDTOList.stream()
+                .filter(kLineDTO -> kLineDTO.getTimestamp() != null)
+                .sorted(Comparator.comparing(XueQiuStockKLineDTO::getTimestamp).reversed())
+                .collect(Collectors.toList());
+
+        for(int i=0; i<sortedKLinetDTOList.size() -20; i++){
+            XueQiuStockKLineDTO currentKLineDTO = sortedKLinetDTOList.get(i);
+            List<XueQiuStockKLineDTO> calculateKLineDTOList = sortedKLinetDTOList.subList(i, i + 20);
+            double ma_20_value =calculateKLineDTOList.stream().mapToDouble(XueQiuStockKLineDTO::getClose).sum() / 20;
+            currentKLineDTO.setMa_20_value(NumberUtil.format(ma_20_value, 2));
+        }
+    }
+    /**
+     * 补全Ma60Value数据
+     *
+     * @param kLineDTOList
+     */
+    private void assembleMa60Value(List<XueQiuStockKLineDTO> kLineDTOList){
+        if(CollectionUtils.isEmpty(kLineDTOList) || kLineDTOList.size() < 60){
+            return ;
+        }
+
+        List<XueQiuStockKLineDTO> sortedKLinetDTOList = kLineDTOList.stream()
+                .filter(kLineDTO -> kLineDTO.getTimestamp() != null)
+                .sorted(Comparator.comparing(XueQiuStockKLineDTO::getTimestamp).reversed())
+                .collect(Collectors.toList());
+
+        for(int i=0; i<sortedKLinetDTOList.size() -60; i++){
+            XueQiuStockKLineDTO currentKLineDTO = sortedKLinetDTOList.get(i);
+            List<XueQiuStockKLineDTO> calculateKLineDTOList = sortedKLinetDTOList.subList(i, i + 60);
+            double ma_60_value =calculateKLineDTOList.stream().mapToDouble(XueQiuStockKLineDTO::getClose).sum() / 60;
+            currentKLineDTO.setMa_60_value(NumberUtil.format(ma_60_value, 2));
+        }
+    }
+    /**
+     * 补全Ma250Value数据
+     *
+     * @param kLineDTOList
+     */
+    private void assembleMa250Value(List<XueQiuStockKLineDTO> kLineDTOList){
+        if(CollectionUtils.isEmpty(kLineDTOList) || kLineDTOList.size() < 250){
+            return ;
+        }
+
+        List<XueQiuStockKLineDTO> sortedKLinetDTOList = kLineDTOList.stream()
+                .filter(kLineDTO -> kLineDTO.getTimestamp() != null)
+                .sorted(Comparator.comparing(XueQiuStockKLineDTO::getTimestamp).reversed())
+                .collect(Collectors.toList());
+
+        for(int i=0; i<sortedKLinetDTOList.size() -250; i++){
+            XueQiuStockKLineDTO currentKLineDTO = sortedKLinetDTOList.get(i);
+            List<XueQiuStockKLineDTO> calculateKLineDTOList = sortedKLinetDTOList.subList(i, i + 250);
+            double ma_250_value =calculateKLineDTOList.stream().mapToDouble(XueQiuStockKLineDTO::getClose).sum() / 250;
+            currentKLineDTO.setMa_250_value(NumberUtil.format(ma_250_value, 2));
+        }
+    }
+
+    /**
+     * 补全Ma1000Value数据
+     *
+     * @param kLineDTOList
+     */
+    private void assembleMa1000Value(List<XueQiuStockKLineDTO> kLineDTOList){
+        if(CollectionUtils.isEmpty(kLineDTOList) || kLineDTOList.size() < 1000){
+            return ;
+        }
+
+        List<XueQiuStockKLineDTO> sortedKLinetDTOList = kLineDTOList.stream()
+                .filter(kLineDTO -> kLineDTO.getTimestamp() != null)
+                .sorted(Comparator.comparing(XueQiuStockKLineDTO::getTimestamp).reversed())
+                .collect(Collectors.toList());
+
+        for(int i=0; i<sortedKLinetDTOList.size() -1000; i++) {
+            XueQiuStockKLineDTO currentKLineDTO = sortedKLinetDTOList.get(i);
+            List<XueQiuStockKLineDTO> calculateKLineDTOList = sortedKLinetDTOList.subList(i, i + 1000);
+            double ma_1000_value = calculateKLineDTOList.stream().mapToDouble(XueQiuStockKLineDTO::getClose).sum() / 1000;
+            currentKLineDTO.setMa_1000_value(NumberUtil.format(ma_1000_value, 2));
         }
     }
 

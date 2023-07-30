@@ -86,4 +86,24 @@ public class XueQiuStockKLineDTO {
      */
     private Double market_capital;
 
+    /**
+     * ma20值
+     */
+    private Double ma_20_value;
+
+    /**
+     * ma60值
+     */
+    private Double ma_60_value;
+
+    /**
+     * ma250值
+     */
+    private Double ma_250_value;
+
+    /**
+     * ma1000值
+     */
+    private Double ma_1000_value;
+
 }

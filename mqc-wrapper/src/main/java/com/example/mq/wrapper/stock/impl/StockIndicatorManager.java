@@ -25,8 +25,8 @@ import java.util.stream.Collectors;
 public class StockIndicatorManager {
 
     private static final String HEADER ="K线日期,1月后股价波动,3月后股价波动,半年后股价波动,1年后股价波动" +
-            ",股东权益合计,营业收入,营业成本,经营现金流入,经营现金净额,净利润,K线数量"+
-            ",编码,名称,行业,省市,总市值,资产负债率,市盈率TTM,pe分位值,市净率,pb分位值,净资产收益率TTM,去掉现金后的ROE" +
+            ",股东权益合计,营业收入,营业成本,经营现金流入,经营现金净额,净利润,K线数量,收盘价,ma1000值"+
+            ",编码,名称,行业,省市,总市值,资产负债率,市盈率TTM,pe百分位,市净率,pb百分位,ma1000差值百分位,净资产收益率TTM,去掉现金后的ROE" +
             ",毛利率,净利率,当季毛利率,当季净利率,当季毛利率同比,当季净利率同比,当季毛利率环比,当季净利率环比" +
             ",营收同比,净利润同比,当季营收同比,当季净利润同比,固定资产同比,在建工程同比,商誉+无形/净资产,固定资产/净资产,在建工程/净资产" +
             ",现金等价物/短期负债,经营现金流入/营收,经营现金净额/净利润,应付票据及应付账款" +
@@ -37,9 +37,8 @@ public class StockIndicatorManager {
 
         LocalStockDataManager localStockDataManager =new LocalStockDataManager();
         List<String> stockCodeList = localStockDataManager.getStockCodeList();
-//        List<String> stockCodeList = Arrays.asList("SZ002001", "SZ002415", "SZ002508", "SH600486", "SZ002507");
 
-        String kLineDate = "20230708";
+        String kLineDate = "20230729";
         Integer reportYear = 2023;
         FinanceReportTypeEnum reportTypeEnum =FinanceReportTypeEnum.QUARTER_1;
 
@@ -98,7 +97,7 @@ public class StockIndicatorManager {
 
         System.out.println("indicatorList: "+ JSON.toJSONString(strIndicatorList));
 
-        // 统计百分位数据
+        // 按行业统计百分位数据
         this.getAndSaveIndicatorDTOPercent(kLineDate, allIndicatorDTOList);
 
         // 按指标筛选数据
@@ -511,17 +510,31 @@ public class StockIndicatorManager {
                 .filter(indicatorDTO -> indicatorDTO.getKLineSize() != null && indicatorDTO.getKLineSize() > 500)
                 .filter(indicatorDTO -> indicatorDTO.getMarket_capital() != null && indicatorDTO.getMarket_capital() >= 30)
                 .filter(indicatorDTO -> indicatorDTO.getRevenue() != null)
-                .filter(indicatorDTO -> indicatorDTO.getPb_p_1000() != null && indicatorDTO.getPb_p_1000() <= 0.3)
                 .filter(indicatorDTO -> indicatorDTO.getAvg_roe_ttm_v1() != null && indicatorDTO.getAvg_roe_ttm_v1() >= 0.15 && indicatorDTO.getAvg_roe_ttm_v1() < 2)
-                .filter(indicatorDTO -> indicatorDTO.getGross_margin_rate() != null && indicatorDTO.getGross_margin_rate() >= 0.15)
-                .filter(indicatorDTO -> indicatorDTO.getNet_selling_rate() != null && indicatorDTO.getNet_selling_rate() >= 0.07)
                 .filter(indicatorDTO -> indicatorDTO.getOperating_income_yoy() != null && indicatorDTO.getOperating_income_yoy() <= 2)
                 .filter(indicatorDTO -> indicatorDTO.getGw_ia_assert_rate() != null && indicatorDTO.getGw_ia_assert_rate() <= 0.3)
                 .filter(indicatorDTO -> indicatorDTO.getReceivable_turnover_days() != null && indicatorDTO.getReceivable_turnover_days() <= 250)
                 .filter(indicatorDTO -> {
-                    boolean result1 = indicatorDTO.getReceivable_turnover_days() != null && indicatorDTO.getReceivable_turnover_days() <= 150;
+                    boolean result1 = indicatorDTO.getReceivable_turnover_days() != null && indicatorDTO.getReceivable_turnover_days() <= 120;
                     boolean result2 = indicatorDTO.getInventory_turnover_days() != null && indicatorDTO.getInventory_turnover_days() <= 350;
                     return result1 || result2;
+                })
+                .filter(indicatorDTO -> {
+                    if(indicatorDTO.getPb_p_1000() ==null){
+                        return true;
+                    }else{
+                        return indicatorDTO.getPb_p_1000() <= 0.3;
+                    }
+                })
+                .filter(indicatorDTO -> {
+                    if(indicatorDTO.getMarket_capital() !=null && indicatorDTO.getMarket_capital() >=1000){
+                        // 市值千亿以上，要求毛利率和净利率较低
+                        return indicatorDTO.getGross_margin_rate() != null && indicatorDTO.getGross_margin_rate() >= 0.1
+                                && indicatorDTO.getNet_selling_rate() != null && indicatorDTO.getNet_selling_rate() >= 0.05;
+                    }else{
+                        return indicatorDTO.getGross_margin_rate() != null && indicatorDTO.getGross_margin_rate() >= 0.15
+                                && indicatorDTO.getNet_selling_rate() != null && indicatorDTO.getNet_selling_rate() >= 0.07;
+                    }
                 })
                 .filter(indicatorDTO -> {
                     if (indicatorDTO.getMarket_capital() <= 50) {
@@ -538,7 +551,7 @@ public class StockIndicatorManager {
                             curMatchNum++;
                         }
 
-                        // 市值50亿以下的， 要求高利润/高增长
+                        // 市值50亿以下的， 要求有高利润或高增长
                         return curMatchNum >= 1;
                     } else {
                         return true;
@@ -613,6 +626,9 @@ public class StockIndicatorManager {
         }
         if(analyseIndicatorDTO.getTotal_holders_equity() !=null){
             analyseIndicatorDTO.setTotal_holders_equity(NumberUtil.format(analyseIndicatorDTO.getTotal_holders_equity() /(10000 *10000), 1));
+        }
+        if(analyseIndicatorDTO.getMa_1000_diff_p() !=null){
+            analyseIndicatorDTO.setMa_1000_diff_p(NumberUtil.format(analyseIndicatorDTO.getMa_1000_diff_p() , 9));
         }
         if(analyseIndicatorDTO.getAvg_roe_ttm() !=null){
             analyseIndicatorDTO.setAvg_roe_ttm(NumberUtil.format(analyseIndicatorDTO.getAvg_roe_ttm(), 3));
@@ -1007,6 +1023,13 @@ public class StockIndicatorManager {
             }
         }
 
+        if(indicatorDTO.getMa_1000_diff_p() ==null){
+            Double ma_1000_diff_p =this.getMa1000DiffPercentValue(indicatorDTO, indicatorElement);
+            if(ma_1000_diff_p !=null){
+                indicatorDTO.setMa_1000_diff_p(ma_1000_diff_p);
+            }
+        }
+
         if(indicatorDTO.getAvg_roe_ttm() ==null){
             Double avg_roe_ttm =this.getAvgRoeTtm(indicatorDTO, indicatorElement);
             if(avg_roe_ttm !=null){
@@ -1306,7 +1329,7 @@ public class StockIndicatorManager {
     }
 
     private Double getPbP1000Value(AnalyseIndicatorDTO indicatorDTO, AnalyseIndicatorElement indicatorElement){
-        if(indicatorDTO ==null || indicatorDTO.getPe() ==null){
+        if(indicatorDTO ==null || indicatorDTO.getPb() ==null){
             return null;
         }
         if(indicatorElement ==null || CollectionUtils.isEmpty(indicatorElement.getKLineDTOList())){
@@ -1324,6 +1347,33 @@ public class StockIndicatorManager {
         for(int index =0; index <pbList.size(); index++){
             if(Math.abs(currentPb -pbList.get(index)) <=0.01){
                 return (index*1.0)/pbList.size();
+            }
+        }
+
+        return null;
+    }
+
+    private Double getMa1000DiffPercentValue(AnalyseIndicatorDTO indicatorDTO, AnalyseIndicatorElement indicatorElement){
+        if(indicatorDTO ==null || indicatorDTO.getClose() ==null || indicatorDTO.getMa_1000_value() ==null){
+            return null;
+        }
+        if(indicatorElement ==null || CollectionUtils.isEmpty(indicatorElement.getKLineDTOList())){
+            return null;
+        }
+
+        List<Double> diffValueList = indicatorElement.getKLineDTOList().stream()
+                .filter(kLineDTO -> kLineDTO.getMa_1000_value() !=null && kLineDTO.getClose() !=null)
+                .map(kLineDTO -> kLineDTO.getClose() - kLineDTO.getMa_1000_value())
+                .sorted()
+                .collect(Collectors.toList());
+        if(CollectionUtils.isEmpty(diffValueList) || diffValueList.size() <1000){
+            return null;
+        }
+
+        Double current_diff_value = indicatorDTO.getClose() - indicatorDTO.getMa_1000_value();
+        for(int index =0; index < diffValueList.size(); index++){
+            if(Math.abs(current_diff_value -diffValueList.get(index)) <=0.01){
+                return (index *1.0)/diffValueList.size();
             }
         }
 

@@ -53,6 +53,9 @@ public class AnalyseIndicatorElement {
      */
     private QuarterIncomeDTO lastPeriodQuarterIncomeDTO;
 
+    /**
+     * 近1000交易日的KLine数据
+     */
     private List<XueQiuStockKLineDTO> kLineDTOList;
 
     private XueQiuStockKLineDTO oneMonthKLineDTO;

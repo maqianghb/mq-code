@@ -50,6 +50,16 @@ public class AnalyseIndicatorDTO {
      */
     private Integer kLineSize;
 
+    /**
+     * 收盘价
+     */
+    private Double close;
+
+    /**
+     * ma1000值
+     */
+    private Double ma_1000_value;
+
     private String code;
 
     private String name;
@@ -90,9 +100,14 @@ public class AnalyseIndicatorDTO {
     private Double pb;
 
     /**
-     * pe分位值(近1000个交易日)
+     * pb分位值(近1000个交易日)
      */
     private Double pb_p_1000;
+
+    /**
+     * 价格和ma1000差值的百分位
+     */
+    private Double ma_1000_diff_p;
 
     /**
      * 净资产收益率TTM

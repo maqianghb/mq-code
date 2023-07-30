@@ -28,7 +28,7 @@ public class StatisticsCodeManager {
         for(ImmutablePair<String, String> pair : StockConstant.STATISTICS_CODE_LIST){
             String statisticsCode =pair.getLeft();
             String statisticsName =pair.getRight();
-            Double percentValue = statisticsCodeManager.queryMa1000Percent(statisticsCode, queryDate, 2000);
+            Double percentValue = statisticsCodeManager.queryMa1000Percent(statisticsCode, queryDate, StockConstant.KLINE_DAY_COUNT);
             String msg =new StringBuilder()
                     .append("queryDate:").append(queryDate)
                     .append(", code:").append(statisticsCode)
