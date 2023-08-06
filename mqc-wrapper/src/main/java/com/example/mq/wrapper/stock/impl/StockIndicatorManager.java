@@ -25,7 +25,7 @@ import java.util.stream.Collectors;
 public class StockIndicatorManager {
 
     private static final String HEADER = "编码,名称,行业,省市,K线差值百分位,总市值,匹配次数,均线相等次数" +
-            ",资产负债率,PE_TTM,pe百分位,市净率,pb百分位,ROE_TTM,去现后的ROE" +
+            ",资产负债率,PE_TTM,pe百分位,市净率,pb百分位,净资产收益率,去现后的ROE" +
             ",毛利率,净利率,当季毛利率,当季净利率,当季毛利率同比,当季净利率同比,当季毛利率环比,当季净利率环比" +
             ",营收同比,净利润同比,当季营收同比,当季净利润同比" +
             ",固定资产同比,在建工程同比,商誉+无形/净资产,固定资产/净资产,在建工程/净资产" +
@@ -40,10 +40,10 @@ public class StockIndicatorManager {
         StockIndicatorManager manager =new StockIndicatorManager();
 
         LocalStockDataManager localStockDataManager =new LocalStockDataManager();
-        List<String> stockCodeList = localStockDataManager.getStockCodeList();
-//        List<String> stockCodeList =StockConstant.TEST_STOCK_CODE_LIST;
+//        List<String> stockCodeList = localStockDataManager.getStockCodeList();
+        List<String> stockCodeList =StockConstant.TEST_STOCK_CODE_LIST;
 
-        String kLineDate = "20230729";
+        String kLineDate = StockConstant.FILE_DATE;
         Integer reportYear = 2023;
         FinanceReportTypeEnum reportTypeEnum =FinanceReportTypeEnum.QUARTER_1;
 
