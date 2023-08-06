@@ -43,6 +43,9 @@ public class LocalStockDataManager {
         // company
 //        manager.queryAndSaveCompanyDTO();
 
+//        List<String> whiteStockCodeList = manager.getWhiteStockCodeList();
+//        System.out.println("whiteStockCodeList:" + JSON.toJSONString(whiteStockCodeList));
+
         System.out.println("end. ");
     }
 
@@ -636,6 +639,22 @@ public class LocalStockDataManager {
      * @return
      */
     public List<String> getBlackStockCodeList(){
+        List<String> stockCodeList = Lists.newArrayList();
+        try {
+            List<String> strList = FileUtils.readLines(new File(StockConstant.STOCK_LIST_BLACK), Charset.forName("UTF-8"));
+            if(CollectionUtils.isEmpty(strList)){
+                return Lists.newArrayList();
+            }
+
+            for(String str : strList){
+                String[] split = StringUtils.split(str, ",");
+                if(split !=null && split.length ==3){
+                    stockCodeList.add(split[0]);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         return Lists.newArrayList();
     }
 
@@ -644,6 +663,24 @@ public class LocalStockDataManager {
      * @return
      */
     public List<String> getWhiteStockCodeList(){
+        List<String> stockCodeList = Lists.newArrayList();
+        try {
+            List<String> strList = FileUtils.readLines(new File(StockConstant.STOCK_LIST_WHITE), Charset.forName("UTF-8"));
+            if(CollectionUtils.isEmpty(strList)){
+                return Lists.newArrayList();
+            }
+
+            for(String str : strList){
+                String[] split = StringUtils.split(str, ",");
+                if(split !=null && split.length ==3){
+                    stockCodeList.add(split[0]);
+                }
+            }
+
+            return stockCodeList;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         return Lists.newArrayList();
     }
 

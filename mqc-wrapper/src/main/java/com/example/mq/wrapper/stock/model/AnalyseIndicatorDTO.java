@@ -5,61 +5,6 @@ import lombok.Data;
 @Data
 public class AnalyseIndicatorDTO {
 
-    private String kLineDate;
-
-    private Double one_month_price_change;
-
-    private Double three_month_price_change;
-
-    private Double half_year_price_change;
-
-    private Double one_year_price_change;
-
-    /**
-     * 股东权益合计
-     */
-    private Double total_holders_equity;
-
-    /**
-     * 营业收入
-     */
-    private Double revenue;
-
-    /**
-     * 营业成本
-     */
-    private Double operating_cost;
-
-    /**
-     * 经营活动现金流入小计
-     */
-    private Double sub_total_of_ci_from_oa;
-
-    /**
-     * 经营活动产生的现金流量净额
-     */
-    private Double ncf_from_oa;
-
-    /**
-     * 净利润
-     */
-    private Double net_profit_atsopc;
-
-    /**
-     * KLine数量
-     */
-    private Integer kLineSize;
-
-    /**
-     * 收盘价
-     */
-    private Double close;
-
-    /**
-     * ma1000值
-     */
-    private Double ma_1000_value;
-
     private String code;
 
     private String name;
@@ -75,9 +20,24 @@ public class AnalyseIndicatorDTO {
     private String provincial_name;
 
     /**
+     * K线和ma1000差值的百分位
+     */
+    private Double ma_1000_diff_p;
+
+    /**
      * 总市值
      */
     private Double market_capital;
+
+    /**
+     * 指标匹配次数
+     */
+    private Integer curMatchNum;
+
+    /**
+     * 最近一段时间，ma20和ma60相等次数
+     */
+    private Integer ma_20_equal_ma_60_num;
 
     /**
      * 资产负债率
@@ -103,11 +63,6 @@ public class AnalyseIndicatorDTO {
      * pb分位值(近1000个交易日)
      */
     private Double pb_p_1000;
-
-    /**
-     * 价格和ma1000差值的百分位
-     */
-    private Double ma_1000_diff_p;
 
     /**
      * 净资产收益率TTM
@@ -245,16 +200,6 @@ public class AnalyseIndicatorDTO {
     private Double inventory_turnover_days;
 
     /**
-     * 过去5个季度的毛利率和净利率
-     */
-    private String gross_net_rate_5_quarter;
-
-    /**
-     * 过去5个季度的营收和净利润
-     */
-    private String oi_net_5_quarter;
-
-    /**
      * 增减持类型
      */
     private String direction;
@@ -278,5 +223,76 @@ public class AnalyseIndicatorDTO {
      * 占流通市值的比例(%)
      */
     private Double free_ratio;
+
+    /**
+     * 过去5个季度的毛利率和净利率
+     */
+    private String gross_net_rate_5_quarter;
+
+    /**
+     * 过去5个季度的营收和净利润
+     */
+    private String oi_net_5_quarter;
+
+
+
+
+    /**
+     * K线日期
+     */
+    private String kLineDate;
+
+    /**
+     * KLine数量
+     */
+    private Integer kLineSize;
+
+    /**
+     * 收盘价
+     */
+    private Double close;
+
+    /**
+     * ma1000值
+     */
+    private Double ma_1000_value;
+
+    /**
+     * 股东权益合计
+     */
+    private Double total_holders_equity;
+
+    /**
+     * 营业收入
+     */
+    private Double revenue;
+
+    /**
+     * 营业成本
+     */
+    private Double operating_cost;
+
+    /**
+     * 经营活动现金流入小计
+     */
+    private Double sub_total_of_ci_from_oa;
+
+    /**
+     * 经营活动产生的现金流量净额
+     */
+    private Double ncf_from_oa;
+
+    /**
+     * 净利润
+     */
+    private Double net_profit_atsopc;
+
+    private Double one_month_price_change;
+
+    private Double three_month_price_change;
+
+    private Double half_year_price_change;
+
+    private Double one_year_price_change;
 
 }
