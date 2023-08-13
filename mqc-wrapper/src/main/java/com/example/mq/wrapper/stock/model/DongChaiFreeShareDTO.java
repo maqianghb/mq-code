@@ -29,4 +29,9 @@ public class DongChaiFreeShareDTO {
      */
     private Double free_ratio;
 
+    /**
+     * 占总市值的比例(%)
+     */
+    private Double total_ratio;
+
 }

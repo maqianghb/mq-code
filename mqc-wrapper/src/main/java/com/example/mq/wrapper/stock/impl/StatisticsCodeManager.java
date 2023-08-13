@@ -1,5 +1,6 @@
 package com.example.mq.wrapper.stock.impl;
 
+import com.example.mq.common.utils.NumberUtil;
 import com.example.mq.wrapper.stock.constant.StockConstant;
 import com.example.mq.wrapper.stock.model.XueQiuStockKLineDTO;
 import org.apache.commons.collections4.CollectionUtils;
@@ -30,10 +31,10 @@ public class StatisticsCodeManager {
             String statisticsName =pair.getRight();
             Double percentValue = statisticsCodeManager.queryMa1000Percent(statisticsCode, queryDate, StockConstant.KLINE_DAY_COUNT);
             String msg =new StringBuilder()
-                    .append("queryDate:").append(queryDate)
+                    .append("日期:").append(queryDate)
                     .append(", code:").append(statisticsCode)
                     .append(", name:").append(statisticsName)
-                    .append(", percentValue:").append(percentValue)
+                    .append(", 均线差值百分位:").append(NumberUtil.format(percentValue, 2))
                     .append(";")
                     .toString();
             msgList.add(msg);

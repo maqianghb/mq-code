@@ -441,7 +441,10 @@ public class DongChaiLocalDataManager {
                             freeShareDTO.setFree_share_num(NumberUtil.format(jsonColumn.getDouble("ABLE_FREE_SHARES"), 1));
                         }
                         if (jsonColumn.getDouble("FREE_RATIO") != null) {
-                            freeShareDTO.setFree_ratio(NumberUtil.format(jsonColumn.getDouble("FREE_RATIO"), 2));
+                            freeShareDTO.setFree_ratio(NumberUtil.format(jsonColumn.getDouble("FREE_RATIO") * 100, 2));
+                        }
+                        if (jsonColumn.getDouble("TOTAL_RATIO") != null) {
+                            freeShareDTO.setTotal_ratio(NumberUtil.format(jsonColumn.getDouble("TOTAL_RATIO") * 100, 2));
                         }
 
                         return freeShareDTO;
@@ -507,8 +510,8 @@ public class DongChaiLocalDataManager {
 
             return Optional.ofNullable(freeShareDTOList).orElse(Lists.newArrayList()).stream()
                     .filter(balanceDTO -> Objects.equals(balanceDTO.getCode(), code))
-                    .filter(balanceDTO -> balanceDTO.getFree_share_num() >100 || balanceDTO.getFree_ratio() >1)
-                    .sorted(Comparator.comparing(DongChaiFreeShareDTO::getFree_date).reversed())
+                    .filter(balanceDTO -> balanceDTO.getFree_share_num() >100 || balanceDTO.getTotal_ratio() >0.1)
+                    .sorted(Comparator.comparing(DongChaiFreeShareDTO::getTotal_ratio).reversed())
                     .findFirst()
                     .orElse(null);
         } catch (Exception e) {

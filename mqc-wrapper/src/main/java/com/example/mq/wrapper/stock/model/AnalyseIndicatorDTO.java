@@ -220,9 +220,9 @@ public class AnalyseIndicatorDTO {
     private Double free_share_num;
 
     /**
-     * 占流通市值的比例(%)
+     * 占总市值的比例(%)
      */
-    private Double free_ratio;
+    private Double total_ratio;
 
     /**
      * 过去5个季度的毛利率和净利率

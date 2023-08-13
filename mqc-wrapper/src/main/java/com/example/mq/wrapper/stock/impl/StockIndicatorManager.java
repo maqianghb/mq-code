@@ -40,8 +40,8 @@ public class StockIndicatorManager {
         StockIndicatorManager manager =new StockIndicatorManager();
 
         LocalStockDataManager localStockDataManager =new LocalStockDataManager();
-//        List<String> stockCodeList = localStockDataManager.getStockCodeList();
-        List<String> stockCodeList =StockConstant.TEST_STOCK_CODE_LIST;
+        List<String> stockCodeList = localStockDataManager.getStockCodeList();
+//        List<String> stockCodeList =StockConstant.TEST_STOCK_CODE_LIST;
 
         String kLineDate = StockConstant.FILE_DATE;
         Integer reportYear = 2023;
@@ -497,6 +497,18 @@ public class StockIndicatorManager {
                     boolean result1 = indicatorDTO.getReceivable_turnover_days() != null && indicatorDTO.getReceivable_turnover_days() <= 120;
                     boolean result2 = indicatorDTO.getInventory_turnover_days() != null && indicatorDTO.getInventory_turnover_days() <= 350;
                     return result1 || result2;
+                })
+                .filter(indicatorDTO -> {
+                    if(StringUtils.isNotBlank(indicatorDTO.getInd_name())
+                            && (indicatorDTO.getInd_name().contains("医") || indicatorDTO.getInd_name().contains("药"))){
+                        if(indicatorDTO.getGross_margin_rate() !=null && indicatorDTO.getNet_selling_rate() !=null){
+                            // 医药行业，过滤毛利率和净利率差过高的数据
+                            double rate_value = indicatorDTO.getGross_margin_rate() - indicatorDTO.getNet_selling_rate();
+                            return rate_value <0.5;
+                        }
+                    }
+
+                    return true;
                 })
                 .filter(indicatorDTO -> {
                     if(indicatorDTO.getPb_p_1000() ==null){
