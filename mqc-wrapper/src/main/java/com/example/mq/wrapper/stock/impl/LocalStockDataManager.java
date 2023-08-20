@@ -38,7 +38,7 @@ public class LocalStockDataManager {
         manager.queryAndSaveKLineList(StockConstant.FILE_DATE);
 
         // finance
-//        manager.queryAndSaveFinanceList(StockConstant.FILE_DATE);
+        manager.queryAndSaveFinanceList(StockConstant.FILE_DATE);
 
         // company
 //        manager.queryAndSaveCompanyDTO();

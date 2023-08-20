@@ -205,6 +205,11 @@ public class AnalyseIndicatorDTO {
     private String direction;
 
     /**
+     * 增减持数量(万股)
+     */
+    private Double change_num;
+
+    /**
      * 变动比例(%)
      */
     private Double after_change_rate;

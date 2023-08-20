@@ -31,7 +31,7 @@ public class StockIndicatorManager {
             ",固定资产同比,在建工程同比,商誉+无形/净资产,固定资产/净资产,在建工程/净资产" +
             ",现金等价物/短期负债,经营现金流入/营收,经营现金净额/净利润" +
             ",应付票据及应付账款,应收票据及应收账款,应付票据及应付账款/应收票据及应收账款,应收账款周转天数,存货周转天数" +
-            ",增减持类型,变动比例(%),解禁时间,解禁数量(万股),占流通市值的比例(%)" +
+            ",增减持类型,增减持数量(万股),变动比例(%),解禁时间,解禁数量(万股),占总市值的比例(%)" +
             ",近5季度的毛利率和净利率,近5季度的营收和利润(亿)" +
             ",K线日期,K线数量,收盘价,ma1000值,股东权益合计,营业收入,营业成本,经营现金流入,经营现金净额,净利润" +
             ",1月后股价波动,3月后股价波动,半年后股价波动,1年后股价波动";
@@ -45,7 +45,7 @@ public class StockIndicatorManager {
 
         String kLineDate = StockConstant.FILE_DATE;
         Integer reportYear = 2023;
-        FinanceReportTypeEnum reportTypeEnum =FinanceReportTypeEnum.QUARTER_1;
+        FinanceReportTypeEnum reportTypeEnum =FinanceReportTypeEnum.HALF_YEAR;
 
         manager.saveAndStatisticsAllAnalysisDTO(kLineDate, stockCodeList, reportYear, reportTypeEnum);
     }
