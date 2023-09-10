@@ -75,16 +75,6 @@ public class AnalyseIndicatorDTO {
     private Double avg_roe_ttm_v1;
 
     /**
-     * 销售毛利率
-     */
-    private Double gross_margin_rate;
-
-    /**
-     * 销售净利率
-     */
-    private Double net_selling_rate;
-
-    /**
      * 当季销售毛利率
      */
     private Double cur_q_gross_margin_rate;
@@ -115,6 +105,16 @@ public class AnalyseIndicatorDTO {
     private Double cur_q_net_selling_rate_q_chg;
 
     /**
+     * 当季营业收入同比增长
+     */
+    private Double cur_q_operating_income_yoy;
+
+    /**
+     * 当季净利润同比增长
+     */
+    private Double cur_q_net_profit_atsopc_yoy;
+
+    /**
      * 营业收入同比增长
      */
     private Double operating_income_yoy;
@@ -125,14 +125,14 @@ public class AnalyseIndicatorDTO {
     private Double net_profit_atsopc_yoy;
 
     /**
-     * 当季营业收入同比增长
+     * 销售毛利率
      */
-    private Double cur_q_operating_income_yoy;
+    private Double gross_margin_rate;
 
     /**
-     * 当季净利润同比增长
+     * 销售净利率
      */
-    private Double cur_q_net_profit_atsopc_yoy;
+    private Double net_selling_rate;
 
     /**
      * 固定资产同比增长

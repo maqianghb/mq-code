@@ -26,8 +26,8 @@ public class StockIndicatorManager {
 
     private static final String HEADER = "编码,名称,行业,省市,K线差值百分位,总市值,匹配次数,均线相等次数" +
             ",资产负债率,PE_TTM,pe百分位,市净率,pb百分位,净资产收益率,去现后的ROE" +
-            ",毛利率,净利率,当季毛利率,当季净利率,当季毛利率同比,当季净利率同比,当季毛利率环比,当季净利率环比" +
-            ",营收同比,净利润同比,当季营收同比,当季净利润同比" +
+            ",当季毛利率,当季净利率,当季毛利率同比,当季净利率同比,当季毛利率环比,当季净利率环比" +
+            ",当季营收同比,当季净利润同比,营收同比,净利润同比,毛利率,净利率" +
             ",固定资产同比,在建工程同比,商誉+无形/净资产,固定资产/净资产,在建工程/净资产" +
             ",现金等价物/短期负债,经营现金流入/营收,经营现金净额/净利润" +
             ",应付票据及应付账款,应收票据及应收账款,应付票据及应付账款/应收票据及应收账款,应收账款周转天数,存货周转天数" +
@@ -486,7 +486,7 @@ public class StockIndicatorManager {
 
         List<AnalyseIndicatorDTO> analyseIndicatorDTOList = indicatorDTOList.stream()
                 .filter(indicatorDTO -> StringUtils.isNoneBlank(indicatorDTO.getName()) && !indicatorDTO.getName().contains("ST"))
-                .filter(indicatorDTO -> indicatorDTO.getKLineSize() != null && indicatorDTO.getKLineSize() > 500)
+                .filter(indicatorDTO -> indicatorDTO.getKLineSize() != null && indicatorDTO.getKLineSize() > 300)
                 .filter(indicatorDTO -> indicatorDTO.getMarket_capital() != null && indicatorDTO.getMarket_capital() >= 30)
                 .filter(indicatorDTO -> indicatorDTO.getRevenue() != null)
                 .filter(indicatorDTO -> indicatorDTO.getAvg_roe_ttm_v1() != null && indicatorDTO.getAvg_roe_ttm_v1() >= 0.15 && indicatorDTO.getAvg_roe_ttm_v1() < 2)
@@ -499,36 +499,42 @@ public class StockIndicatorManager {
                     return result1 || result2;
                 })
                 .filter(indicatorDTO -> {
-                    if(StringUtils.isNotBlank(indicatorDTO.getInd_name())
-                            && (indicatorDTO.getInd_name().contains("医") || indicatorDTO.getInd_name().contains("药"))){
-                        if(indicatorDTO.getGross_margin_rate() !=null && indicatorDTO.getNet_selling_rate() !=null){
-                            // 医药行业，过滤毛利率和净利率差过高的数据
-                            double rate_value = indicatorDTO.getGross_margin_rate() - indicatorDTO.getNet_selling_rate();
-                            return rate_value <0.5;
+                    String ind_name = indicatorDTO.getInd_name();
+                    if(StringUtils.isNotBlank(ind_name)){
+                        // 农业、环保、建筑相关直接过滤掉
+                        if(ind_name.contains("农") || ind_name.contains("环保")|| ind_name.contains("建筑")){
+                            return false;
+                        }
+
+                        // 医药行业，过滤毛利率和净利率差过高的数据
+                        if(ind_name.contains("医") || ind_name.contains("药")){
+                            if(indicatorDTO.getGross_margin_rate() !=null && indicatorDTO.getNet_selling_rate() !=null){
+                                double rate_diff_value = indicatorDTO.getGross_margin_rate() - indicatorDTO.getNet_selling_rate();
+                                return rate_diff_value <0.5;
+                            }
                         }
                     }
 
                     return true;
                 })
                 .filter(indicatorDTO -> {
-                    if(indicatorDTO.getPb_p_1000() ==null){
-                        return true;
-                    }else{
-                        return indicatorDTO.getPb_p_1000() <= 0.3;
+                    if(indicatorDTO.getPb_p_1000() !=null && indicatorDTO.getPb_p_1000() > 0.3){
+                        if(indicatorDTO.getMa_1000_diff_p() !=null && indicatorDTO.getMa_1000_diff_p() <0.2){
+                            return true;
+                        }
+
+                        return false;
                     }
+
+                    return true;
                 })
                 .filter(indicatorDTO -> {
                     if(indicatorDTO.getMarket_capital() !=null && indicatorDTO.getMarket_capital() >=1000){
-                        // 市值千亿以上，要求毛利率和净利率较低
+                        // 市值千亿以上，毛利率和净利率条件放宽
                         return indicatorDTO.getGross_margin_rate() != null && indicatorDTO.getGross_margin_rate() >= 0.1
                                 && indicatorDTO.getNet_selling_rate() != null && indicatorDTO.getNet_selling_rate() >= 0.05;
-                    }else{
-                        return indicatorDTO.getGross_margin_rate() != null && indicatorDTO.getGross_margin_rate() >= 0.15
-                                && indicatorDTO.getNet_selling_rate() != null && indicatorDTO.getNet_selling_rate() >= 0.07;
-                    }
-                })
-                .filter(indicatorDTO -> {
-                    if (indicatorDTO.getMarket_capital() <= 50) {
+                    }else if(indicatorDTO.getMarket_capital() !=null && indicatorDTO.getMarket_capital() <= 50){
+                        // 市值50亿以下的， 要求有高利润或高增长
                         int curMatchNum = 0;
 
                         // 毛利率和净利率指标
@@ -542,10 +548,10 @@ public class StockIndicatorManager {
                             curMatchNum++;
                         }
 
-                        // 市值50亿以下的， 要求有高利润或高增长
                         return curMatchNum >= 1;
                     } else {
-                        return true;
+                        return indicatorDTO.getGross_margin_rate() != null && indicatorDTO.getGross_margin_rate() >= 0.15
+                                && indicatorDTO.getNet_selling_rate() != null && indicatorDTO.getNet_selling_rate() >= 0.07;
                     }
                 })
                 .collect(Collectors.toList());

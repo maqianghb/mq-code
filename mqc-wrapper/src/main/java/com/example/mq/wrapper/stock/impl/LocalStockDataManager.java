@@ -100,6 +100,9 @@ public class LocalStockDataManager {
 
             String incomeFileName =String.format(StockConstant.INCOME_LIST, fileDate);
             FileUtils.writeLines(new File(incomeFileName), strIncomeDTOList, true);
+
+            // 单季利润数据
+            this.getAndSaveQuarterIncome(fileDate);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -148,8 +151,6 @@ public class LocalStockDataManager {
             e.printStackTrace();
         }
 
-        // 单季数据
-        this.getAndSaveQuarterIncome(fileDate);
     }
 
     /**
