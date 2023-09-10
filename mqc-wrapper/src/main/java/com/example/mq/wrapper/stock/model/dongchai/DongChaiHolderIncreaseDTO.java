@@ -1,4 +1,4 @@
-package com.example.mq.wrapper.stock.model;
+package com.example.mq.wrapper.stock.model.dongchai;
 
 import lombok.Data;
 

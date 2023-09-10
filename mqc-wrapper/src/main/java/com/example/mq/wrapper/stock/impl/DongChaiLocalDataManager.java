@@ -5,24 +5,27 @@ import com.alibaba.fastjson.JSONObject;
 import com.example.mq.common.utils.CloseableHttpClientUtil;
 import com.example.mq.common.utils.NumberUtil;
 import com.example.mq.wrapper.stock.constant.StockConstant;
-import com.example.mq.wrapper.stock.enums.FinanceReportTypeEnum;
-import com.example.mq.wrapper.stock.model.*;
+import com.example.mq.wrapper.stock.model.XueQiuStockBalanceDTO;
+import com.example.mq.wrapper.stock.model.dongchai.DongChaiFinanceNoticeDTO;
+import com.example.mq.wrapper.stock.model.dongchai.DongChaiFreeShareDTO;
+import com.example.mq.wrapper.stock.model.dongchai.DongChaiHolderIncreaseDTO;
+import com.example.mq.wrapper.stock.model.dongchai.DongChaiNorthHoldShareDTO;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.assertj.core.util.Lists;
 
 import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.Field;
 import java.nio.charset.Charset;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 
 public class DongChaiLocalDataManager {
@@ -45,8 +48,10 @@ public class DongChaiLocalDataManager {
 //        List<DongChaiHolderIncreaseDTO> increaseDTOList = manager.queryAndSaveHolderIncreaseList();
 //        System.out.println("increaseDTOList: " + JSON.toJSONString(increaseDTOList));
 
-        List<DongChaiFreeShareDTO> freeShareDTOList = manager.queryFreeShareDTOList();
-        System.out.println("freeShareDTOList: " + JSON.toJSONString(freeShareDTOList));
+//        List<DongChaiFreeShareDTO> freeShareDTOList = manager.queryFreeShareDTOList();
+//        System.out.println("freeShareDTOList: " + JSON.toJSONString(freeShareDTOList));
+
+        manager.queryAndSaveHoldShareDTOList();
 
         System.out.println("end.");
     }
@@ -471,6 +476,258 @@ public class DongChaiLocalDataManager {
     }
 
     /**
+     * 查询并保存沪港通持股数据
+     */
+    private void queryAndSaveHoldShareDTOList(){
+        LocalStockDataManager localStockDataManager =new LocalStockDataManager();
+        List<String> stockCodeList = localStockDataManager.getStockCodeList();
+        if(CollectionUtils.isEmpty(stockCodeList)){
+            return ;
+        }
+
+        // 查询沪港通持股数据
+        for(String stockCode : stockCodeList){
+            try {
+                // 查询数据
+                List<DongChaiNorthHoldShareDTO> tmpHoldShareDTOList = this.queryNorthHoldShareDTOList(stockCode.substring(2));
+                if(CollectionUtils.isEmpty(tmpHoldShareDTOList)){
+                    continue;
+                }
+
+
+                // 本地数据
+                List<String> strList =Lists.newArrayList();
+                String fileName =String.format(StockConstant.NORTH_HOLD_SHARES_FILE, stockCode);
+                File localFile = new File(fileName);
+                if(localFile.exists()){
+                    strList =FileUtils.readLines(localFile, Charset.forName("UTF-8"));
+                }
+                Map<String, DongChaiNorthHoldShareDTO> holdShareDTOMap = Optional.ofNullable(strList).orElse(Lists.newArrayList()).stream()
+                        .map(str -> JSON.parseObject(str, DongChaiNorthHoldShareDTO.class))
+                        .collect(Collectors.toMap(DongChaiNorthHoldShareDTO::getTradeDate, val -> val, (val1, val2) -> val1));
+
+                // 补上查询出来的数据
+                for(DongChaiNorthHoldShareDTO holdShareDTO : tmpHoldShareDTOList){
+                    if(!holdShareDTOMap.containsKey(holdShareDTO.getTradeDate())){
+                        holdShareDTOMap.put(holdShareDTO.getTradeDate(), holdShareDTO);
+                    }
+                }
+
+                // 重新写入本地文件
+                List<String> strDataList = holdShareDTOMap.values().stream()
+                        .sorted(Comparator.comparing(DongChaiNorthHoldShareDTO::getTradeDate).reversed())
+                        .map(holdShareDTO -> JSON.toJSONString(holdShareDTO))
+                        .collect(Collectors.toList());
+                if(!Objects.equals(strDataList.size(), strList.size())){
+                    FileUtils.writeLines(new File(fileName), strDataList, false);
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+    }
+
+    /**
+     * 查询沪港通持股数据
+     *
+     * @return
+     */
+    private List<DongChaiNorthHoldShareDTO> queryNorthHoldShareDTOList(String simpleCode){
+        LocalDate nowLocalDate = LocalDate.now();
+        String startDate =nowLocalDate.plusYears(-1).format(DateTimeFormatter.ISO_DATE);
+
+        String url = new StringBuilder().append(StockConstant.DONG_CHAI_URL)
+//                .append("?callback=").append("jQuery1123093599956891065_1689992754007")
+                .append("?sortColumns=").append("TRADE_DATE")
+                .append("&sortTypes=").append("-1")
+                .append("&pageSize=").append(StockConstant.DONG_CHAI_MAX_LIMIT)
+                .append("&pageNumber=").append(1)
+                .append("&reportName=").append("RPT_MUTUAL_HOLDSTOCKNORTH_STA")
+                .append("&columns=").append("ALL")
+                .append("&source=").append("WEB")
+                .append("&client=").append("WEB")
+                .append("&filter=").append("(SECURITY_CODE%3D%22")
+                .append(simpleCode).append("%22)(TRADE_DATE%3E%3D%27")
+                .append(startDate).append("%27)")
+                .toString();
+
+        String strResult = CloseableHttpClientUtil.doGet(url, StringUtils.EMPTY);
+        List<String> columnList = Optional.ofNullable(JSONObject.parseObject(strResult))
+                .map(jsonResult -> jsonResult.getJSONObject("result"))
+                .map(jsonResult -> JSON.parseArray(jsonResult.getString("data"), String.class))
+                .orElse(Lists.newArrayList());
+        if(CollectionUtils.isEmpty(columnList)){
+            return Lists.newArrayList();
+        }
+
+        List<DongChaiNorthHoldShareDTO> northHoldShareDTOList = columnList.stream()
+                .map(strColumn -> {
+                    JSONObject jsonColumn = JSON.parseObject(strColumn);
+                    DongChaiNorthHoldShareDTO northHoldShareDTO = new DongChaiNorthHoldShareDTO();
+                    if (StringUtils.isNotBlank(jsonColumn.getString("SECURITY_CODE"))) {
+                        String code = jsonColumn.getString("SECURITY_CODE");
+                        if (code.startsWith("6")) {
+                            code = "SH" + code;
+                        } else if (code.startsWith("0") || code.startsWith("3")) {
+                            code = "SZ" + code;
+                        }
+                        northHoldShareDTO.setCode(code);
+                    }
+                    if (StringUtils.isNotBlank(jsonColumn.getString("SECURITY_NAME"))) {
+                        northHoldShareDTO.setName(jsonColumn.getString("SECURITY_NAME"));
+                    }
+                    if (StringUtils.isNotBlank(jsonColumn.getString("TRADE_DATE"))) {
+                        northHoldShareDTO.setTradeDate(jsonColumn.getString("TRADE_DATE"));
+                    }
+                    if (jsonColumn.getInteger("HOLD_SHARES") != null) {
+                        double hold_shares = NumberUtil.format(jsonColumn.getInteger("HOLD_SHARES") / 10000, 1);
+                        northHoldShareDTO.setHoldShares(hold_shares);
+                    }
+                    if (jsonColumn.getDouble("TOTAL_SHARES_RATIO") != null) {
+                        double total_shares_ratio = NumberUtil.format(jsonColumn.getDouble("TOTAL_SHARES_RATIO"), 2);
+                        northHoldShareDTO.setTotalSharesRatio(total_shares_ratio);
+                    }
+
+                    return northHoldShareDTO;
+                })
+                .collect(Collectors.toList());
+
+        // 补全增持数量和比例
+        this.assembleHoldIncreaseShares(northHoldShareDTOList);
+
+        return northHoldShareDTOList;
+    }
+
+    /**
+     * 补全增持数量和比例
+     *
+     * @param northHoldShareDTOList
+     */
+    private void assembleHoldIncreaseShares(List<DongChaiNorthHoldShareDTO> northHoldShareDTOList){
+        if(CollectionUtils.isEmpty(northHoldShareDTOList)){
+            return ;
+        }
+
+        for(int i=0; i< northHoldShareDTOList.size(); i++){
+            DongChaiNorthHoldShareDTO curHoldShareDTO = northHoldShareDTOList.get(i);
+
+            // 当天增持数据
+            Double curIncreaseShares = this.getHoldIncreaseShares(curHoldShareDTO, northHoldShareDTOList, 1);
+            if(curIncreaseShares !=null){
+                curHoldShareDTO.setCurIncreaseShares(NumberUtil.format(curIncreaseShares, 1));
+            }
+            Double curIncreaseRatio = this.getHoldIncreaseRatio(curHoldShareDTO, northHoldShareDTOList, 1);
+            if(curIncreaseRatio !=null){
+                curHoldShareDTO.setCurIncreaseRatio(NumberUtil.format(curIncreaseShares, 2));
+            }
+
+            // 30天增持数据
+            Double increaseShares_30 = this.getHoldIncreaseShares(curHoldShareDTO, northHoldShareDTOList, 30);
+            if(increaseShares_30 !=null){
+                curHoldShareDTO.setIncreaseShares_30(NumberUtil.format(increaseShares_30, 1));
+            }
+            Double increaseRatio_30 = this.getHoldIncreaseRatio(curHoldShareDTO, northHoldShareDTOList, 30);
+            if(increaseRatio_30 !=null){
+                curHoldShareDTO.setIncreaseRatio_30(NumberUtil.format(increaseRatio_30, 2));
+            }
+
+            // 60天增持数据
+            Double increaseShares_60 = this.getHoldIncreaseShares(curHoldShareDTO, northHoldShareDTOList, 60);
+            if(increaseShares_60 !=null){
+                curHoldShareDTO.setIncreaseShares_60(NumberUtil.format(increaseShares_60, 1));
+            }
+            Double increaseRatio_60 = this.getHoldIncreaseRatio(curHoldShareDTO, northHoldShareDTOList, 60);
+            if(increaseRatio_60 !=null){
+                curHoldShareDTO.setIncreaseRatio_60(NumberUtil.format(increaseRatio_60, 2));
+            }
+
+            // 90天增持数据
+            Double increaseShares_90 = this.getHoldIncreaseShares(curHoldShareDTO, northHoldShareDTOList, 90);
+            if(increaseShares_90 !=null){
+                curHoldShareDTO.setIncreaseShares_90(NumberUtil.format(increaseShares_90, 1));
+            }
+            Double increaseRatio_90 = this.getHoldIncreaseRatio(curHoldShareDTO, northHoldShareDTOList, 90);
+            if(increaseRatio_90 !=null){
+                curHoldShareDTO.setIncreaseRatio_90(NumberUtil.format(increaseRatio_90, 2));
+            }
+        }
+
+    }
+
+    /**
+     * 计算时间段内的增持数量
+     *
+     * @param northHoldShareDTOList
+     * @param days
+     */
+    private Double getHoldIncreaseShares(DongChaiNorthHoldShareDTO curHoldShareDTO, List<DongChaiNorthHoldShareDTO> northHoldShareDTOList, int days){
+        if(curHoldShareDTO ==null || CollectionUtils.isEmpty(northHoldShareDTOList)){
+            return null;
+        }
+
+        // 当前计算的时间数据
+        DateTimeFormatter df =DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        LocalDateTime endLocalDateTime = LocalDate.parse(curHoldShareDTO.getTradeDate(), df).atStartOfDay();
+        long endTimeMillis = endLocalDateTime.toInstant(ZoneOffset.of("+8")).toEpochMilli();
+
+        List<DongChaiNorthHoldShareDTO> sortedShareDTOList = northHoldShareDTOList.stream()
+                .sorted(Comparator.comparing(DongChaiNorthHoldShareDTO::getTradeDate).reversed())
+                .collect(Collectors.toList());
+        for(int i=0; i<sortedShareDTOList.size(); i++){
+            DongChaiNorthHoldShareDTO startHoldShareDTO = sortedShareDTOList.get(i);
+            LocalDateTime startLocalDateTime = LocalDate.parse(startHoldShareDTO.getTradeDate(), df).atStartOfDay();
+            long startTimeMillis = startLocalDateTime.toInstant(ZoneOffset.of("+8")).toEpochMilli();
+
+            long sectionDays = (endTimeMillis - startTimeMillis)/(24*60*60*1000);
+            if( sectionDays >=days && sectionDays < days +8){
+                // 计算增减持数量
+                if(curHoldShareDTO.getHoldShares() !=null && startHoldShareDTO.getHoldShares() !=null){
+                    return curHoldShareDTO.getHoldShares() - startHoldShareDTO.getHoldShares();
+                }
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * 计算时间段内的增持比例
+     *
+     * @param northHoldShareDTOList
+     * @param days
+     */
+    private Double getHoldIncreaseRatio(DongChaiNorthHoldShareDTO curHoldShareDTO, List<DongChaiNorthHoldShareDTO> northHoldShareDTOList, int days){
+        if(curHoldShareDTO ==null || CollectionUtils.isEmpty(northHoldShareDTOList)){
+            return null;
+        }
+
+        // 当前计算的时间数据
+        DateTimeFormatter df =DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        LocalDateTime endLocalDateTime = LocalDate.parse(curHoldShareDTO.getTradeDate(), df).atStartOfDay();
+        long endTimeMillis = endLocalDateTime.toInstant(ZoneOffset.of("+8")).toEpochMilli();
+
+        List<DongChaiNorthHoldShareDTO> sortedShareDTOList = northHoldShareDTOList.stream()
+                .sorted(Comparator.comparing(DongChaiNorthHoldShareDTO::getTradeDate).reversed())
+                .collect(Collectors.toList());
+        for(int i=0; i<sortedShareDTOList.size(); i++){
+            DongChaiNorthHoldShareDTO startHoldShareDTO = sortedShareDTOList.get(i);
+            LocalDateTime startLocalDateTime = LocalDate.parse(startHoldShareDTO.getTradeDate(), df).atStartOfDay();
+            long startTimeMillis = startLocalDateTime.toInstant(ZoneOffset.of("+8")).toEpochMilli();
+
+            long sectionDays = (endTimeMillis - startTimeMillis)/(24*60*60*1000);
+            if( sectionDays >=days && sectionDays < days +8){
+                // 计算增减持比例
+                if(curHoldShareDTO.getTotalSharesRatio() !=null && startHoldShareDTO.getTotalSharesRatio() !=null){
+                    return curHoldShareDTO.getTotalSharesRatio() - startHoldShareDTO.getTotalSharesRatio();
+                }
+            }
+        }
+
+        return null;
+    }
+
+    /**
      * 增减持信息
      *
      * @param code
@@ -494,7 +751,6 @@ public class DongChaiLocalDataManager {
 
         return null;
     }
-
 
     /**
      * 解禁信息

@@ -1,5 +1,7 @@
 package com.example.mq.wrapper.stock.model;
 
+import com.example.mq.wrapper.stock.model.dongchai.DongChaiFreeShareDTO;
+import com.example.mq.wrapper.stock.model.dongchai.DongChaiHolderIncreaseDTO;
 import lombok.Data;
 
 import java.util.List;

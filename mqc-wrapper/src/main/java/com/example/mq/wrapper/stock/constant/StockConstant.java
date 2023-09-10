@@ -68,4 +68,7 @@ public class StockConstant {
     public static final String FINANCE_NOTICE_LIST ="E:/stock_data/dc_finance_%s_%s.csv";
     public static final String HOLDER_INCREASE_LIST ="E:/stock_data/dc_holder_increase_%s.csv";
 
+
+    public static final String NORTH_HOLD_SHARES_FILE ="E:/stock_data/dc_north_hold_shares/north_hold_shares_%s.txt";
+
 }

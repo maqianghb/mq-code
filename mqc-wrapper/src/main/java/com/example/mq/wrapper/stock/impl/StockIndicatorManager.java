@@ -7,6 +7,8 @@ import com.example.mq.wrapper.stock.constant.StockConstant;
 import com.example.mq.wrapper.stock.enums.FinanceReportTypeEnum;
 import com.example.mq.wrapper.stock.enums.KLineTypeEnum;
 import com.example.mq.wrapper.stock.model.*;
+import com.example.mq.wrapper.stock.model.dongchai.DongChaiFreeShareDTO;
+import com.example.mq.wrapper.stock.model.dongchai.DongChaiHolderIncreaseDTO;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
