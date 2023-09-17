@@ -14,7 +14,7 @@ public class StockConstant {
     public static final String INDICATOR_URL ="https://stock.xueqiu.com/v5/stock/finance/cn/indicator.json";
     public static final String COMPANY_URL ="https://stock.xueqiu.com/v5/stock/f10/cn/company.json";
 
-    public static final String COOKIE ="device_id=dda0a4a2c4c9181929b82ccadaa4ec1d; s=cg11wwxa5w; cookiesu=611692494183709; xq_a_token=a0f5e0d91bc0846f43452e89ae79e08167c42068; xqat=a0f5e0d91bc0846f43452e89ae79e08167c42068; xq_r_token=76ed99965d5bffa08531a6a47501f096f61108e8; xq_id_token=eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJ1aWQiOi0xLCJpc3MiOiJ1YyIsImV4cCI6MTY5NTUxNTc5NCwiY3RtIjoxNjkzNTcwMDM4NDgwLCJjaWQiOiJkOWQwbjRBWnVwIn0.SJYDlqq3dOC-y7RZC-KpivPU5HdvuQzBol_XQb-jIFfdp6zOxzm9nvRp8-hZtY5S6_QNm3cUN-LIHrv-veBLpAz2R-7mRt9RSEPwbDj3MwL3azYUb_F7WQeETQ-50Lp5FPM0Q6ZygaAiTEA2tINNI_cnz_ONQXOzApCicwb9YG9GeEoM4aVDsEiswEJ_Fec7GUMAJNyDyMPwaIJ5etOCcgM4_ZIGy7DybX_EGStooqg_-JbgchxLBXuYJrRAaJk5jWC-28uL7muurQ5tq9X_5_ZEMoPKrN9vtit10gY7ep9MwNfdIK31JObq-_zdonwLv1687i7ihZe4f7VktvgHOQ; u=611692494183709; is_overseas=0; Hm_lvt_1db88642e346389874251b5a1eded6e3=1691803896,1692494183,1693114179,1693570096; Hm_lpvt_1db88642e346389874251b5a1eded6e3=1693570096";
+    public static final String COOKIE ="device_id=dda0a4a2c4c9181929b82ccadaa4ec1d; s=cg11wwxa5w; cookiesu=611692494183709; xq_a_token=29bdb37dee2432c294425cc9e8f45710a62643a5; xqat=29bdb37dee2432c294425cc9e8f45710a62643a5; xq_r_token=3a35db27fcf5471898becda7aa5dab6afeafe471; xq_id_token=eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJ1aWQiOi0xLCJpc3MiOiJ1YyIsImV4cCI6MTY5NjgxMTc5NCwiY3RtIjoxNjk0OTQxNTg4NTI1LCJjaWQiOiJkOWQwbjRBWnVwIn0.OifPNvgdD5jF1RXiuDxqO0F1b6hkGfACTnAizJOKa9Mt3U5t9ZmGYWFpptkkyU1hqLL4Jio_joUsVoPLvqh2_TXepGL2FTBnCwQlOcfnsFy33OLfpDVo42Oz15EqCr3ze7INx3LtgjHJIk9Q17RW5Q6qVSdbSpKvO0U2GR5vDdNeKKyPpChO8SV-g8Q9a_4Ap047_q6rpYt0yvFxD4pM9maTl5rTKt4lodDmERillqfLqOVVsEpTW1oXMYheyTgNAycfAhuC6gU_uHbWbOmnFjdF5acv5DLOC6gDAafjC1Ajqy5qLgY-de_Iur9n7KDizsiLbmrdWezzmUZB0C9S6Q; u=611692494183709; Hm_lvt_1db88642e346389874251b5a1eded6e3=1693114179,1693570096,1693630776,1694941594; is_overseas=0; Hm_lpvt_1db88642e346389874251b5a1eded6e3=1694941601";
 
     public static final List<ImmutablePair<String, String>> STATISTICS_CODE_LIST = Arrays.asList(
             new ImmutablePair<>("SH000016", "上证50"),
@@ -28,7 +28,8 @@ public class StockConstant {
             new ImmutablePair<>("SZ000858", "五粮液"),
             new ImmutablePair<>("SZ002415", "海康威视"),
             new ImmutablePair<>("SZ000333", "美的集团"),
-            new ImmutablePair<>("SH600585", "海螺水泥"));
+            new ImmutablePair<>("SH600585", "海螺水泥"),
+            new ImmutablePair<>("SZ000725", "京东方A"));
 
     public static final List<String> TEST_STOCK_CODE_LIST = Arrays.asList("SZ002001", "SZ002415", "SZ002508", "SH600486", "SZ002507");
 

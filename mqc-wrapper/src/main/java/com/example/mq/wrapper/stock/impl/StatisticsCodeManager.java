@@ -20,7 +20,6 @@ public class StatisticsCodeManager {
     public static void main(String[] args) {
         StatisticsCodeManager statisticsCodeManager =new StatisticsCodeManager();
 
-
         DateTimeFormatter df =DateTimeFormatter.ofPattern("yyyyMMdd");
         LocalDateTime localDateTime = LocalDateTime.now();//当前时间
         String queryDate = df.format(localDateTime);//格式化为字符串

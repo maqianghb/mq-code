@@ -75,6 +75,16 @@ public class AnalyseIndicatorDTO {
     private Double avg_roe_ttm_v1;
 
     /**
+     * 当季营业收入同比增长
+     */
+    private Double cur_q_operating_income_yoy;
+
+    /**
+     * 当季净利润同比增长
+     */
+    private Double cur_q_net_profit_atsopc_yoy;
+
+    /**
      * 当季销售毛利率
      */
     private Double cur_q_gross_margin_rate;
@@ -103,16 +113,6 @@ public class AnalyseIndicatorDTO {
      * 当季销售净利率环比
      */
     private Double cur_q_net_selling_rate_q_chg;
-
-    /**
-     * 当季营业收入同比增长
-     */
-    private Double cur_q_operating_income_yoy;
-
-    /**
-     * 当季净利润同比增长
-     */
-    private Double cur_q_net_profit_atsopc_yoy;
 
     /**
      * 营业收入同比增长
