@@ -71,5 +71,6 @@ public class StockConstant {
 
 
     public static final String NORTH_HOLD_SHARES_FILE ="E:/stock_data/dc_north_hold_shares/north_hold_shares_%s.txt";
+    public static final String LATEST_HOLD_SHARES_FILE ="E:/stock_data/north_hold_shares_%s_%s.csv";
 
 }

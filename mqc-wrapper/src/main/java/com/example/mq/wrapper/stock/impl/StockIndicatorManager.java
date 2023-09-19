@@ -9,6 +9,7 @@ import com.example.mq.wrapper.stock.enums.KLineTypeEnum;
 import com.example.mq.wrapper.stock.model.*;
 import com.example.mq.wrapper.stock.model.dongchai.DongChaiFreeShareDTO;
 import com.example.mq.wrapper.stock.model.dongchai.DongChaiHolderIncreaseDTO;
+import com.example.mq.wrapper.stock.model.dongchai.DongChaiNorthHoldShareDTO;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -38,6 +39,10 @@ public class StockIndicatorManager {
             ",K线日期,K线数量,收盘价,ma1000值,股东权益合计,营业收入,营业成本,经营现金流入,经营现金净额,净利润" +
             ",1月后股价波动,3月后股价波动,半年后股价波动,1年后股价波动";
 
+    private static final String HOLD_SHARE_HEADER = "编码,名称,日期,持股数量(万股),总股数的持股占比(%),近1000天持股数的百分位" +
+            ",当天增减持数量(万股),当天增持比例(%),近30天的增减持数量(万股),近30天的增持比例(%)" +
+            ",近60天的增减持数量(万股),近60天的增持比例(%),近90天的增减持数量(万股),近90天的增持比例(%)";
+
     public static void main(String[] args) {
         StockIndicatorManager manager =new StockIndicatorManager();
 
@@ -49,7 +54,12 @@ public class StockIndicatorManager {
         Integer reportYear = 2023;
         FinanceReportTypeEnum reportTypeEnum =FinanceReportTypeEnum.HALF_YEAR;
 
-        manager.saveAndStatisticsAllAnalysisDTO(kLineDate, stockCodeList, reportYear, reportTypeEnum);
+        // 统计数据
+//        manager.saveAndStatisticsAllAnalysisDTO(kLineDate, stockCodeList, reportYear, reportTypeEnum);
+
+        // 沪港通数据
+        manager.queryAndSaveNorthHoldShares(kLineDate, stockCodeList);
+
     }
 
     /**
@@ -109,6 +119,7 @@ public class StockIndicatorManager {
 
         // 按指标筛选数据
         this.filterAndSaveIndicatorDTO(kLineDate, allIndicatorDTOList);
+
     }
 
     /**
@@ -1625,6 +1636,112 @@ public class StockIndicatorManager {
                 .sum();
 
         return sum /total_holders_equity_v1;
+    }
+
+    /**
+     * 查询并保存沪港通持股数据
+     *
+     * @param stockCodeList
+     */
+    private void queryAndSaveNorthHoldShares(String kLineDate, List<String> stockCodeList){
+        if(StringUtils.isBlank(kLineDate) || CollectionUtils.isEmpty(stockCodeList)){
+            return ;
+        }
+
+        // 查询沪港通持股数据
+        DongChaiLocalDataManager dongChaiLocalDataManager =new DongChaiLocalDataManager();
+        List<DongChaiNorthHoldShareDTO> holdShareDTOList = dongChaiLocalDataManager.queryLatestNorthHoldShares(stockCodeList);
+        if(CollectionUtils.isEmpty(holdShareDTOList)){
+            return ;
+        }
+
+        // 生成结果
+        List<String> strHoldSharesList =Lists.newArrayList();
+        strHoldSharesList.add(HOLD_SHARE_HEADER);
+        for(DongChaiNorthHoldShareDTO holdShareDTO : holdShareDTOList){
+            try {
+                this.formatNorthHoldShareDTO(holdShareDTO);
+
+                Field[] fields = DongChaiNorthHoldShareDTO.class.getDeclaredFields();
+                JSONObject jsonObject = JSON.parseObject(JSON.toJSONString(holdShareDTO));
+                StringBuilder strHoldSharesBuilder =new StringBuilder();
+                for(Field field : fields){
+                    Object value = jsonObject.get(field.getName());
+                    strHoldSharesBuilder.append(",").append(value);
+                }
+                strHoldSharesList.add(strHoldSharesBuilder.toString().substring(1));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        // 记录结果
+        try {
+            DateTimeFormatter df =DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss");
+            LocalDateTime localDateTime = LocalDateTime.now();//当前时间
+            String strDateTime = df.format(localDateTime);//格式化为字符串
+            String resultFileName =String.format(StockConstant.LATEST_HOLD_SHARES_FILE, kLineDate, strDateTime);
+            FileUtils.writeLines(new File(resultFileName), "UTF-8", strHoldSharesList, true);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * 数据格式化
+     *
+     * @param holdShareDTO
+     */
+    private void formatNorthHoldShareDTO(DongChaiNorthHoldShareDTO holdShareDTO){
+        if(holdShareDTO ==null){
+            return ;
+        }
+
+        if(holdShareDTO.getHoldShares() !=null){
+            double holdShares = NumberUtil.format(holdShareDTO.getHoldShares(), 2);
+            holdShareDTO.setHoldShares(holdShares);
+        }
+        if(holdShareDTO.getTotalSharesRatio() !=null){
+            double totalShareRatio = NumberUtil.format(holdShareDTO.getTotalSharesRatio(), 2);
+            holdShareDTO.setTotalSharesRatio(totalShareRatio);
+        }
+        if(holdShareDTO.getHoldSharePercent() !=null){
+            double holdSharePercent = NumberUtil.format(holdShareDTO.getHoldSharePercent(), 2);
+            holdShareDTO.setHoldSharePercent(holdSharePercent);
+        }
+        if(holdShareDTO.getCurIncreaseShares() !=null){
+            double curIncreaseShares = NumberUtil.format(holdShareDTO.getCurIncreaseShares(), 2);
+            holdShareDTO.setCurIncreaseShares(curIncreaseShares);
+        }
+        if(holdShareDTO.getCurIncreaseRatio() !=null){
+            double curIncreaseRatio = NumberUtil.format(holdShareDTO.getCurIncreaseRatio(), 2);
+            holdShareDTO.setCurIncreaseRatio(curIncreaseRatio);
+        }
+        if(holdShareDTO.getIncreaseShares_30() !=null){
+            double increaseShares_30 = NumberUtil.format(holdShareDTO.getIncreaseShares_30(), 2);
+            holdShareDTO.setIncreaseShares_30(increaseShares_30);
+        }
+        if(holdShareDTO.getIncreaseRatio_30() !=null){
+            double increaseRatio_30 = NumberUtil.format(holdShareDTO.getIncreaseRatio_30(), 2);
+            holdShareDTO.setIncreaseRatio_30(increaseRatio_30);
+        }
+        if(holdShareDTO.getIncreaseShares_60() !=null){
+            double increaseShares_60 = NumberUtil.format(holdShareDTO.getIncreaseShares_60(), 2);
+            holdShareDTO.setIncreaseShares_60(increaseShares_60);
+        }
+        if(holdShareDTO.getIncreaseRatio_60() !=null){
+            double increaseRatio_60 = NumberUtil.format(holdShareDTO.getIncreaseRatio_60(), 2);
+            holdShareDTO.setIncreaseRatio_60(increaseRatio_60);
+        }
+        if(holdShareDTO.getIncreaseShares_90() !=null){
+            double increaseShares_90 = NumberUtil.format(holdShareDTO.getIncreaseShares_90(), 2);
+            holdShareDTO.setIncreaseShares_90(increaseShares_90);
+        }
+        if(holdShareDTO.getIncreaseRatio_90() !=null){
+            double increaseRatio_90 = NumberUtil.format(holdShareDTO.getIncreaseRatio_90(), 2);
+            holdShareDTO.setIncreaseRatio_90(increaseRatio_90);
+        }
+
     }
 
 }

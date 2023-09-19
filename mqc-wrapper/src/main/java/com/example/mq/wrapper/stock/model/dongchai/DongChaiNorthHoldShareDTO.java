@@ -18,12 +18,12 @@ public class DongChaiNorthHoldShareDTO {
     private String tradeDate;
 
     /**
-     * 持股数量（万股）
+     * 持股数量(万股)
      */
     private Double holdShares;
 
     /**
-     * 总股数的持股占比（%）
+     * 总股数的持股占比(%)
      */
     private Double totalSharesRatio;
 
@@ -33,42 +33,42 @@ public class DongChaiNorthHoldShareDTO {
     private Double holdSharePercent;
 
     /**
-     * 当天增减持数量
+     * 当天增减持数量(万股)
      */
     private Double curIncreaseShares;
 
     /**
-     * 当天增持比例
+     * 当天增持比例(%)
      */
     private Double curIncreaseRatio;
 
     /**
-     * 近30天的增减持数量
+     * 近30天的增减持数量(万股)
      */
     private Double increaseShares_30;
 
     /**
-     * 近30天的增持比例
+     * 近30天的增持比例(%)
      */
     private Double increaseRatio_30;
 
     /**
-     * 近60天的增减持数量
+     * 近60天的增减持数量(万股)
      */
     private Double increaseShares_60;
 
     /**
-     * 近60天的增持比例
+     * 近60天的增持比例(%)
      */
     private Double increaseRatio_60;
 
     /**
-     * 近90天的增减持数量
+     * 近90天的增减持数量(万股)
      */
     private Double increaseShares_90;
 
     /**
-     * 近90天的增持比例
+     * 近90天的增持比例(%)
      */
     private Double increaseRatio_90;
 

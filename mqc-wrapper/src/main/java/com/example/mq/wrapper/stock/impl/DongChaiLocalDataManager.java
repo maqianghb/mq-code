@@ -51,7 +51,7 @@ public class DongChaiLocalDataManager {
 //        List<DongChaiFreeShareDTO> freeShareDTOList = manager.queryFreeShareDTOList();
 //        System.out.println("freeShareDTOList: " + JSON.toJSONString(freeShareDTOList));
 
-        manager.queryAndSaveHoldShareDTOList();
+//        manager.queryAndSaveHoldShareDTOList();
 
         System.out.println("end.");
     }
@@ -775,6 +775,39 @@ public class DongChaiLocalDataManager {
         }
 
         return null;
+    }
+
+    /**
+     * 查询最近日期的沪港通数据
+     */
+    public List<DongChaiNorthHoldShareDTO> queryLatestNorthHoldShares(List<String> stockCodeList){
+        if(CollectionUtils.isEmpty(stockCodeList)){
+            return Lists.newArrayList();
+        }
+
+        List<DongChaiNorthHoldShareDTO> latestHoldShareDTOList =Lists.newArrayList();
+        for(String stockCode : stockCodeList){
+            try {
+                List<String> strList =Lists.newArrayList();
+                String fileName =String.format(StockConstant.NORTH_HOLD_SHARES_FILE, stockCode);
+                File localFile = new File(fileName);
+                if(localFile.exists()){
+                    strList =FileUtils.readLines(localFile, Charset.forName("UTF-8"));
+                }
+                DongChaiNorthHoldShareDTO tmpHoldShareDTO = Optional.ofNullable(strList).orElse(Lists.newArrayList()).stream()
+                        .map(str -> JSON.parseObject(str, DongChaiNorthHoldShareDTO.class))
+                        .sorted(Comparator.comparing(DongChaiNorthHoldShareDTO::getTradeDate).reversed())
+                        .findFirst()
+                        .orElse(null);
+                if(tmpHoldShareDTO !=null){
+                    latestHoldShareDTOList.add(tmpHoldShareDTO);
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return latestHoldShareDTOList;
     }
 
 }
