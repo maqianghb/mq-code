@@ -619,7 +619,7 @@ public class DongChaiLocalDataManager {
             }
             Double curIncreaseRatio = this.getHoldIncreaseRatio(curHoldShareDTO, northHoldShareDTOList, 1);
             if(curIncreaseRatio !=null){
-                curHoldShareDTO.setCurIncreaseRatio(NumberUtil.format(curIncreaseShares, 2));
+                curHoldShareDTO.setCurIncreaseRatio(NumberUtil.format(curIncreaseRatio, 2));
             }
 
             // 30天增持数据
