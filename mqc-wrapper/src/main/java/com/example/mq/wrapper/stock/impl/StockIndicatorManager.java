@@ -55,7 +55,7 @@ public class StockIndicatorManager {
         FinanceReportTypeEnum reportTypeEnum =FinanceReportTypeEnum.QUARTER_3;
 
         // 统计数据
-        manager.saveAndStatisticsAllAnalysisDTO(kLineDate, stockCodeList, reportYear, reportTypeEnum);
+//        manager.saveAndStatisticsAllAnalysisDTO(kLineDate, stockCodeList, reportYear, reportTypeEnum);
 
         // 沪港通数据
         manager.queryAndSaveNorthHoldShares(kLineDate, stockCodeList);
@@ -226,7 +226,7 @@ public class StockIndicatorManager {
                     .map(AnalyseIndicatorDTO::getPb_p_1000)
                     .collect(Collectors.toList());
             if(CollectionUtils.isNotEmpty(pb_p_1000_list)){
-                String msg = this.getIndicatorPercentValue(indName, "pb_p_100", pb_p_1000_list);
+                String msg = this.getIndicatorPercentValue(indName, "pb_p_1000", pb_p_1000_list);
                 if(StringUtils.isNotBlank(msg)){
                     strPercentList.add(msg);
                 }
