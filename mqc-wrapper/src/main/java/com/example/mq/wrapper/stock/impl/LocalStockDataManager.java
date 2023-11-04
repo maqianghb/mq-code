@@ -34,15 +34,18 @@ public class LocalStockDataManager {
     public static void main(String[] args) {
         LocalStockDataManager manager =new LocalStockDataManager();
 
+//        manager.saveStockCodeList();
+
+        // company
+//        manager.queryAndSaveCompanyDTO();
+
         // kLine
         manager.queryAndSaveKLineList(StockConstant.FILE_DATE);
 
         // finance
         manager.queryAndSaveFinanceList(StockConstant.FILE_DATE);
 
-        // company
-//        manager.queryAndSaveCompanyDTO();
-
+//
 //        List<String> whiteStockCodeList = manager.getWhiteStockCodeList();
 //        System.out.println("whiteStockCodeList:" + JSON.toJSONString(whiteStockCodeList));
 

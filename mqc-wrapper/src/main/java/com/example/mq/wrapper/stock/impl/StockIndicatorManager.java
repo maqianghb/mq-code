@@ -27,9 +27,9 @@ import java.util.stream.Collectors;
 
 public class StockIndicatorManager {
 
-    private static final String HEADER = "编码,名称,行业,省市,K线差值百分位,总市值,匹配次数,均线相等次数" +
-            ",资产负债率,PE_TTM,pe百分位,市净率,pb百分位,净资产收益率,去现后的ROE" +
-            ",当季营收同比,当季净利润同比,当季毛利率,当季净利率,当季毛利率同比,当季净利率同比,当季毛利率环比,当季净利率环比" +
+    private static final String HEADER = "编码,名称,行业,省市,K线差值百分位,总市值,匹配次数,均线次数" +
+            ",资产负债率,PE_TTM,pe百分位,市净率,pb百分位,ROE_TTM,去现后的ROE" +
+            ",当季营收同比,当季净利同比,当季毛利率,当季净利率,当季毛利率同比,当季净利率同比,当季毛利率环比,当季净利率环比" +
             ",营收同比,净利润同比,毛利率,净利率" +
             ",固定资产同比,在建工程同比,商誉+无形/净资产,固定资产/净资产,在建工程/净资产" +
             ",现金等价物/短期负债,经营现金流入/营收,经营现金净额/净利润" +
@@ -52,10 +52,10 @@ public class StockIndicatorManager {
 
         String kLineDate = StockConstant.FILE_DATE;
         Integer reportYear = 2023;
-        FinanceReportTypeEnum reportTypeEnum =FinanceReportTypeEnum.HALF_YEAR;
+        FinanceReportTypeEnum reportTypeEnum =FinanceReportTypeEnum.QUARTER_3;
 
         // 统计数据
-//        manager.saveAndStatisticsAllAnalysisDTO(kLineDate, stockCodeList, reportYear, reportTypeEnum);
+        manager.saveAndStatisticsAllAnalysisDTO(kLineDate, stockCodeList, reportYear, reportTypeEnum);
 
         // 沪港通数据
         manager.queryAndSaveNorthHoldShares(kLineDate, stockCodeList);

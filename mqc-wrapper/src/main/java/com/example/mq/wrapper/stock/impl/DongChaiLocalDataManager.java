@@ -785,6 +785,10 @@ public class DongChaiLocalDataManager {
             return Lists.newArrayList();
         }
 
+        // 更新沪股通持股数据
+        this.queryAndSaveHoldShareDTOList();
+
+        // 查询最新的持股数据
         List<DongChaiNorthHoldShareDTO> latestHoldShareDTOList =Lists.newArrayList();
         for(String stockCode : stockCodeList){
             try {
