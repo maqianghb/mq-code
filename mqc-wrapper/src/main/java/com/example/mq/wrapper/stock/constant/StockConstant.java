@@ -35,7 +35,7 @@ public class StockConstant {
 
     public static final Integer FINANCE_REPORT_COUNT =30;
     public static final Integer KLINE_DAY_COUNT =2000;
-    public static final String FILE_DATE ="20231031";
+    public static final String FILE_DATE ="20231104";
 
     public static final String SH_STOCK_LIST ="E:/stock_data/stock_list_1_sh.txt";
     public static final String SZ_STOCK_LIST ="E:/stock_data/stock_list_2_sz.txt";

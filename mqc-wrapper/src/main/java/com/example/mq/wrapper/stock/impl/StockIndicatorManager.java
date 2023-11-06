@@ -55,10 +55,10 @@ public class StockIndicatorManager {
         FinanceReportTypeEnum reportTypeEnum =FinanceReportTypeEnum.QUARTER_3;
 
         // 统计数据
-//        manager.saveAndStatisticsAllAnalysisDTO(kLineDate, stockCodeList, reportYear, reportTypeEnum);
+        manager.saveAndStatisticsAllAnalysisDTO(kLineDate, stockCodeList, reportYear, reportTypeEnum);
 
         // 沪港通数据
-        manager.queryAndSaveNorthHoldShares(kLineDate, stockCodeList);
+//        manager.queryAndSaveNorthHoldShares(kLineDate, stockCodeList);
 
     }
 
@@ -502,20 +502,67 @@ public class StockIndicatorManager {
                 .filter(indicatorDTO -> indicatorDTO.getKLineSize() != null && indicatorDTO.getKLineSize() > 300)
                 .filter(indicatorDTO -> indicatorDTO.getMarket_capital() != null && indicatorDTO.getMarket_capital() >= 30)
                 .filter(indicatorDTO -> indicatorDTO.getRevenue() != null)
-                .filter(indicatorDTO -> indicatorDTO.getAvg_roe_ttm_v1() != null && indicatorDTO.getAvg_roe_ttm_v1() >= 0.15 && indicatorDTO.getAvg_roe_ttm_v1() < 2)
-                .filter(indicatorDTO -> indicatorDTO.getOperating_income_yoy() != null && indicatorDTO.getOperating_income_yoy() <= 2)
+                .filter(indicatorDTO -> {
+                    // ROE_TTM >12%, 或去现后ROE >16%
+                    if(indicatorDTO.getAvg_roe_ttm() !=null && indicatorDTO.getAvg_roe_ttm() >=0.12 && indicatorDTO.getAvg_roe_ttm() <=0.5){
+                        return true;
+                    }
+                    if(indicatorDTO.getAvg_roe_ttm_v1() != null && indicatorDTO.getAvg_roe_ttm_v1() >= 0.16 && indicatorDTO.getAvg_roe_ttm_v1() < 2){
+                     return true;
+                    }
+
+                    return false;
+                })
+                .filter(indicatorDTO -> {
+                    if(indicatorDTO.getOperating_income_yoy() != null && indicatorDTO.getOperating_income_yoy() <= 2){
+//                        // 当季营收、净利润同比增加
+//                        if(indicatorDTO.getCur_q_operating_income_yoy() !=null && indicatorDTO.getCur_q_operating_income_yoy() >=0.1){
+//                            return true;
+//                        }
+//                        if(indicatorDTO.getCur_q_net_profit_atsopc_yoy() !=null && indicatorDTO.getCur_q_net_profit_atsopc_yoy() >=0.1){
+//                            return true;
+//                        }
+//
+//                        // 当季毛利率、净利率同比好转
+//                        if(indicatorDTO.getCur_q_gross_margin_rate_change() !=null && indicatorDTO.getCur_q_gross_margin_rate_change() >=0.1){
+//                            return true;
+//                        }
+//                        if(indicatorDTO.getCur_q_net_selling_rate_change() !=null && indicatorDTO.getCur_q_net_selling_rate_change() >=0.1){
+//                            return true;
+//                        }
+//
+//                        // 当季毛利率、净利率环比好转
+//                        if(indicatorDTO.getCur_q_gross_margin_rate_q_chg() !=null && indicatorDTO.getCur_q_gross_margin_rate_q_chg() >=0.1){
+//                            return true;
+//                        }
+//                        if(indicatorDTO.getCur_q_net_selling_rate_q_chg() !=null && indicatorDTO.getCur_q_net_selling_rate_q_chg() >=0.1){
+//                            return true;
+//                        }
+
+                        return true;
+                    }
+
+                    return false;
+                })
                 .filter(indicatorDTO -> indicatorDTO.getGw_ia_assert_rate() != null && indicatorDTO.getGw_ia_assert_rate() <= 0.3)
                 .filter(indicatorDTO -> indicatorDTO.getReceivable_turnover_days() != null && indicatorDTO.getReceivable_turnover_days() <= 250)
                 .filter(indicatorDTO -> {
-                    boolean result1 = indicatorDTO.getReceivable_turnover_days() != null && indicatorDTO.getReceivable_turnover_days() <= 120;
-                    boolean result2 = indicatorDTO.getInventory_turnover_days() != null && indicatorDTO.getInventory_turnover_days() <= 350;
-                    return result1 || result2;
+                    // 存货周转天数<350, 或应收账款周转天数<120天
+                    if(indicatorDTO.getInventory_turnover_days() != null && indicatorDTO.getInventory_turnover_days() <= 350){
+                        return true;
+                    }else if(indicatorDTO.getReceivable_turnover_days() != null && indicatorDTO.getReceivable_turnover_days() <= 120){
+                        return true;
+                    }
+
+                    return false;
                 })
                 .filter(indicatorDTO -> {
                     String ind_name = indicatorDTO.getInd_name();
                     if(StringUtils.isNotBlank(ind_name)){
-                        // 农业、环保、建筑相关直接过滤掉
-                        if(ind_name.contains("农") || ind_name.contains("环保")|| ind_name.contains("建筑")){
+                        // 农业、环保、建筑相关行业直接过滤掉
+                        if(ind_name.contains("农") || ind_name.contains("环保") || ind_name.contains("建筑")
+                                || ind_name.contains("保险") || ind_name.contains("纺织") || ind_name.contains("房地产")
+                                || ind_name.contains("服装")){
                             return false;
                         }
 
@@ -531,7 +578,8 @@ public class StockIndicatorManager {
                     return true;
                 })
                 .filter(indicatorDTO -> {
-                    if(indicatorDTO.getPb_p_1000() !=null && indicatorDTO.getPb_p_1000() > 0.3){
+                    // pb分位值在30%以下，或均线分位值在20%以下
+                        if(indicatorDTO.getPb_p_1000() !=null && indicatorDTO.getPb_p_1000() > 0.3){
                         if(indicatorDTO.getMa_1000_diff_p() !=null && indicatorDTO.getMa_1000_diff_p() <0.2){
                             return true;
                         }
@@ -546,25 +594,26 @@ public class StockIndicatorManager {
                         // 市值千亿以上，毛利率和净利率条件放宽
                         return indicatorDTO.getGross_margin_rate() != null && indicatorDTO.getGross_margin_rate() >= 0.1
                                 && indicatorDTO.getNet_selling_rate() != null && indicatorDTO.getNet_selling_rate() >= 0.05;
-                    }else if(indicatorDTO.getMarket_capital() !=null && indicatorDTO.getMarket_capital() <= 50){
-                        // 市值50亿以下的， 要求有高利润或高增长
+                    }else if(indicatorDTO.getMarket_capital() !=null && indicatorDTO.getMarket_capital() <= 100){
+                        // 市值在100亿~1000亿间
+                        return indicatorDTO.getGross_margin_rate() != null && indicatorDTO.getGross_margin_rate() >= 0.15
+                                && indicatorDTO.getNet_selling_rate() != null && indicatorDTO.getNet_selling_rate() >= 0.07;
+                    } else{
+                        // 市值100亿以下的， 要求有高利润或高增长
                         int curMatchNum = 0;
 
-                        // 毛利率和净利率指标
+                        // 当季毛利率和净利率指标
                         if (indicatorDTO.getCur_q_gross_margin_rate() >= 0.30 && indicatorDTO.getCur_q_net_selling_rate() >= 0.15) {
                             curMatchNum++;
                         }
 
-                        // 营收和利润增长指标
+                        // 当季营收和利润增长指标
                         if (indicatorDTO.getCur_q_operating_income_yoy() != null && indicatorDTO.getCur_q_operating_income_yoy() >= 0.10
                                 && indicatorDTO.getCur_q_net_profit_atsopc_yoy() != null && indicatorDTO.getCur_q_net_profit_atsopc_yoy() >= 0.15) {
                             curMatchNum++;
                         }
 
                         return curMatchNum >= 1;
-                    } else {
-                        return indicatorDTO.getGross_margin_rate() != null && indicatorDTO.getGross_margin_rate() >= 0.15
-                                && indicatorDTO.getNet_selling_rate() != null && indicatorDTO.getNet_selling_rate() >= 0.07;
                     }
                 })
                 .collect(Collectors.toList());
