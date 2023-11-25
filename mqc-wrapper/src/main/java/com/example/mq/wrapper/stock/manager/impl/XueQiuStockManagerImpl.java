@@ -1,10 +1,11 @@
-package com.example.mq.wrapper.stock.impl;
+package com.example.mq.wrapper.stock.manager.impl;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.example.mq.common.utils.CloseableHttpClientUtil;
 import com.example.mq.wrapper.stock.constant.StockConstant;
 import com.example.mq.wrapper.stock.enums.FinanceReportTypeEnum;
+import com.example.mq.wrapper.stock.manager.XueQiuStockManager;
 import com.example.mq.wrapper.stock.model.*;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -16,16 +17,9 @@ import java.time.ZoneId;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class XueQiuStockManager {
+public class XueQiuStockManagerImpl implements XueQiuStockManager {
 
-    /**
-     * 查询K线数据
-     *
-     * @param code 编码
-     * @param type K线类型
-     * @param count 查询数量
-     * @return
-     */
+    @Override
     public List<XueQiuStockKLineDTO> queryKLineList(String code, String type, Long endTimeStamp, Integer count) {
         String url =new StringBuilder().append(StockConstant.K_LINE_URL)
                 .append("?symbol=").append(code)
@@ -78,12 +72,7 @@ public class XueQiuStockManager {
         return sortedKLineDTOList;
     }
 
-    /**
-     * 查询资产负债数据
-     * @param code 编码
-     * @param count 数据条数
-     * @return
-     */
+    @Override
     public List<XueQiuStockBalanceDTO> queryBalanceList(String code, Integer count) {
         String url =new StringBuilder().append(StockConstant.BALANCE_URL)
                 .append("?symbol=").append(code)
@@ -115,12 +104,7 @@ public class XueQiuStockManager {
         return balanceDTOList;
     }
 
-    /**
-     * 查询利润数据
-     * @param code 编码
-     * @param count 数据条数
-     * @return
-     */
+    @Override
     public List<XueQiuStockIncomeDTO> queryIncomeList(String code, Integer count) {
         String url =new StringBuilder().append(StockConstant.INCOME_URL)
                 .append("?symbol=").append(code)
@@ -153,12 +137,7 @@ public class XueQiuStockManager {
         return incomeDTOList;
     }
 
-    /**
-     * 查询现金流数据
-     * @param code 编码
-     * @param count 数据条数
-     * @return
-     */
+    @Override
     public List<XueQiuStockCashFlowDTO> queryCashFlowList(String code, Integer count) {
         String url =new StringBuilder().append(StockConstant.CASH_FLOW_URL)
                 .append("?symbol=").append(code)
@@ -191,12 +170,7 @@ public class XueQiuStockManager {
         return cashFlowDTOList;
     }
 
-    /**
-     * 查询指标数据
-     * @param code 编码
-     * @param count 数据条数
-     * @return
-     */
+    @Override
     public List<XueQiuStockIndicatorDTO> queryIndicatorList(String code, Integer count) {
         String url =new StringBuilder().append(StockConstant.INDICATOR_URL)
                 .append("?symbol=").append(code)
@@ -229,12 +203,7 @@ public class XueQiuStockManager {
         return indicatorDTOList;
     }
 
-    /**
-     * 查询指标数据
-     *
-     * @param code 编码
-     * @return
-     */
+    @Override
     public CompanyDTO queryCompanyDTO(String code) {
         String url =new StringBuilder().append(StockConstant.COMPANY_URL)
                 .append("?symbol=").append(code)

@@ -14,12 +14,14 @@ public class StockConstant {
     public static final String INDICATOR_URL ="https://stock.xueqiu.com/v5/stock/finance/cn/indicator.json";
     public static final String COMPANY_URL ="https://stock.xueqiu.com/v5/stock/f10/cn/company.json";
 
-    public static final String COOKIE ="device_id=dda0a4a2c4c9181929b82ccadaa4ec1d; s=cg11wwxa5w; cookiesu=611692494183709; xq_a_token=e2f0876e8fd368a0be2b6d38a49ed2dd5eec7557; xqat=e2f0876e8fd368a0be2b6d38a49ed2dd5eec7557; xq_r_token=2a5b753b2db675b4ac36c938d20120660651116d; xq_id_token=eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJ1aWQiOi0xLCJpc3MiOiJ1YyIsImV4cCI6MTcwMDY5OTg3NSwiY3RtIjoxNjk5MDYzNzA2MTI4LCJjaWQiOiJkOWQwbjRBWnVwIn0.W3WTAUqnluWprvRgiMVPgyjSyU5_HkX007vwyMzdY84ZvfmXSGlynNGlr57LDJNDzGbDMnevU2I_JDisutAOj-5wpBh0EjnNQt3YIccwI1wnUToPj94MgBjc5S0FG86M63Yn9AGIsBZyeLrxrFGEzOVsHKwnRm-Pd6vu0MKrxwaFrLssel-Kz74KqJmB3016gmCEF_y_xYYL_G1v2DpYaLPL-pTMpxnSJGs7b8eG4EVTZ_9XE-6JclLai90y1IvVzRUeqCwluBbP8Mh855YmcxG5qpAWCZ5X90CFxK8-MctDesvZwrjXEIfCCecDAeEtBi0x-bW6DTiCD1sQrND3bA; u=611692494183709; is_overseas=0; Hm_lvt_1db88642e346389874251b5a1eded6e3=1698408979,1698544630,1698754480,1699063763; Hm_lpvt_1db88642e346389874251b5a1eded6e3=1699063763";
+    public static final String COOKIE ="device_id=dda0a4a2c4c9181929b82ccadaa4ec1d; s=cg11wwxa5w; cookiesu=611692494183709; xq_a_token=4fda997cf0d3bc4ef43eba42532cf38a54bcbc00; xqat=4fda997cf0d3bc4ef43eba42532cf38a54bcbc00; xq_r_token=a440894245f0f9be071ea5c41d674edb42789120; xq_id_token=eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJ1aWQiOi0xLCJpc3MiOiJ1YyIsImV4cCI6MTcwMzI5MTg4MiwiY3RtIjoxNzAwODg1ODY0NzMwLCJjaWQiOiJkOWQwbjRBWnVwIn0.PxpzCz1Qux9_3DE7emSZa4LxibCIrO58ELzKJ4tqy4xy4XdCnCXCnHCqJ3Kr3U7qaHts3B7AGryMGX0UnXcRO6pwN8ZX6mgwbUr_Apovnex_DA2ZvIQbnt87jhkzC3lp8b3PUsbiyyA8GeTZTztw9-HaUGNaTPh1TDVyErBXfcAg2M4NHVzJybHPHgMgFx_WyF0PH3UoaKiKEJ09Qu2FMyP7p5Pf0af9Y5oqsJ3pIILKPTGuoB7VBprxjnNR_2JKdtbtdSJreZtNQxpf62WYuA26ggpVnII2BWoiaglSVrdHqCwXCDU1ZwuuERDZRy6YVP9XTcACF85XrcgHYjemsA; u=611692494183709; Hm_lvt_1db88642e346389874251b5a1eded6e3=1698754480,1699063763,1700656578,1700885899; Hm_lpvt_1db88642e346389874251b5a1eded6e3=1700885959";
 
     public static final List<ImmutablePair<String, String>> STATISTICS_CODE_LIST = Arrays.asList(
             new ImmutablePair<>("SH000016", "上证50"),
             new ImmutablePair<>("SH000300", "沪深300"),
+            new ImmutablePair<>("SZ399330", "深证100"),
             new ImmutablePair<>("SH000905", "中证500"),
+            new ImmutablePair<>("SH000852", "中证1000"),
             new ImmutablePair<>("SZ399673", "创业板50"),
             new ImmutablePair<>("SH512880", "证券ETF"),
 
@@ -35,7 +37,7 @@ public class StockConstant {
 
     public static final Integer FINANCE_REPORT_COUNT =30;
     public static final Integer KLINE_DAY_COUNT =2000;
-    public static final String FILE_DATE ="20231104";
+    public static final String FILE_DATE ="20231125";
 
     public static final String SH_STOCK_LIST ="E:/stock_data/stock_list_1_sh.txt";
     public static final String SZ_STOCK_LIST ="E:/stock_data/stock_list_2_sz.txt";
@@ -71,6 +73,8 @@ public class StockConstant {
 
 
     public static final String NORTH_HOLD_SHARES_FILE ="E:/stock_data/dc_north_hold_shares/north_hold_shares_%s.txt";
-    public static final String LATEST_HOLD_SHARES_FILE ="E:/stock_data/north_hold_shares_%s_%s.csv";
+    public static final String NORTH_HOLD_SHARES_IND_FILE ="E:/stock_data/dc_north_hold_shares_ind/north_hold_shares_ind_%s.txt";
 
+    public static final String LATEST_HOLD_SHARES_FILE ="E:/stock_data/north_hold_shares_%s_%s.csv";
+    public static final String LATEST_IND_HOLD_SHARES_FILE ="E:/stock_data/industry_north_hold_shares_%s_%s.csv";
 }

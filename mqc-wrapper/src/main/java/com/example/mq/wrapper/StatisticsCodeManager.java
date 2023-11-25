@@ -1,7 +1,9 @@
-package com.example.mq.wrapper.stock.impl;
+package com.example.mq.wrapper;
 
 import com.example.mq.common.utils.NumberUtil;
 import com.example.mq.wrapper.stock.constant.StockConstant;
+import com.example.mq.wrapper.stock.manager.XueQiuStockManager;
+import com.example.mq.wrapper.stock.manager.impl.XueQiuStockManagerImpl;
 import com.example.mq.wrapper.stock.model.XueQiuStockKLineDTO;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
@@ -53,7 +55,7 @@ public class StatisticsCodeManager {
         LocalDateTime queryDateTime = LocalDate.parse(queryDate, df).atStartOfDay();
         long queryDateMills = queryDateTime.toInstant(ZoneOffset.of("+8")).toEpochMilli();
 
-        XueQiuStockManager xueQiuStockManager =new XueQiuStockManager();
+        XueQiuStockManager xueQiuStockManager =new XueQiuStockManagerImpl();
         List<XueQiuStockKLineDTO> kLineDTOList = xueQiuStockManager.queryKLineList(statisticsCode, "day", queryDateMills, totalCount);
         if(CollectionUtils.isEmpty(kLineDTOList)){
             return null;

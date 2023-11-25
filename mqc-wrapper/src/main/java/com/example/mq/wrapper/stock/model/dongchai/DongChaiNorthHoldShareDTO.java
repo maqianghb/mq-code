@@ -23,6 +23,11 @@ public class DongChaiNorthHoldShareDTO {
     private Double holdShares;
 
     /**
+     * 持有市值（亿元）
+     */
+    private Double holdMarketCap;
+
+    /**
      * 总股数的持股占比(%)
      */
     private Double totalSharesRatio;
