@@ -405,13 +405,15 @@ public class LocalDataManagerImpl implements LocalDataManager {
                 if(!Objects.equals(strDataList.size(), strList.size())){
                     FileUtils.writeLines(new File(fileName), strDataList, false);
                 }
+
+                System.out.println("queryAndUpdateNorthHoldShareList end, stockCode: " + stockCode);
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
 
         // 更新行业的沪港通数据
-        for(int i=0; i<300; i++){
+        for(int i=0; i<100; i++){
             LocalDateTime queryDateTime = LocalDateTime.now().plusDays(-i);
             this.updateLocalIndustryHoldShares(stockCodeList, queryDateTime);
         }
@@ -709,6 +711,8 @@ public class LocalDataManagerImpl implements LocalDataManager {
                 if(tmpHoldShareDTO !=null){
                     latestHoldShareDTOList.add(tmpHoldShareDTO);
                 }
+
+                System.out.println(" queryLatestNorthHoldShares end, tmpHoldShareDTO: " + JSON.toJSONString(tmpHoldShareDTO));
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -927,6 +931,8 @@ public class LocalDataManagerImpl implements LocalDataManager {
                 if(!Objects.equals(strDataList.size(), strList.size())){
                     FileUtils.writeLines(new File(fileName), strDataList, false);
                 }
+
+                System.out.println("updateLocalIndustryHoldShares end, indName: " + indName);
             } catch (IOException e) {
                 e.printStackTrace();
             }
