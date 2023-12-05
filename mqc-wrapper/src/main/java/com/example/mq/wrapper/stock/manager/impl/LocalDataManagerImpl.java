@@ -685,13 +685,16 @@ public class LocalDataManagerImpl implements LocalDataManager {
     /**
      * 查询最近日期的沪港通数据
      */
-    public List<DongChaiNorthHoldShareDTO> queryLatestNorthHoldShares(List<String> stockCodeList){
+    public List<DongChaiNorthHoldShareDTO> queryLatestNorthHoldShares(List<String> stockCodeList, Boolean updateLocalData){
         if(CollectionUtils.isEmpty(stockCodeList)){
             return Lists.newArrayList();
         }
 
-        // 先更新本地的沪股通持股数据
-        this.queryAndUpdateNorthHoldShareList();
+
+        if(Objects.equals(updateLocalData, true)){
+            // 先更新本地的沪股通持股数据
+            this.queryAndUpdateNorthHoldShareList();
+        }
 
         // 查询最新的持股数据
         List<DongChaiNorthHoldShareDTO> latestHoldShareDTOList =Lists.newArrayList();

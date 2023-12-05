@@ -30,10 +30,10 @@ public class CommonManager {
 
         StockIndicatorManager stockIndicatorManager =new StockIndicatorManagerImpl();
         // 指标数据
-        stockIndicatorManager.calculateAndSaveAllAnalysisDTO(kLineDate, stockCodeList, reportYear ,reportTypeEnum);
+//        stockIndicatorManager.calculateAndSaveAllAnalysisDTO(kLineDate, stockCodeList, reportYear ,reportTypeEnum);
 
         // 沪港通数据
-//        stockIndicatorManager.queryAndSaveNorthHoldShares(StockConstant.FILE_DATE, stockCodeList);
+        stockIndicatorManager.queryAndSaveNorthHoldShares(StockConstant.FILE_DATE, stockCodeList, false);
 
     }
 

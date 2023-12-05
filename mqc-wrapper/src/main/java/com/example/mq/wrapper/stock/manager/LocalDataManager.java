@@ -150,9 +150,10 @@ public interface LocalDataManager {
      * 查询最近日期的沪港通数据
      *
      * @param stockCodeList
+     * @param updateLocalData 是否更新本地文件
      * @return
      */
-    List<DongChaiNorthHoldShareDTO> queryLatestNorthHoldShares(List<String> stockCodeList);
+    List<DongChaiNorthHoldShareDTO> queryLatestNorthHoldShares(List<String> stockCodeList, Boolean updateLocalData);
 
     /**
      * 查询最新的行业持股数据

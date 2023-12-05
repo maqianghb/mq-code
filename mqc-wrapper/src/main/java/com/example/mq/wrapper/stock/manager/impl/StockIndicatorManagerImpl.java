@@ -1667,20 +1667,15 @@ public class StockIndicatorManagerImpl implements StockIndicatorManager {
         return sum / total_holders_equity_v1;
     }
 
-    /**
-     * 查询并保存最新的沪港通持股数据
-     *
-     * @param fileDate
-     */
     @Override
-    public void queryAndSaveNorthHoldShares(String fileDate, List<String> stockCodeList) {
+    public void queryAndSaveNorthHoldShares(String fileDate, List<String> stockCodeList, Boolean updateLocalData) {
         if (StringUtils.isBlank(fileDate) || CollectionUtils.isEmpty(stockCodeList)) {
             return;
         }
 
         // 查询最新的沪港通持股数据
         LocalDataManager localDataManager = new LocalDataManagerImpl();
-        List<DongChaiNorthHoldShareDTO> holdShareDTOList = localDataManager.queryLatestNorthHoldShares(stockCodeList);
+        List<DongChaiNorthHoldShareDTO> holdShareDTOList = localDataManager.queryLatestNorthHoldShares(stockCodeList, updateLocalData);
         if (CollectionUtils.isEmpty(holdShareDTOList)) {
             return;
         }
@@ -1745,7 +1740,7 @@ public class StockIndicatorManagerImpl implements StockIndicatorManager {
             try {
                 this.formatIndNorthHoldShareDTO(indHoldShareDTO);
 
-                Field[] fields = DongChaiNorthHoldShareDTO.class.getDeclaredFields();
+                Field[] fields = DongChaiIndustryHoldShareDTO.class.getDeclaredFields();
                 JSONObject jsonObject = JSON.parseObject(JSON.toJSONString(indHoldShareDTO));
                 StringBuilder strHoldSharesBuilder = new StringBuilder();
                 for (Field field : fields) {

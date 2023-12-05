@@ -21,7 +21,8 @@ public interface StockIndicatorManager {
      *
      * @param fileDate
      * @param stockCodeList
+     * @param updateLocalData 是否先更新本地数据
      */
-    void queryAndSaveNorthHoldShares(String fileDate, List<String> stockCodeList);
+    void queryAndSaveNorthHoldShares(String fileDate, List<String> stockCodeList, Boolean updateLocalData);
 
 }
