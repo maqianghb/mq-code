@@ -7,9 +7,10 @@ import com.example.mq.client.service.customer.request.CustomerRequest;
 import com.example.mq.core.domain.customer.model.Customer;
 import com.example.mq.service.annotation.HotDataSourceSelector;
 import com.example.mq.service.customer.CustomerDomainService;
+import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.util.Asserts;
-import org.assertj.core.util.Lists;
+
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;

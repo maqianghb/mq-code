@@ -14,11 +14,11 @@ import com.example.mq.wrapper.stock.model.dongchai.DongChaiFreeShareDTO;
 import com.example.mq.wrapper.stock.model.dongchai.DongChaiHolderIncreaseDTO;
 import com.example.mq.wrapper.stock.model.dongchai.DongChaiIndustryHoldShareDTO;
 import com.example.mq.wrapper.stock.model.dongchai.DongChaiNorthHoldShareDTO;
+import com.google.common.collect.Lists;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.assertj.core.util.Lists;
 
 import java.io.File;
 import java.lang.reflect.Field;

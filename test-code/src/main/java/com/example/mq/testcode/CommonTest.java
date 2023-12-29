@@ -4,10 +4,10 @@ package com.example.mq.testcode;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.example.mq.common.utils.CloseableHttpClientUtil;
+import com.google.common.collect.Lists;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.assertj.core.util.Lists;
 import org.junit.Test;
 
 import java.io.File;
@@ -23,12 +23,12 @@ public class CommonTest {
     @Test
     public void testGetAllStockCodes(){
         try {
-            List<String> strList =FileUtils.readLines(new File("E:/stock_list_2_sz.txt"), Charset.forName("UTF-8"));
+            List<String> strList =FileUtils.readLines(new File("/stock_code_list.txt"), Charset.forName("UTF-8"));
             if(CollectionUtils.isEmpty(strList)){
                 return;
             }
 
-            List<String> formatCodeList =Lists.newArrayList();
+            List<String> formatCodeList = Lists.newArrayList();
             for(String str : strList){
                 String[] split = StringUtils.split(str, ", ");
                 if(split ==null || split.length <2){

@@ -10,7 +10,7 @@ import com.example.mq.data.dubbo.TraceContextUtils;
 import com.example.mq.common.utils.CommonUtils;
 import com.example.mq.common.utils.SpringContextUtil;
 import com.example.mq.service.customer.CustomerDomainService;
-import org.assertj.core.util.Lists;
+import com.google.common.collect.Lists;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

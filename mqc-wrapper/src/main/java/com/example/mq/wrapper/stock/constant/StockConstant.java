@@ -39,42 +39,34 @@ public class StockConstant {
     public static final Integer KLINE_DAY_COUNT =2000;
     public static final String FILE_DATE ="20231125";
 
-    public static final String SH_STOCK_LIST ="E:/stock_data/stock_list_1_sh.txt";
-    public static final String SZ_STOCK_LIST ="E:/stock_data/stock_list_2_sz.txt";
-    public static final String CYB_STOCK_LIST ="E:/stock_data/stock_list_3_cyb.txt";
+    public static final String STOCK_LIST ="/Users/maqiang/Documents/002-stock_data/stock_list.txt";
+    public static final String COMPANY_LIST ="/Users/maqiang/Documents/002-stock_data/company_list.txt";
 
-    public static final String SH_STOCK_CODE_LIST ="E:/stock_data/stock_code_1_sh.txt";
-    public static final String SZ_STOCK_CODE_LIST ="E:/stock_data/stock_code_2_sz.txt";
-    public static final String CYB_STOCK_CODE_LIST ="E:/stock_data/stock_code_3_cyb.txt";
+    public static final String STOCK_LIST_WHITE ="/Users/maqiang/Documents/002-stock_data/stock_list_white.txt";
+    public static final String STOCK_LIST_BLACK ="/Users/maqiang/Documents/002-stock_data/stock_list_black.txt";
 
-    public static final String COMPANY_LIST ="E:/stock_data/company_list.txt";
+    public static final String KLINE_LIST_DAY ="/Users/maqiang/Documents/002-stock_data/xq_k_line/k_line_list_day_%s.txt";
 
-    public static final String STOCK_LIST_WHITE ="E:/stock_data/stock_list_white.txt";
-    public static final String STOCK_LIST_BLACK ="E:/stock_data/stock_list_black.txt";
+    public static final String BALANCE_LIST ="/Users/maqiang/Documents/002-stock_data/xq_finance/xq_balance_list.txt";
+    public static final String INCOME_LIST ="/Users/maqiang/Documents/002-stock_data/xq_finance/xq_income_list.txt";
+    public static final String CASH_FLOW_LIST ="/Users/maqiang/Documents/002-stock_data/xq_finance/xq_cash_flow_list.txt";
+    public static final String INDICATOR_LIST_XQ ="/Users/maqiang/Documents/002-stock_data/xq_finance/xq_indicator_list.txt";
+    public static final String INCOME_LIST_Q ="/Users/maqiang/Documents/002-stock_data/xq_finance/xq_income_list_q.txt";
 
-    public static final String INDICATOR_LIST_ANALYSIS ="E:/stock_data/analysis_%s_%s.csv";
-    public static final String INDICATOR_LIST_PERCENT ="E:/stock_data/percent_%s_%s.csv";
-    public static final String INDICATOR_LIST_FILTER ="E:/stock_data/filter_%s_%d_%s.csv";
-
-    public static final String KLINE_LIST_DAY ="E:/stock_data/xq_k_line_%s/k_line_list_day_%s.txt";
-
-    public static final String BALANCE_LIST ="E:/stock_data/xq_finance_%s/xq_balance_list.txt";
-    public static final String INCOME_LIST ="E:/stock_data/xq_finance_%s/xq_income_list.txt";
-    public static final String CASH_FLOW_LIST ="E:/stock_data/xq_finance_%s/xq_cash_flow_list.txt";
-    public static final String INDICATOR_LIST_XQ ="E:/stock_data/xq_finance_%s/xq_indicator_list.txt";
-    public static final String INCOME_LIST_Q ="E:/stock_data/xq_finance_%s/xq_income_list_q.txt";
-
+    public static final String INDICATOR_LIST_ANALYSIS ="/Users/maqiang/Documents/002-stock_data/analysis_%s_%s.csv";
+    public static final String INDICATOR_LIST_PERCENT ="/Users/maqiang/Documents/002-stock_data/percent_%s_%s.csv";
+    public static final String INDICATOR_LIST_FILTER ="/Users/maqiang/Documents/002-stock_data/filter_%s_%d_%s.csv";
 
     public static final String DONG_CHAI_URL ="https://datacenter-web.eastmoney.com/api/data/v1/get";
     public static final Integer DONG_CHAI_MAX_LIMIT =500;
 
-    public static final String FINANCE_NOTICE_LIST ="E:/stock_data/dc_finance_%s_%s.csv";
-    public static final String HOLDER_INCREASE_LIST ="E:/stock_data/dc_holder_increase_%s.csv";
+    public static final String FINANCE_NOTICE_LIST ="/Users/maqiang/Documents/002-stock_data/dc_finance_%s_%s.csv";
+    public static final String HOLDER_INCREASE_LIST ="/Users/maqiang/Documents/002-stock_data/dc_holder_increase_%s.csv";
 
 
-    public static final String NORTH_HOLD_SHARES_FILE ="E:/stock_data/dc_north_hold_shares/north_hold_shares_%s.txt";
-    public static final String NORTH_HOLD_SHARES_IND_FILE ="E:/stock_data/dc_north_hold_shares_ind/north_hold_shares_ind_%s.txt";
+    public static final String NORTH_HOLD_SHARES_FILE ="/Users/maqiang/Documents/002-stock_data/dc_north_hold_shares/north_hold_shares_%s.txt";
+    public static final String NORTH_HOLD_SHARES_IND_FILE ="/Users/maqiang/Documents/002-stock_data/dc_north_hold_shares_ind/north_hold_shares_ind_%s.txt";
 
-    public static final String LATEST_HOLD_SHARES_FILE ="E:/stock_data/north_hold_shares_%s_%s.csv";
-    public static final String LATEST_IND_HOLD_SHARES_FILE ="E:/stock_data/industry_north_hold_shares_%s_%s.csv";
+    public static final String LATEST_HOLD_SHARES_FILE ="/Users/maqiang/Documents/002-stock_data/north_hold_shares_%s_%s.csv";
+    public static final String LATEST_IND_HOLD_SHARES_FILE ="/Users/maqiang/Documents/002-stock_data/industry_north_hold_shares_%s_%s.csv";
 }

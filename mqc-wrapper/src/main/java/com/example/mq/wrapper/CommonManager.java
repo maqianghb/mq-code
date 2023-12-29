@@ -15,10 +15,10 @@ public class CommonManager {
         LocalDataManager localDataManager =new LocalDataManagerImpl();
 
         // 更新本地文件的K线数据
-//        localDataManager.queryAndUpdateKLineList(StockConstant.FILE_DATE);
+        localDataManager.queryAndUpdateKLineList();
 
         // 更新本地文件的财务数据
-//        localDataManager.queryAndUpdateFinanceList(StockConstant.FILE_DATE);
+        localDataManager.queryAndUpdateFinanceList();
 
         // 参数列表
         Integer reportYear = 2023;

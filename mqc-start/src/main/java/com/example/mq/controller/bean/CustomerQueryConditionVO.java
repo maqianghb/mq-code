@@ -3,6 +3,7 @@ package com.example.mq.controller.bean;
 import java.util.List;
 
 import com.alibaba.fastjson.JSONObject;
+import com.example.mq.common.utils.DateUtil;
 import com.example.mq.common.utils.NumberUtil;
 import com.example.mq.service.bean.CustomerQueryCondition;
 import lombok.Data;
@@ -53,10 +54,10 @@ public class CustomerQueryConditionVO {
 			condition.setMaxCostAmount(NumberUtil.intValue(NumberUtil.mul(vo.getMaxCostAmount(), 100.0)));
 		}
 		if(!StringUtils.isEmpty(vo.getMinActiveTime())){
-			condition.setMinActiveTime(DateUtil.parseDateTime(vo.getMinActiveTime()));
+			condition.setMinActiveTime(DateUtil.parseDateTime(vo.getMinActiveTime(), DateUtil.TIME_FORMAT));
 		}
 		if(!StringUtils.isEmpty(vo.getMaxActiveTime())){
-			condition.setMaxActiveTime(DateUtil.parseDateTime(vo.getMaxActiveTime()));
+			condition.setMaxActiveTime(DateUtil.parseDateTime(vo.getMaxActiveTime(), DateUtil.TIME_FORMAT));
 		}
 		return condition;
 	}

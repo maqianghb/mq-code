@@ -13,11 +13,6 @@ import java.util.List;
 public interface LocalDataManager {
 
     /**
-     * 保存全部code
-     */
-    void saveStockCodeList();
-
-    /**
      * 查询并保存公司信息
      */
     void queryAndSaveCompanyDTO();
@@ -25,16 +20,14 @@ public interface LocalDataManager {
     /**
      * 查询并更新全网K线数据
      *
-     * @param fileDate
      */
-    void queryAndUpdateKLineList(String fileDate);
+    void queryAndUpdateKLineList();
 
     /**
      * 查询并保存全网财务数据
      *
-     * @param fileDate
      */
-    void queryAndUpdateFinanceList(String fileDate);
+    void queryAndUpdateFinanceList();
 
     /**
      * 查询并保存业绩预告数据

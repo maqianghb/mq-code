@@ -43,6 +43,7 @@
 		<commons-io.version>2.5</commons-io.version>
 		<commons-lang3.version>3.3.1</commons-lang3.version>
 		<commons-collections4.version>4.1</commons-collections4.version>
+		<google-guava.version>21.0</google-guava.version>
 		<commons-jexl3.version>3.1</commons-jexl3.version>
 		<mongo.java.driver.version>3.6.4</mongo.java.driver.version>
 		<codis-proxy.version>1.0.5</codis-proxy.version>
@@ -120,6 +121,13 @@
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-collections4</artifactId>
 			<version>${commons-collections4.version}</version>
+		</dependency>
+
+		<!-- google-guava -->
+		<dependency>
+			<groupId>com.google.guava</groupId>
+			<artifactId>guava</artifactId>
+			<version>${google-guava.version}</version>
 		</dependency>
 
 		<dependency>

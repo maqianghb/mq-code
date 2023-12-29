@@ -7,9 +7,9 @@ import com.example.mq.wrapper.stock.constant.StockConstant;
 import com.example.mq.wrapper.stock.enums.FinanceReportTypeEnum;
 import com.example.mq.wrapper.stock.manager.XueQiuStockManager;
 import com.example.mq.wrapper.stock.model.*;
+import com.google.common.collect.Lists;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.assertj.core.util.Lists;
 
 import java.lang.reflect.Field;
 import java.time.LocalDateTime;

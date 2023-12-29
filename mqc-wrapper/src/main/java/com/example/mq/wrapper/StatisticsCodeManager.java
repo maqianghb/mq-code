@@ -5,9 +5,9 @@ import com.example.mq.wrapper.stock.constant.StockConstant;
 import com.example.mq.wrapper.stock.manager.XueQiuStockManager;
 import com.example.mq.wrapper.stock.manager.impl.XueQiuStockManagerImpl;
 import com.example.mq.wrapper.stock.model.XueQiuStockKLineDTO;
+import com.google.common.collect.Lists;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.assertj.core.util.Lists;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
