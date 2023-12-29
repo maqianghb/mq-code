@@ -42,8 +42,4 @@ public class DateUtil {
         return LocalDateTime.parse(strDateTime, df);
     }
 
-
-
-
-
 }
