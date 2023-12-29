@@ -546,10 +546,10 @@ public class LocalDataManagerImpl implements LocalDataManager {
     }
 
     @Override
-    public List<XueQiuStockKLineDTO> getLocalKLineList(String fileDate, String code, LocalDateTime endKLineDateTime, KLineTypeEnum typeEnum, Integer count){
+    public List<XueQiuStockKLineDTO> getLocalKLineList(String code, LocalDateTime endKLineDateTime, KLineTypeEnum typeEnum, Integer count){
         String klineListFileName = StringUtils.EMPTY;
         if(Objects.equals(typeEnum.getCode(), KLineTypeEnum.DAY.getCode())){
-            klineListFileName = String.format(StockConstant.KLINE_LIST_DAY, fileDate, code);
+            klineListFileName = String.format(StockConstant.KLINE_LIST_DAY, code);
         }
 
         long endDateMills = endKLineDateTime.toInstant(ZoneOffset.of("+8")).toEpochMilli();
@@ -579,10 +579,10 @@ public class LocalDataManagerImpl implements LocalDataManager {
     }
 
     @Override
-    public XueQiuStockBalanceDTO getLocalBalanceDTO(String fileDate, String code, Integer year, FinanceReportTypeEnum typeEnum){
+    public XueQiuStockBalanceDTO getLocalBalanceDTO(String code, Integer year, FinanceReportTypeEnum typeEnum){
         try {
             if(CollectionUtils.isEmpty(balanceDTOList)){
-                String fileName =String.format(StockConstant.BALANCE_LIST, fileDate);
+                String fileName =String.format(StockConstant.BALANCE_LIST);
                 List<String> strList =FileUtils.readLines(new File(fileName), Charset.forName("UTF-8"));
                 balanceDTOList = Optional.ofNullable(strList).orElse(Lists.newArrayList()).stream()
                         .map(str -> JSON.parseObject(str, XueQiuStockBalanceDTO.class))
@@ -603,10 +603,10 @@ public class LocalDataManagerImpl implements LocalDataManager {
     }
 
     @Override
-    public XueQiuStockIncomeDTO getLocalIncomeDTO(String fileDate, String code, Integer year, FinanceReportTypeEnum typeEnum){
+    public XueQiuStockIncomeDTO getLocalIncomeDTO(String code, Integer year, FinanceReportTypeEnum typeEnum){
         try {
             if(CollectionUtils.isEmpty(incomeDTOList)){
-                String fileName =String.format(StockConstant.INCOME_LIST, fileDate);
+                String fileName =String.format(StockConstant.INCOME_LIST);
                 List<String> strList =FileUtils.readLines(new File(fileName), Charset.forName("UTF-8"));
                 incomeDTOList = Optional.ofNullable(strList).orElse(Lists.newArrayList()).stream()
                         .map(str -> JSON.parseObject(str, XueQiuStockIncomeDTO.class))
@@ -627,10 +627,10 @@ public class LocalDataManagerImpl implements LocalDataManager {
     }
 
     @Override
-    public List<QuarterIncomeDTO> getLocalQuarterIncomeDTO(String fileDate, String code, List<ImmutablePair<Integer, FinanceReportTypeEnum>> yearAndReportTypeList){
+    public List<QuarterIncomeDTO> getLocalQuarterIncomeDTO(String code, List<ImmutablePair<Integer, FinanceReportTypeEnum>> yearAndReportTypeList){
         try {
             if(CollectionUtils.isEmpty(quarterIncomeDTOList)){
-                String fileName =String.format(StockConstant.INCOME_LIST_Q, fileDate);
+                String fileName =String.format(StockConstant.INCOME_LIST_Q);
                 List<String> strList =FileUtils.readLines(new File(fileName), Charset.forName("UTF-8"));
                 quarterIncomeDTOList = Optional.ofNullable(strList).orElse(Lists.newArrayList()).stream()
                         .map(str -> JSON.parseObject(str, QuarterIncomeDTO.class))
@@ -666,10 +666,10 @@ public class LocalDataManagerImpl implements LocalDataManager {
     }
 
     @Override
-    public XueQiuStockCashFlowDTO getLocalCashFlowDTO(String fileDate, String code, Integer year, FinanceReportTypeEnum typeEnum){
+    public XueQiuStockCashFlowDTO getLocalCashFlowDTO(String code, Integer year, FinanceReportTypeEnum typeEnum){
         try {
             if(CollectionUtils.isEmpty(cashFlowDTOList)){
-                String fileName =String.format(StockConstant.CASH_FLOW_LIST, fileDate);
+                String fileName =String.format(StockConstant.CASH_FLOW_LIST);
                 List<String> strList =FileUtils.readLines(new File(fileName), Charset.forName("UTF-8"));
                 cashFlowDTOList = Optional.ofNullable(strList).orElse(Lists.newArrayList()).stream()
                         .map(str -> JSON.parseObject(str, XueQiuStockCashFlowDTO.class))
@@ -690,10 +690,10 @@ public class LocalDataManagerImpl implements LocalDataManager {
     }
 
     @Override
-    public XueQiuStockIndicatorDTO getLocalXqIndicatorDTO(String fileDate, String code, Integer year, FinanceReportTypeEnum typeEnum){
+    public XueQiuStockIndicatorDTO getLocalXqIndicatorDTO(String code, Integer year, FinanceReportTypeEnum typeEnum){
         try {
             if(CollectionUtils.isEmpty(xqIndicatorDTOList)){
-                String fileName =String.format(StockConstant.INDICATOR_LIST_XQ, fileDate);
+                String fileName =String.format(StockConstant.INDICATOR_LIST_XQ);
                 List<String> strList =FileUtils.readLines(new File(fileName), Charset.forName("UTF-8"));
                 xqIndicatorDTOList = Optional.ofNullable(strList).orElse(Lists.newArrayList()).stream()
                         .map(str -> JSON.parseObject(str, XueQiuStockIndicatorDTO.class))

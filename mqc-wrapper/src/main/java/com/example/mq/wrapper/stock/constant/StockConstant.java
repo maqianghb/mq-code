@@ -14,7 +14,7 @@ public class StockConstant {
     public static final String INDICATOR_URL ="https://stock.xueqiu.com/v5/stock/finance/cn/indicator.json";
     public static final String COMPANY_URL ="https://stock.xueqiu.com/v5/stock/f10/cn/company.json";
 
-    public static final String COOKIE ="device_id=dda0a4a2c4c9181929b82ccadaa4ec1d; s=cg11wwxa5w; cookiesu=611692494183709; xq_a_token=4fda997cf0d3bc4ef43eba42532cf38a54bcbc00; xqat=4fda997cf0d3bc4ef43eba42532cf38a54bcbc00; xq_r_token=a440894245f0f9be071ea5c41d674edb42789120; xq_id_token=eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJ1aWQiOi0xLCJpc3MiOiJ1YyIsImV4cCI6MTcwMzI5MTg4MiwiY3RtIjoxNzAwODg1ODY0NzMwLCJjaWQiOiJkOWQwbjRBWnVwIn0.PxpzCz1Qux9_3DE7emSZa4LxibCIrO58ELzKJ4tqy4xy4XdCnCXCnHCqJ3Kr3U7qaHts3B7AGryMGX0UnXcRO6pwN8ZX6mgwbUr_Apovnex_DA2ZvIQbnt87jhkzC3lp8b3PUsbiyyA8GeTZTztw9-HaUGNaTPh1TDVyErBXfcAg2M4NHVzJybHPHgMgFx_WyF0PH3UoaKiKEJ09Qu2FMyP7p5Pf0af9Y5oqsJ3pIILKPTGuoB7VBprxjnNR_2JKdtbtdSJreZtNQxpf62WYuA26ggpVnII2BWoiaglSVrdHqCwXCDU1ZwuuERDZRy6YVP9XTcACF85XrcgHYjemsA; u=611692494183709; Hm_lvt_1db88642e346389874251b5a1eded6e3=1698754480,1699063763,1700656578,1700885899; Hm_lpvt_1db88642e346389874251b5a1eded6e3=1700885959";
+    public static final String COOKIE ="xq_a_token=9eb4932f3197a06d242009fa2ee386ce66c8799f; xqat=9eb4932f3197a06d242009fa2ee386ce66c8799f; xq_r_token=d7a7d3c7d70d9e116b3f0277feb01c5b9543559b; xq_id_token=eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJ1aWQiOi0xLCJpc3MiOiJ1YyIsImV4cCI6MTcwNTg4NDA0OSwiY3RtIjoxNzAzODU5ODA5OTY5LCJjaWQiOiJkOWQwbjRBWnVwIn0.NvXJTC8JL1LhiektEHqvOXu4Symk8ztsM8KfcqjERhcUKI8DdsMeCAYOtMoa1E-vF2D5cyd0TtLupq61BrK8L3sZ64MlO1Znp4k5jG9_Cnm4HVvo_xHKbgr_OngUbcu1p93sllvqGBIV2tJawup4yi-K88I-D196fr-VRUIEnTbqkD_5UFP33E7fREuE8naSbrN6umRjiKN26_YuF_2dWKGXj_SEiFeT5_k_WRbDXPDC3KiAm6tzmifszErpztq-349smitBWQ9D3GLRAsUrWv5QbL1kfwdOs6dpYhKy8ciQ-dMf4hB0iEAp0KJ3Ci2FssL4iXl_-9cD4L1ysCZoqQ; cookiesu=551703859817291; u=551703859817291; is_overseas=0; device_id=d1c43ea5bef6f4cbab0c374859804514";
 
     public static final List<ImmutablePair<String, String>> STATISTICS_CODE_LIST = Arrays.asList(
             new ImmutablePair<>("SH000016", "上证50"),
@@ -37,7 +37,6 @@ public class StockConstant {
 
     public static final Integer FINANCE_REPORT_COUNT =30;
     public static final Integer KLINE_DAY_COUNT =2000;
-    public static final String FILE_DATE ="20231125";
 
     public static final String STOCK_LIST ="/Users/maqiang/Documents/002-stock_data/stock_list.txt";
     public static final String COMPANY_LIST ="/Users/maqiang/Documents/002-stock_data/company_list.txt";
@@ -67,6 +66,6 @@ public class StockConstant {
     public static final String NORTH_HOLD_SHARES_FILE ="/Users/maqiang/Documents/002-stock_data/dc_north_hold_shares/north_hold_shares_%s.txt";
     public static final String NORTH_HOLD_SHARES_IND_FILE ="/Users/maqiang/Documents/002-stock_data/dc_north_hold_shares_ind/north_hold_shares_ind_%s.txt";
 
-    public static final String LATEST_HOLD_SHARES_FILE ="/Users/maqiang/Documents/002-stock_data/north_hold_shares_%s_%s.csv";
-    public static final String LATEST_IND_HOLD_SHARES_FILE ="/Users/maqiang/Documents/002-stock_data/industry_north_hold_shares_%s_%s.csv";
+    public static final String LATEST_HOLD_SHARES_FILE ="/Users/maqiang/Documents/002-stock_data/north_hold_shares_%s.csv";
+    public static final String LATEST_IND_HOLD_SHARES_FILE ="/Users/maqiang/Documents/002-stock_data/industry_north_hold_shares_%s.csv";
 }

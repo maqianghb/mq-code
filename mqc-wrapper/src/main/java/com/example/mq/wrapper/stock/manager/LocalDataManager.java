@@ -80,25 +80,23 @@ public interface LocalDataManager {
     /**
      * K线指标查询
      *
-     * @param fileDate
      * @param code
      * @param endKLineDateTime k线日期
      * @param typeEnum
      * @param count    截止到k线日期的查询数量(包含k线日期)
      * @return
      */
-    List<XueQiuStockKLineDTO> getLocalKLineList(String fileDate, String code, LocalDateTime endKLineDateTime, KLineTypeEnum typeEnum, Integer count);
+    List<XueQiuStockKLineDTO> getLocalKLineList(String code, LocalDateTime endKLineDateTime, KLineTypeEnum typeEnum, Integer count);
 
     /**
      * 负债表指标查询
      *
-     * @param fileDate
      * @param code
      * @param year
      * @param typeEnum
      * @return
      */
-    XueQiuStockBalanceDTO getLocalBalanceDTO(String fileDate, String code, Integer year, FinanceReportTypeEnum typeEnum);
+    XueQiuStockBalanceDTO getLocalBalanceDTO(String code, Integer year, FinanceReportTypeEnum typeEnum);
 
     /**
      * 利润表指标查询
@@ -108,7 +106,7 @@ public interface LocalDataManager {
      * @param typeEnum
      * @return
      */
-    XueQiuStockIncomeDTO getLocalIncomeDTO(String fileDate, String code, Integer year, FinanceReportTypeEnum typeEnum);
+    XueQiuStockIncomeDTO getLocalIncomeDTO(String code, Integer year, FinanceReportTypeEnum typeEnum);
 
     /**
      * 单季利润表指标查询
@@ -117,7 +115,7 @@ public interface LocalDataManager {
      * @param yearAndReportTypeList
      * @return
      */
-    List<QuarterIncomeDTO> getLocalQuarterIncomeDTO(String fileDate, String code, List<ImmutablePair<Integer, FinanceReportTypeEnum>> yearAndReportTypeList);
+    List<QuarterIncomeDTO> getLocalQuarterIncomeDTO(String code, List<ImmutablePair<Integer, FinanceReportTypeEnum>> yearAndReportTypeList);
 
     /**
      * 现金流指标查询
@@ -127,7 +125,7 @@ public interface LocalDataManager {
      * @param typeEnum
      * @return
      */
-    XueQiuStockCashFlowDTO getLocalCashFlowDTO(String fileDate, String code, Integer year, FinanceReportTypeEnum typeEnum);
+    XueQiuStockCashFlowDTO getLocalCashFlowDTO(String code, Integer year, FinanceReportTypeEnum typeEnum);
 
     /**
      * 雪球指标查询
@@ -137,7 +135,7 @@ public interface LocalDataManager {
      * @param typeEnum
      * @return
      */
-    XueQiuStockIndicatorDTO getLocalXqIndicatorDTO(String fileDate, String code, Integer year, FinanceReportTypeEnum typeEnum);
+    XueQiuStockIndicatorDTO getLocalXqIndicatorDTO(String code, Integer year, FinanceReportTypeEnum typeEnum);
 
     /**
      * 查询最近日期的沪港通数据

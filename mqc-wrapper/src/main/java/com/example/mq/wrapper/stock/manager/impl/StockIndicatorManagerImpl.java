@@ -55,8 +55,7 @@ public class StockIndicatorManagerImpl implements StockIndicatorManager {
         List<AnalyseIndicatorDTO> allIndicatorDTOList = Lists.newArrayList();
         for (String stockCode : stockCodeList) {
             try {
-                AnalyseIndicatorElement indicatorElement = this.getIndicatorElement(StockConstant.FILE_DATE
-                        , stockCode, reportYear, reportTypeEnum, kLineDate);
+                AnalyseIndicatorElement indicatorElement = this.getIndicatorElement(stockCode, reportYear, reportTypeEnum, kLineDate);
                 AnalyseIndicatorDTO analyseIndicatorDTO = this.getAnalyseIndicatorDTO(indicatorElement);
                 this.formatAnalyseIndicatorDTO(analyseIndicatorDTO);
 
@@ -750,7 +749,7 @@ public class StockIndicatorManagerImpl implements StockIndicatorManager {
         }
     }
 
-    private AnalyseIndicatorElement getIndicatorElement(String fileDate, String code, Integer year, FinanceReportTypeEnum typeEnum
+    private AnalyseIndicatorElement getIndicatorElement(String code, Integer year, FinanceReportTypeEnum typeEnum
             , String kLineDate) {
         AnalyseIndicatorElement indicatorElement = new AnalyseIndicatorElement();
         indicatorElement.setCode(code);
@@ -762,9 +761,9 @@ public class StockIndicatorManagerImpl implements StockIndicatorManager {
         CompanyDTO companyDTO = localDataManager.getLocalCompanyDTO(code);
         indicatorElement.setCompanyDTO(companyDTO);
 
-        this.assembleFinanceElement(indicatorElement, fileDate, code, year, typeEnum);
+        this.assembleFinanceElement(indicatorElement, code, year, typeEnum);
 
-        this.assembleKLineElement(indicatorElement, fileDate, code, kLineDate);
+        this.assembleKLineElement(indicatorElement, code, kLineDate);
 
         this.assembleHolderIncreaseElement(indicatorElement, code);
 
@@ -777,54 +776,52 @@ public class StockIndicatorManagerImpl implements StockIndicatorManager {
      * 财务分析源数据
      *
      * @param indicatorElement
-     * @param fileDate
      * @param code
      * @param year
      * @param typeEnum
      */
-    private void assembleFinanceElement(AnalyseIndicatorElement indicatorElement, String fileDate, String code
-            , Integer year, FinanceReportTypeEnum typeEnum) {
+    private void assembleFinanceElement(AnalyseIndicatorElement indicatorElement, String code, Integer year, FinanceReportTypeEnum typeEnum) {
         if (indicatorElement == null || year == null || typeEnum == null) {
             return;
         }
 
         LocalDataManager localDataManager = new LocalDataManagerImpl();
-        XueQiuStockBalanceDTO balanceDTO = localDataManager.getLocalBalanceDTO(fileDate, code, year, typeEnum);
+        XueQiuStockBalanceDTO balanceDTO = localDataManager.getLocalBalanceDTO(code, year, typeEnum);
         if (balanceDTO != null) {
             indicatorElement.setCurBalanceDTO(balanceDTO);
         }
 
-        XueQiuStockBalanceDTO lastSamePeriodBalanceDTO = localDataManager.getLocalBalanceDTO(fileDate, code, year - 1, typeEnum);
+        XueQiuStockBalanceDTO lastSamePeriodBalanceDTO = localDataManager.getLocalBalanceDTO(code, year - 1, typeEnum);
         if (lastSamePeriodBalanceDTO != null) {
             indicatorElement.setLastSamePeriodBalanceDTO(lastSamePeriodBalanceDTO);
         }
 
-        XueQiuStockBalanceDTO lastYearBalanceDTO = localDataManager.getLocalBalanceDTO(fileDate, code, year - 1, FinanceReportTypeEnum.ALL_YEAR);
+        XueQiuStockBalanceDTO lastYearBalanceDTO = localDataManager.getLocalBalanceDTO(code, year - 1, FinanceReportTypeEnum.ALL_YEAR);
         if (lastYearBalanceDTO != null) {
             indicatorElement.setLastYearBalanceDTO(lastYearBalanceDTO);
         }
 
-        XueQiuStockIncomeDTO incomeDTO = localDataManager.getLocalIncomeDTO(fileDate, code, year, typeEnum);
+        XueQiuStockIncomeDTO incomeDTO = localDataManager.getLocalIncomeDTO(code, year, typeEnum);
         if (incomeDTO != null) {
             indicatorElement.setCurIncomeDTO(incomeDTO);
         }
 
-        XueQiuStockIncomeDTO lastYearIncomeDTO = localDataManager.getLocalIncomeDTO(fileDate, code, year - 1, FinanceReportTypeEnum.ALL_YEAR);
+        XueQiuStockIncomeDTO lastYearIncomeDTO = localDataManager.getLocalIncomeDTO(code, year - 1, FinanceReportTypeEnum.ALL_YEAR);
         if (lastYearIncomeDTO != null) {
             indicatorElement.setLastYearIncomeDTO(lastYearIncomeDTO);
         }
 
-        XueQiuStockCashFlowDTO cashFlowDTO = localDataManager.getLocalCashFlowDTO(fileDate, code, year, typeEnum);
+        XueQiuStockCashFlowDTO cashFlowDTO = localDataManager.getLocalCashFlowDTO(code, year, typeEnum);
         if (cashFlowDTO != null) {
             indicatorElement.setCurCashFlowDTO(cashFlowDTO);
         }
 
-        XueQiuStockCashFlowDTO lastYearCashFlowDTO = localDataManager.getLocalCashFlowDTO(fileDate, code, year - 1, FinanceReportTypeEnum.ALL_YEAR);
+        XueQiuStockCashFlowDTO lastYearCashFlowDTO = localDataManager.getLocalCashFlowDTO(code, year - 1, FinanceReportTypeEnum.ALL_YEAR);
         if (lastYearCashFlowDTO != null) {
             indicatorElement.setLastYearCashFlowDTO(lastYearCashFlowDTO);
         }
 
-        XueQiuStockIndicatorDTO indicatorDTO = localDataManager.getLocalXqIndicatorDTO(fileDate, code, year, typeEnum);
+        XueQiuStockIndicatorDTO indicatorDTO = localDataManager.getLocalXqIndicatorDTO(code, year, typeEnum);
         if (indicatorDTO != null) {
             indicatorElement.setCurIndicatorDTO(indicatorDTO);
         }
@@ -879,7 +876,7 @@ public class StockIndicatorManagerImpl implements StockIndicatorManager {
                     new ImmutablePair<>(year - 1, FinanceReportTypeEnum.SINGLE_Q_4));
         }
 
-        List<QuarterIncomeDTO> quarterIncomeDTOList = localDataManager.getLocalQuarterIncomeDTO(fileDate, code, immutablePairList);
+        List<QuarterIncomeDTO> quarterIncomeDTOList = localDataManager.getLocalQuarterIncomeDTO(code, immutablePairList);
         if (CollectionUtils.isNotEmpty(quarterIncomeDTOList)) {
             indicatorElement.setQuarterIncomeDTOList(quarterIncomeDTOList);
 
@@ -907,12 +904,11 @@ public class StockIndicatorManagerImpl implements StockIndicatorManager {
      * k线源数据
      *
      * @param indicatorElement
-     * @param fileDate
      * @param code
      * @param kLineDate
      */
-    private void assembleKLineElement(AnalyseIndicatorElement indicatorElement, String fileDate, String code, String kLineDate) {
-        if (indicatorElement == null || StringUtils.isBlank(fileDate) || StringUtils.isBlank(code) || StringUtils.isBlank(kLineDate)) {
+    private void assembleKLineElement(AnalyseIndicatorElement indicatorElement, String code, String kLineDate) {
+        if (indicatorElement == null || StringUtils.isBlank(code) || StringUtils.isBlank(kLineDate)) {
             return;
         }
 
@@ -920,14 +916,14 @@ public class StockIndicatorManagerImpl implements StockIndicatorManager {
         LocalDateTime kLineDateTime = LocalDate.parse(kLineDate, df).atStartOfDay();
 
         LocalDataManager localDataManager = new LocalDataManagerImpl();
-        List<XueQiuStockKLineDTO> kLineDTOList = localDataManager.getLocalKLineList(fileDate, code, kLineDateTime, KLineTypeEnum.DAY, 1000);
+        List<XueQiuStockKLineDTO> kLineDTOList = localDataManager.getLocalKLineList(code, kLineDateTime, KLineTypeEnum.DAY, 1000);
         if (CollectionUtils.isNotEmpty(kLineDTOList)) {
             indicatorElement.setKLineDTOList(kLineDTOList);
         }
 
 
         LocalDateTime oneMonthDateTime = kLineDateTime.plusMonths(1);
-        List<XueQiuStockKLineDTO> oneMonthKLineDTOList = localDataManager.getLocalKLineList(fileDate, code, oneMonthDateTime, KLineTypeEnum.DAY, 1);
+        List<XueQiuStockKLineDTO> oneMonthKLineDTOList = localDataManager.getLocalKLineList(code, oneMonthDateTime, KLineTypeEnum.DAY, 1);
         if (CollectionUtils.isNotEmpty(oneMonthKLineDTOList)) {
             XueQiuStockKLineDTO oneMonthKLineDTO = oneMonthKLineDTOList.get(0);
             LocalDateTime oneMonthKLineDateTime = LocalDateTime.ofEpochSecond(oneMonthKLineDTO.getTimestamp() / 1000, 0, ZoneOffset.ofHours(8));
@@ -937,7 +933,7 @@ public class StockIndicatorManagerImpl implements StockIndicatorManager {
         }
 
         LocalDateTime threeMonthDateTime = kLineDateTime.plusMonths(3);
-        List<XueQiuStockKLineDTO> threeMonthKLineDTOList = localDataManager.getLocalKLineList(fileDate, code, threeMonthDateTime, KLineTypeEnum.DAY, 1);
+        List<XueQiuStockKLineDTO> threeMonthKLineDTOList = localDataManager.getLocalKLineList(code, threeMonthDateTime, KLineTypeEnum.DAY, 1);
         if (CollectionUtils.isNotEmpty(threeMonthKLineDTOList)) {
             XueQiuStockKLineDTO threeMonthKLineDTO = threeMonthKLineDTOList.get(0);
             LocalDateTime threeMonthKLineDateTime = LocalDateTime.ofEpochSecond(threeMonthKLineDTO.getTimestamp() / 1000, 0, ZoneOffset.ofHours(8));
@@ -947,7 +943,7 @@ public class StockIndicatorManagerImpl implements StockIndicatorManager {
         }
 
         LocalDateTime halfYearDateTime = kLineDateTime.plusMonths(6);
-        List<XueQiuStockKLineDTO> halfYearKLineDTOList = localDataManager.getLocalKLineList(fileDate, code, halfYearDateTime, KLineTypeEnum.DAY, 1);
+        List<XueQiuStockKLineDTO> halfYearKLineDTOList = localDataManager.getLocalKLineList(code, halfYearDateTime, KLineTypeEnum.DAY, 1);
         if (CollectionUtils.isNotEmpty(halfYearKLineDTOList)) {
             XueQiuStockKLineDTO halfYearKLineDTO = halfYearKLineDTOList.get(0);
             LocalDateTime halfYearKLineDateTime = LocalDateTime.ofEpochSecond(halfYearKLineDTO.getTimestamp() / 1000, 0, ZoneOffset.ofHours(8));
@@ -957,7 +953,7 @@ public class StockIndicatorManagerImpl implements StockIndicatorManager {
         }
 
         LocalDateTime oneYearDateTime = kLineDateTime.plusYears(1);
-        List<XueQiuStockKLineDTO> oneYearKLineDTOList = localDataManager.getLocalKLineList(fileDate, code, oneYearDateTime, KLineTypeEnum.DAY, 1);
+        List<XueQiuStockKLineDTO> oneYearKLineDTOList = localDataManager.getLocalKLineList(code, oneYearDateTime, KLineTypeEnum.DAY, 1);
         if (CollectionUtils.isNotEmpty(oneYearKLineDTOList)) {
             XueQiuStockKLineDTO oneYearKLineDTO = oneYearKLineDTOList.get(0);
             LocalDateTime oneYearKLineDateTime = LocalDateTime.ofEpochSecond(oneYearKLineDTO.getTimestamp() / 1000, 0, ZoneOffset.ofHours(8));
@@ -1668,8 +1664,8 @@ public class StockIndicatorManagerImpl implements StockIndicatorManager {
     }
 
     @Override
-    public void queryAndSaveNorthHoldShares(String fileDate, List<String> stockCodeList, Boolean updateLocalData) {
-        if (StringUtils.isBlank(fileDate) || CollectionUtils.isEmpty(stockCodeList)) {
+    public void queryAndSaveNorthHoldShares(List<String> stockCodeList, Boolean updateLocalData) {
+        if (CollectionUtils.isEmpty(stockCodeList)) {
             return;
         }
 
@@ -1705,27 +1701,21 @@ public class StockIndicatorManagerImpl implements StockIndicatorManager {
             DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss");
             LocalDateTime localDateTime = LocalDateTime.now();//当前时间
             String strDateTime = df.format(localDateTime);//格式化为字符串
-            String resultFileName = String.format(StockConstant.LATEST_HOLD_SHARES_FILE, fileDate, strDateTime);
+            String resultFileName = String.format(StockConstant.LATEST_HOLD_SHARES_FILE, strDateTime);
             FileUtils.writeLines(new File(resultFileName), "UTF-8", strHoldSharesList, true);
         } catch (Exception e) {
             e.printStackTrace();
         }
 
         // 查询并保存行业的沪港通持股数据
-        this.queryAndSaveIndustryHoldShares(fileDate);
+        this.queryAndSaveIndustryHoldShares();
     }
 
     /**
      * by行业查询并保存沪港通数据
      *
-     * @param fileDate
      */
-    private void queryAndSaveIndustryHoldShares(String fileDate) {
-        if (StringUtils.isBlank(fileDate)) {
-            return;
-        }
-
-
+    private void queryAndSaveIndustryHoldShares() {
         // 查询最新的行业持股数据
         LocalDataManager localDataManager = new LocalDataManagerImpl();
         List<DongChaiIndustryHoldShareDTO> industryHoldShareDTOList = localDataManager.queryLatestIndustryHoldShareDTO();
@@ -1758,7 +1748,7 @@ public class StockIndicatorManagerImpl implements StockIndicatorManager {
             DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss");
             LocalDateTime localDateTime = LocalDateTime.now();//当前时间
             String strDateTime = df.format(localDateTime);//格式化为字符串
-            String resultFileName = String.format(StockConstant.LATEST_IND_HOLD_SHARES_FILE, fileDate, strDateTime);
+            String resultFileName = String.format(StockConstant.LATEST_IND_HOLD_SHARES_FILE, strDateTime);
             FileUtils.writeLines(new File(resultFileName), "UTF-8", strHoldSharesList, true);
         } catch (Exception e) {
             e.printStackTrace();
