@@ -24,10 +24,24 @@ public interface LocalDataManager {
     void queryAndUpdateKLineList();
 
     /**
-     * 查询并保存全网财务数据
-     *
+     * 更新资产负债数据
      */
-    void queryAndUpdateFinanceList();
+    void queryAndUpdateBalanceData();
+
+    /**
+     * 更新利润表数据
+     */
+    void queryAndUpdateIncomeData();
+
+    /**
+     * 更新现金流数据
+     */
+    void queryAndUpdateCashFlowData();
+
+    /**
+     * 更新雪球指标数据
+     */
+    void queryAndUpdateIndicatorData();
 
     /**
      * 查询并保存业绩预告数据
