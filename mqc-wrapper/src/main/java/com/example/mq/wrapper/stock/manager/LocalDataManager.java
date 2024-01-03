@@ -155,10 +155,19 @@ public interface LocalDataManager {
      * 查询最近日期的沪港通数据
      *
      * @param stockCodeList
-     * @param updateLocalData 是否更新本地文件
      * @return
      */
-    List<DongChaiNorthHoldShareDTO> queryLatestNorthHoldShares(List<String> stockCodeList, Boolean updateLocalData);
+    List<DongChaiNorthHoldShareDTO> queryLatestNorthHoldShares(List<String> stockCodeList);
+
+    /**
+     * 查询本地文件中的沪港通持股数据
+     *
+     * @param code 编码
+     * @param endTradeTime 交易日期
+     * @param count 截止到交易日期的查询数量（包含交易日期）
+     * @return
+     */
+    List<DongChaiNorthHoldShareDTO> queryLocalNorthHoldShareDTOs(String code, LocalDateTime endTradeTime, Integer count);
 
     /**
      * 查询最新的行业持股数据
@@ -166,5 +175,14 @@ public interface LocalDataManager {
      * @return
      */
     List<DongChaiIndustryHoldShareDTO> queryLatestIndustryHoldShareDTO();
+
+    /**
+     * by行业持股数据
+     *
+     * @param indName
+     * @param queryDate
+     * @return
+     */
+    DongChaiIndustryHoldShareDTO queryIndustryHoldShareDTO(String indName, String queryDate);
 
 }

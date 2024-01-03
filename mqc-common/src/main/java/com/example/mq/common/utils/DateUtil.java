@@ -1,19 +1,18 @@
 package com.example.mq.common.utils;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apache.tomcat.jni.Local;
+import org.apache.commons.lang3.StringUtils;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
 
 @Slf4j
 public class DateUtil {
 
-    public static final String TIME_FORMAT ="yyyy-MM-dd HH:mm:ss";
+    public static final String DATE_TIME_FORMAT ="yyyy-MM-dd HH:mm:ss";
 
     /**
      * 格式化时间
@@ -35,6 +34,11 @@ public class DateUtil {
         }
 
         return null;
+    }
+
+    public static final String formatLocalDateTime(LocalDateTime localDateTime, String format){
+        DateTimeFormatter df = DateTimeFormatter.ofPattern(format);
+        return df.format(localDateTime);
     }
 
     public static final LocalDateTime parseLocalDateTime(String strDateTime, String format){

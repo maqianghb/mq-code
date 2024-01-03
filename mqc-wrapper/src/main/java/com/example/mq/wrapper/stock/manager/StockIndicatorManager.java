@@ -20,8 +20,13 @@ public interface StockIndicatorManager {
      * 查询并保存最新的沪港通持股数据
      *
      * @param stockCodeList
-     * @param updateLocalData 是否先更新本地数据
      */
-    void queryAndSaveNorthHoldShares(List<String> stockCodeList, Boolean updateLocalData);
+    void queryAndSaveLatestNorthHoldShares(List<String> stockCodeList);
+
+    /**
+     * by行业查询并保存沪港通数据
+     *
+     */
+    void queryAndSaveLatestIndustryHoldShares();
 
 }

@@ -24,10 +24,11 @@ public class CommonManager {
 
         StockIndicatorManager stockIndicatorManager =new StockIndicatorManagerImpl();
         // 指标数据
-        stockIndicatorManager.calculateAndSaveAllAnalysisDTO(kLineDate, stockCodeList, reportYear ,reportTypeEnum);
+//        stockIndicatorManager.calculateAndSaveAllAnalysisDTO(kLineDate, stockCodeList, reportYear ,reportTypeEnum);
 
         // 沪港通数据
-        stockIndicatorManager.queryAndSaveNorthHoldShares(stockCodeList, false);
+        stockIndicatorManager.queryAndSaveLatestNorthHoldShares(stockCodeList);
+        stockIndicatorManager.queryAndSaveLatestIndustryHoldShares();
     }
 
     @Test
@@ -35,13 +36,16 @@ public class CommonManager {
         LocalDataManager localDataManager =new LocalDataManagerImpl();
 
         // 更新本地文件的K线数据
-        localDataManager.queryAndUpdateKLineList();
+//        localDataManager.queryAndUpdateKLineList();
 
         // 更新本地文件的财务数据
-        localDataManager.queryAndUpdateBalanceData();
-        localDataManager.queryAndUpdateIncomeData();
-        localDataManager.queryAndUpdateCashFlowData();
-        localDataManager.queryAndUpdateIndicatorData();
+        Boolean updateFinanceData =false;
+        if(updateFinanceData){
+            localDataManager.queryAndUpdateBalanceData();
+            localDataManager.queryAndUpdateIncomeData();
+            localDataManager.queryAndUpdateCashFlowData();
+            localDataManager.queryAndUpdateIndicatorData();
+        }
 
         // 更新北上持股数据
         localDataManager.queryAndUpdateNorthHoldShareList();

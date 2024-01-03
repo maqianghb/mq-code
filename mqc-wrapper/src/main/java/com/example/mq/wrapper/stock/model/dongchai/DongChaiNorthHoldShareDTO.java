@@ -13,22 +13,27 @@ public class DongChaiNorthHoldShareDTO {
     private String name;
 
     /**
+     * 行业
+     */
+    private String indName;
+
+    /**
      * 日期
      */
     private String tradeDate;
 
     /**
-     * 持股数量(万股)
+     * 沪港通持股数量(万股)
      */
     private Double holdShares;
 
     /**
-     * 持有市值（亿元）
+     * 沪港通持有市值（亿元）
      */
     private Double holdMarketCap;
 
     /**
-     * 总股数的持股占比(%)
+     * 沪港通持股占总股数的百分比(%)
      */
     private Double totalSharesRatio;
 
@@ -38,14 +43,14 @@ public class DongChaiNorthHoldShareDTO {
     private Double holdSharePercent;
 
     /**
-     * 当天增减持数量(万股)
+     * 近7天的增减持数量(万股)
      */
-    private Double curIncreaseShares;
+    private Double increaseShares_7;
 
     /**
-     * 当天增持比例(%)
+     * 近7天的增持比例(%)
      */
-    private Double curIncreaseRatio;
+    private Double increaseRatio_7;
 
     /**
      * 近30天的增减持数量(万股)
@@ -58,16 +63,6 @@ public class DongChaiNorthHoldShareDTO {
     private Double increaseRatio_30;
 
     /**
-     * 近60天的增减持数量(万股)
-     */
-    private Double increaseShares_60;
-
-    /**
-     * 近60天的增持比例(%)
-     */
-    private Double increaseRatio_60;
-
-    /**
      * 近90天的增减持数量(万股)
      */
     private Double increaseShares_90;
@@ -76,5 +71,25 @@ public class DongChaiNorthHoldShareDTO {
      * 近90天的增持比例(%)
      */
     private Double increaseRatio_90;
+
+    /**
+     * 近360天的增减持数量(万股)
+     */
+    private Double increaseShares_360;
+
+    /**
+     * 近360天的增持比例(%)
+     */
+    private Double increaseRatio_360;
+
+    /**
+     * 当天增减持数量(万股)
+     */
+    private Double curIncreaseShares;
+
+    /**
+     * 当天增持比例(%)
+     */
+    private Double curIncreaseRatio;
 
 }

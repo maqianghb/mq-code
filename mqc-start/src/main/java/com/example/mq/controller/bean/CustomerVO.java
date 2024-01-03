@@ -94,10 +94,10 @@ public class CustomerVO {
 		}
 
 		if(null != customer.getMinActiveTime()){
-			vo.setMinActiveTime(DateUtil.formatDateTime(customer.getMinActiveTime(), DateUtil.TIME_FORMAT));
+			vo.setMinActiveTime(DateUtil.formatDateTime(customer.getMinActiveTime(), DateUtil.DATE_TIME_FORMAT));
 		}
 		if(null != customer.getMaxActiveTime()){
-			vo.setMaxActiveTime(DateUtil.formatDateTime(customer.getMaxActiveTime(), DateUtil.TIME_FORMAT));
+			vo.setMaxActiveTime(DateUtil.formatDateTime(customer.getMaxActiveTime(), DateUtil.DATE_TIME_FORMAT));
 		}
 		vo.setRemark(customer.getRemark());
 		vo.setDeleted(customer.getDeleted());
@@ -105,10 +105,10 @@ public class CustomerVO {
 		vo.setCreateUser(customer.getCreateUser());
 		vo.setUpdateUser(customer.getUpdateUser());
 		if(null != customer.getCreateTime()){
-			vo.setCreateTime(DateUtil.formatDateTime(customer.getCreateTime(), DateUtil.TIME_FORMAT));
+			vo.setCreateTime(DateUtil.formatDateTime(customer.getCreateTime(), DateUtil.DATE_TIME_FORMAT));
 		}
 		if(null != customer.getUpdateTime()){
-			vo.setUpdateTime(DateUtil.formatDateTime(customer.getUpdateTime(), DateUtil.TIME_FORMAT));
+			vo.setUpdateTime(DateUtil.formatDateTime(customer.getUpdateTime(), DateUtil.DATE_TIME_FORMAT));
 		}
 		return vo;
 	}
@@ -135,10 +135,10 @@ public class CustomerVO {
 			customer.setTotalCostAmount(NumberUtil.intValue(NumberUtil.mul(vo.getTotalCostAmount(), 100.0)));
 		}
 		if(null != vo.getMinActiveTime()){
-			customer.setMinActiveTime(DateUtil.parseDateTime(vo.getMinActiveTime(), DateUtil.TIME_FORMAT));
+			customer.setMinActiveTime(DateUtil.parseDateTime(vo.getMinActiveTime(), DateUtil.DATE_TIME_FORMAT));
 		}
 		if(null != vo.getMaxActiveTime()){
-			customer.setMaxActiveTime(DateUtil.parseDateTime(vo.getMaxActiveTime(), DateUtil.TIME_FORMAT));
+			customer.setMaxActiveTime(DateUtil.parseDateTime(vo.getMaxActiveTime(), DateUtil.DATE_TIME_FORMAT));
 		}
 		customer.setRemark(vo.getRemark());
 		customer.setDeleted(vo.getDeleted());
@@ -146,10 +146,10 @@ public class CustomerVO {
 		customer.setCreateUser(vo.getCreateUser());
 		customer.setUpdateUser(vo.getUpdateUser());
 		if(null != vo.getCreateTime()){
-			customer.setCreateTime(DateUtil.parseDateTime(vo.getCreateTime(), DateUtil.TIME_FORMAT));
+			customer.setCreateTime(DateUtil.parseDateTime(vo.getCreateTime(), DateUtil.DATE_TIME_FORMAT));
 		}
 		if(null != vo.getUpdateTime()){
-			customer.setUpdateTime(DateUtil.parseDateTime(vo.getUpdateTime(), DateUtil.TIME_FORMAT));
+			customer.setUpdateTime(DateUtil.parseDateTime(vo.getUpdateTime(), DateUtil.DATE_TIME_FORMAT));
 		}
 		return customer;
 	}

@@ -2,6 +2,7 @@ package com.example.mq.wrapper.stock.manager.impl;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.example.mq.common.utils.DateUtil;
 import com.example.mq.common.utils.NumberUtil;
 import com.example.mq.wrapper.stock.constant.StockConstant;
 import com.example.mq.wrapper.stock.enums.FinanceReportTypeEnum;
@@ -43,11 +44,11 @@ public class StockIndicatorManagerImpl implements StockIndicatorManager {
             ",K线日期,K线数量,收盘价,ma1000值,股东权益合计,营业收入,营业成本,经营现金流入,经营现金净额,净利润" +
             ",1月后股价波动,3月后股价波动,半年后股价波动,1年后股价波动";
 
-    private static final String HOLD_SHARE_HEADER = "编码,名称,日期,持股数量(万股),总股数的持股占比(%),近1000天持股数的百分位" +
-            ",当天增减持数量(万股),当天增持比例(%),近30天的增减持数量(万股),近30天的增持比例(%)" +
-            ",近60天的增减持数量(万股),近60天的增持比例(%),近90天的增减持数量(万股),近90天的增持比例(%)";
-    private static final String IND_HOLD_SHARE_HEADER = "行业名称,日期,行业市值(亿元),行业占比" +
-            ",30天行业占比变化,90天行业占比变化,360天行业占比变化";
+    private static final String HOLD_SHARE_HEADER = "编码,名称,行业,日期,沪港通持股数(万),沪港通持有市值(亿),沪港通持股占比(%),近1000天持股数的百分位" +
+            ",近7天的增减持数(万),近7天的增持比例(%),近30天的增减持数(万),近30天的增持比例(%),近90天的增减持数(万),近90天的增持比例(%)" +
+            ",近360天的增减持数(万),近360天的增持比例(%),当天增减持数(万),当天增持比例(%)";
+    private static final String IND_HOLD_SHARE_HEADER = "行业,日期,行业总市值,行业总市值占比,沪港通持有市值,占北上总市值的比例" +
+            ",沪港通超配比例,7天沪港通持股占比变化,30天沪港通持股占比变化,90天沪港通持股占比变化,360天沪港通持股占比变化";
 
     @Override
     public void calculateAndSaveAllAnalysisDTO(String kLineDate, List<String> stockCodeList, Integer reportYear, FinanceReportTypeEnum reportTypeEnum) {
@@ -1664,14 +1665,14 @@ public class StockIndicatorManagerImpl implements StockIndicatorManager {
     }
 
     @Override
-    public void queryAndSaveNorthHoldShares(List<String> stockCodeList, Boolean updateLocalData) {
+    public void queryAndSaveLatestNorthHoldShares(List<String> stockCodeList) {
         if (CollectionUtils.isEmpty(stockCodeList)) {
             return;
         }
 
         // 查询最新的沪港通持股数据
         LocalDataManager localDataManager = new LocalDataManagerImpl();
-        List<DongChaiNorthHoldShareDTO> holdShareDTOList = localDataManager.queryLatestNorthHoldShares(stockCodeList, updateLocalData);
+        List<DongChaiNorthHoldShareDTO> holdShareDTOList = localDataManager.queryLatestNorthHoldShares(stockCodeList);
         if (CollectionUtils.isEmpty(holdShareDTOList)) {
             return;
         }
@@ -1681,6 +1682,16 @@ public class StockIndicatorManagerImpl implements StockIndicatorManager {
         strHoldSharesList.add(HOLD_SHARE_HEADER);
         for (DongChaiNorthHoldShareDTO holdShareDTO : holdShareDTOList) {
             try {
+                // 公司信息
+                CompanyDTO companyDTO = localDataManager.getLocalCompanyDTO(holdShareDTO.getCode());
+                if(companyDTO !=null){
+                    holdShareDTO.setIndName(companyDTO.getInd_name());
+                }
+
+                // 沪港通增减持数量和比例
+                this.assembleHoldIncreaseShares(holdShareDTO);
+
+                // 格式化数据
                 this.formatNorthHoldShareDTO(holdShareDTO);
 
                 Field[] fields = DongChaiNorthHoldShareDTO.class.getDeclaredFields();
@@ -1706,16 +1717,10 @@ public class StockIndicatorManagerImpl implements StockIndicatorManager {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-        // 查询并保存行业的沪港通持股数据
-        this.queryAndSaveIndustryHoldShares();
     }
 
-    /**
-     * by行业查询并保存沪港通数据
-     *
-     */
-    private void queryAndSaveIndustryHoldShares() {
+    @Override
+    public void queryAndSaveLatestIndustryHoldShares() {
         // 查询最新的行业持股数据
         LocalDataManager localDataManager = new LocalDataManagerImpl();
         List<DongChaiIndustryHoldShareDTO> industryHoldShareDTOList = localDataManager.queryLatestIndustryHoldShareDTO();
@@ -1728,6 +1733,10 @@ public class StockIndicatorManagerImpl implements StockIndicatorManager {
         strHoldSharesList.add(IND_HOLD_SHARE_HEADER);
         for (DongChaiIndustryHoldShareDTO indHoldShareDTO : industryHoldShareDTOList) {
             try {
+                // by行业持股的比例变化
+                this.fillIndustryHoldShareRatioChange(indHoldShareDTO);
+
+                // 格式化数据
                 this.formatIndNorthHoldShareDTO(indHoldShareDTO);
 
                 Field[] fields = DongChaiIndustryHoldShareDTO.class.getDeclaredFields();
@@ -1756,6 +1765,114 @@ public class StockIndicatorManagerImpl implements StockIndicatorManager {
     }
 
     /**
+     * 补全增持数量和比例
+     *
+     * @param holdShareDTO
+     */
+    private void assembleHoldIncreaseShares(DongChaiNorthHoldShareDTO holdShareDTO){
+        if(holdShareDTO == null || StringUtils.isBlank(holdShareDTO.getCode()) || StringUtils.isBlank(holdShareDTO.getTradeDate())){
+            return;
+        }
+
+        // 历史沪港通持股数据
+        LocalDataManager localDataManager =new LocalDataManagerImpl();
+        LocalDateTime tradeDateTime = DateUtil.parseLocalDateTime(holdShareDTO.getTradeDate(), DateUtil.DATE_TIME_FORMAT);
+        List<DongChaiNorthHoldShareDTO> historyHoldShareDTOList = localDataManager.queryLocalNorthHoldShareDTOs(holdShareDTO.getCode(), tradeDateTime, 400);
+        if(CollectionUtils.isEmpty(historyHoldShareDTOList)){
+            return;
+        }
+
+        // 1日前的持股数据
+        DongChaiNorthHoldShareDTO holdShareDTODay1 = this.getBeforeNorthHoldShareDTO(holdShareDTO, historyHoldShareDTOList, 1);
+        if(holdShareDTODay1 !=null){
+            if(holdShareDTO.getHoldShares() !=null && holdShareDTODay1.getHoldShares() !=null){
+                holdShareDTO.setCurIncreaseShares(NumberUtil.format(holdShareDTO.getHoldShares() - holdShareDTODay1.getHoldShares(), 1));
+            }
+            if(holdShareDTO.getTotalSharesRatio() !=null && holdShareDTODay1.getTotalSharesRatio() !=null){
+                holdShareDTO.setCurIncreaseRatio(NumberUtil.format(holdShareDTO.getTotalSharesRatio() - holdShareDTODay1.getTotalSharesRatio(), 2));
+            }
+        }
+
+        // 7日前的持股数据
+        DongChaiNorthHoldShareDTO holdShareDTODay7 = this.getBeforeNorthHoldShareDTO(holdShareDTO, historyHoldShareDTOList, 7);
+        if(holdShareDTODay7 !=null){
+            if(holdShareDTO.getHoldShares() !=null && holdShareDTODay7.getHoldShares() !=null){
+                holdShareDTO.setIncreaseShares_7(NumberUtil.format(holdShareDTO.getHoldShares() - holdShareDTODay7.getHoldShares(), 1));
+            }
+            if(holdShareDTO.getTotalSharesRatio() !=null && holdShareDTODay7.getTotalSharesRatio() !=null){
+                holdShareDTO.setIncreaseRatio_7(NumberUtil.format(holdShareDTO.getTotalSharesRatio() - holdShareDTODay7.getTotalSharesRatio(), 2));
+            }
+        }
+
+        // 30日前的持股数据
+        DongChaiNorthHoldShareDTO holdShareDTODay30 = this.getBeforeNorthHoldShareDTO(holdShareDTO, historyHoldShareDTOList, 30);
+        if(holdShareDTODay30 !=null){
+            if(holdShareDTO.getHoldShares() !=null && holdShareDTODay30.getHoldShares() !=null){
+                holdShareDTO.setIncreaseShares_30(NumberUtil.format(holdShareDTO.getHoldShares() - holdShareDTODay30.getHoldShares(), 1));
+            }
+            if(holdShareDTO.getTotalSharesRatio() !=null && holdShareDTODay30.getTotalSharesRatio() !=null){
+                holdShareDTO.setIncreaseRatio_30(NumberUtil.format(holdShareDTO.getTotalSharesRatio() - holdShareDTODay30.getTotalSharesRatio(), 2));
+            }
+        }
+
+        // 90日前的持股数据
+        DongChaiNorthHoldShareDTO holdShareDTODay90 = this.getBeforeNorthHoldShareDTO(holdShareDTO, historyHoldShareDTOList, 90);
+        if(holdShareDTODay90 !=null){
+            if(holdShareDTO.getHoldShares() !=null && holdShareDTODay90.getHoldShares() !=null){
+                holdShareDTO.setIncreaseShares_90(NumberUtil.format(holdShareDTO.getHoldShares() - holdShareDTODay90.getHoldShares(), 1));
+            }
+            if(holdShareDTO.getTotalSharesRatio() !=null && holdShareDTODay90.getTotalSharesRatio() !=null){
+                holdShareDTO.setIncreaseRatio_90(NumberUtil.format(holdShareDTO.getTotalSharesRatio() - holdShareDTODay90.getTotalSharesRatio(), 2));
+            }
+        }
+
+        // 360日前的持股数据
+        DongChaiNorthHoldShareDTO holdShareDTODay360 = this.getBeforeNorthHoldShareDTO(holdShareDTO, historyHoldShareDTOList, 360);
+        if(holdShareDTODay360 !=null){
+            if(holdShareDTO.getHoldShares() !=null && holdShareDTODay360.getHoldShares() !=null){
+                holdShareDTO.setIncreaseShares_360(NumberUtil.format(holdShareDTO.getHoldShares() - holdShareDTODay360.getHoldShares(), 1));
+            }
+            if(holdShareDTO.getTotalSharesRatio() !=null && holdShareDTODay360.getTotalSharesRatio() !=null){
+                holdShareDTO.setIncreaseRatio_360(NumberUtil.format(holdShareDTO.getTotalSharesRatio() - holdShareDTODay360.getTotalSharesRatio(), 2));
+            }
+        }
+
+    }
+
+    /**
+     * 获取N天前的最近的北上持股数据
+     *
+     * @param holdShareDTO
+     * @param historyHoldShareDTOList
+     * @param beforeDayNum
+     * @return
+     */
+    private DongChaiNorthHoldShareDTO getBeforeNorthHoldShareDTO(DongChaiNorthHoldShareDTO holdShareDTO
+            , List<DongChaiNorthHoldShareDTO> historyHoldShareDTOList, Integer beforeDayNum){
+        if(holdShareDTO ==null || StringUtils.isBlank(holdShareDTO.getTradeDate())){
+            return null;
+        }
+        if(CollectionUtils.isEmpty(historyHoldShareDTOList) || beforeDayNum ==null){
+            return null;
+        }
+
+        LocalDateTime tradeDateTime = DateUtil.parseLocalDateTime(holdShareDTO.getTradeDate(), DateUtil.DATE_TIME_FORMAT);
+
+        LocalDateTime beforeDateTime = tradeDateTime.plusDays(-beforeDayNum);
+        DongChaiNorthHoldShareDTO beforeHoldShareDTO = historyHoldShareDTOList.stream()
+                .filter(hisHoldShareDTO -> StringUtils.isNotBlank(hisHoldShareDTO.getTradeDate()))
+                .filter(hisHoldShareDTO -> {
+                    LocalDateTime hisDataTime = DateUtil.parseLocalDateTime(hisHoldShareDTO.getTradeDate(), DateUtil.DATE_TIME_FORMAT);
+                    return hisDataTime.isBefore(beforeDateTime) || hisDataTime.isEqual(beforeDateTime);
+                })
+                .sorted(Comparator.comparing(DongChaiNorthHoldShareDTO::getTradeDate).reversed())
+                .findFirst()
+                .orElse(null);
+
+        return beforeHoldShareDTO;
+    }
+
+    /**
      * 数据格式化
      *
      * @param holdShareDTO
@@ -1766,8 +1883,12 @@ public class StockIndicatorManagerImpl implements StockIndicatorManager {
         }
 
         if (holdShareDTO.getHoldShares() != null) {
-            double holdShares = NumberUtil.format(holdShareDTO.getHoldShares(), 2);
+            double holdShares = NumberUtil.format(holdShareDTO.getHoldShares(), 1);
             holdShareDTO.setHoldShares(holdShares);
+        }
+        if(holdShareDTO.getHoldMarketCap() !=null){
+            double holdMarketCap = NumberUtil.format(holdShareDTO.getHoldMarketCap(), 1);
+            holdShareDTO.setHoldMarketCap(holdMarketCap);
         }
         if (holdShareDTO.getTotalSharesRatio() != null) {
             double totalShareRatio = NumberUtil.format(holdShareDTO.getTotalSharesRatio(), 2);
@@ -1777,39 +1898,93 @@ public class StockIndicatorManagerImpl implements StockIndicatorManager {
             double holdSharePercent = NumberUtil.format(holdShareDTO.getHoldSharePercent(), 2);
             holdShareDTO.setHoldSharePercent(holdSharePercent);
         }
-        if (holdShareDTO.getCurIncreaseShares() != null) {
-            double curIncreaseShares = NumberUtil.format(holdShareDTO.getCurIncreaseShares(), 2);
-            holdShareDTO.setCurIncreaseShares(curIncreaseShares);
+        if (holdShareDTO.getIncreaseShares_7() != null) {
+            double increaseShares_7 = NumberUtil.format(holdShareDTO.getIncreaseShares_7(), 1);
+            holdShareDTO.setIncreaseShares_7(increaseShares_7);
         }
-        if (holdShareDTO.getCurIncreaseRatio() != null) {
-            double curIncreaseRatio = NumberUtil.format(holdShareDTO.getCurIncreaseRatio(), 2);
-            holdShareDTO.setCurIncreaseRatio(curIncreaseRatio);
+        if (holdShareDTO.getIncreaseRatio_7() != null) {
+            double increaseRatio_7 = NumberUtil.format(holdShareDTO.getIncreaseRatio_7(), 2);
+            holdShareDTO.setIncreaseRatio_7(increaseRatio_7);
         }
         if (holdShareDTO.getIncreaseShares_30() != null) {
-            double increaseShares_30 = NumberUtil.format(holdShareDTO.getIncreaseShares_30(), 2);
+            double increaseShares_30 = NumberUtil.format(holdShareDTO.getIncreaseShares_30(), 1);
             holdShareDTO.setIncreaseShares_30(increaseShares_30);
         }
         if (holdShareDTO.getIncreaseRatio_30() != null) {
             double increaseRatio_30 = NumberUtil.format(holdShareDTO.getIncreaseRatio_30(), 2);
             holdShareDTO.setIncreaseRatio_30(increaseRatio_30);
         }
-        if (holdShareDTO.getIncreaseShares_60() != null) {
-            double increaseShares_60 = NumberUtil.format(holdShareDTO.getIncreaseShares_60(), 2);
-            holdShareDTO.setIncreaseShares_60(increaseShares_60);
-        }
-        if (holdShareDTO.getIncreaseRatio_60() != null) {
-            double increaseRatio_60 = NumberUtil.format(holdShareDTO.getIncreaseRatio_60(), 2);
-            holdShareDTO.setIncreaseRatio_60(increaseRatio_60);
-        }
         if (holdShareDTO.getIncreaseShares_90() != null) {
-            double increaseShares_90 = NumberUtil.format(holdShareDTO.getIncreaseShares_90(), 2);
+            double increaseShares_90 = NumberUtil.format(holdShareDTO.getIncreaseShares_90(), 1);
             holdShareDTO.setIncreaseShares_90(increaseShares_90);
         }
         if (holdShareDTO.getIncreaseRatio_90() != null) {
             double increaseRatio_90 = NumberUtil.format(holdShareDTO.getIncreaseRatio_90(), 2);
             holdShareDTO.setIncreaseRatio_90(increaseRatio_90);
         }
+        if (holdShareDTO.getCurIncreaseShares() != null) {
+            double curIncreaseShares = NumberUtil.format(holdShareDTO.getCurIncreaseShares(), 1);
+            holdShareDTO.setCurIncreaseShares(curIncreaseShares);
+        }
+        if (holdShareDTO.getCurIncreaseRatio() != null) {
+            double curIncreaseRatio = NumberUtil.format(holdShareDTO.getCurIncreaseRatio(), 2);
+            holdShareDTO.setCurIncreaseRatio(curIncreaseRatio);
+        }
 
+    }
+
+    /**
+     * by行业持股比例变化
+     *
+     * @param holdShareDTO
+     */
+    private void fillIndustryHoldShareRatioChange(DongChaiIndustryHoldShareDTO holdShareDTO){
+        if(holdShareDTO ==null || StringUtils.isBlank(holdShareDTO.getTradeDate())){
+            return;
+        }
+
+        LocalDateTime tradeDateTime = DateUtil.parseLocalDateTime(holdShareDTO.getTradeDate(), DateUtil.DATE_TIME_FORMAT);
+        if(tradeDateTime ==null){
+            return;
+        }
+
+        LocalDataManager localDataManager =new LocalDataManagerImpl();
+
+        // 近7天的变化
+        LocalDateTime queryDateTime7 = tradeDateTime.plusDays(-7);
+        String queryDate7 = DateUtil.formatLocalDateTime(queryDateTime7, DateUtil.DATE_TIME_FORMAT);
+        DongChaiIndustryHoldShareDTO queryHoldShareDTO7 = localDataManager.queryIndustryHoldShareDTO(holdShareDTO.getIndName(), queryDate7);
+        if(queryHoldShareDTO7 !=null && queryHoldShareDTO7.getIndustryRatio() !=null){
+            double ratio_change_7 = holdShareDTO.getIndustryRatio() - queryHoldShareDTO7.getIndustryRatio();
+            holdShareDTO.setInd_ratio_chg_7(ratio_change_7);
+        }
+
+        // 近30天的变化
+        LocalDateTime queryDateTime30 = tradeDateTime.plusDays(-30);
+        String queryDate30 = DateUtil.formatLocalDateTime(queryDateTime30, DateUtil.DATE_TIME_FORMAT);
+        DongChaiIndustryHoldShareDTO queryHoldShareDTO30 = localDataManager.queryIndustryHoldShareDTO(holdShareDTO.getIndName(), queryDate30);
+        if(queryHoldShareDTO30 !=null && queryHoldShareDTO30.getIndustryRatio() !=null){
+            double ratio_change_30 = holdShareDTO.getIndustryRatio() - queryHoldShareDTO30.getIndustryRatio();
+            holdShareDTO.setInd_ratio_chg_30(ratio_change_30);
+        }
+
+        // 近90天的变化
+        LocalDateTime queryDateTime90 = tradeDateTime.plusDays(-90);
+        String queryDate90 = DateUtil.formatLocalDateTime(queryDateTime90, DateUtil.DATE_TIME_FORMAT);
+        DongChaiIndustryHoldShareDTO queryHoldShareDTO90 = localDataManager.queryIndustryHoldShareDTO(holdShareDTO.getIndName(), queryDate90);
+        if(queryHoldShareDTO90 !=null && queryHoldShareDTO90.getIndustryRatio() !=null){
+            double ratio_change_90 = holdShareDTO.getIndustryRatio() - queryHoldShareDTO90.getIndustryRatio();
+            holdShareDTO.setInd_ratio_chg_90(ratio_change_90);
+        }
+
+        // 近360天的变化
+        LocalDateTime queryDateTime360 = tradeDateTime.plusDays(-360);
+        String queryDate360 = DateUtil.formatLocalDateTime(queryDateTime360, DateUtil.DATE_TIME_FORMAT);
+        DongChaiIndustryHoldShareDTO queryHoldShareDTO360 = localDataManager.queryIndustryHoldShareDTO(holdShareDTO.getIndName(), queryDate360);
+        if(queryHoldShareDTO360 !=null && queryHoldShareDTO360.getIndustryRatio() !=null){
+            double ratio_change_360 = holdShareDTO.getIndustryRatio() - queryHoldShareDTO360.getIndustryRatio();
+            holdShareDTO.setInd_ratio_chg_360(ratio_change_360);
+        }
     }
 
     /**

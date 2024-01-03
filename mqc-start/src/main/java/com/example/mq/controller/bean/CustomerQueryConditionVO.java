@@ -54,10 +54,10 @@ public class CustomerQueryConditionVO {
 			condition.setMaxCostAmount(NumberUtil.intValue(NumberUtil.mul(vo.getMaxCostAmount(), 100.0)));
 		}
 		if(!StringUtils.isEmpty(vo.getMinActiveTime())){
-			condition.setMinActiveTime(DateUtil.parseDateTime(vo.getMinActiveTime(), DateUtil.TIME_FORMAT));
+			condition.setMinActiveTime(DateUtil.parseDateTime(vo.getMinActiveTime(), DateUtil.DATE_TIME_FORMAT));
 		}
 		if(!StringUtils.isEmpty(vo.getMaxActiveTime())){
-			condition.setMaxActiveTime(DateUtil.parseDateTime(vo.getMaxActiveTime(), DateUtil.TIME_FORMAT));
+			condition.setMaxActiveTime(DateUtil.parseDateTime(vo.getMaxActiveTime(), DateUtil.DATE_TIME_FORMAT));
 		}
 		return condition;
 	}

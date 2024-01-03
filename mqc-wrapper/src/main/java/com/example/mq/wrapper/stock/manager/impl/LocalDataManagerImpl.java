@@ -2,6 +2,7 @@ package com.example.mq.wrapper.stock.manager.impl;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.example.mq.common.utils.DateUtil;
 import com.example.mq.common.utils.NumberUtil;
 import com.example.mq.wrapper.stock.constant.StockConstant;
 import com.example.mq.wrapper.stock.enums.FinanceReportTypeEnum;
@@ -772,15 +773,9 @@ public class LocalDataManagerImpl implements LocalDataManager {
     /**
      * 查询最近日期的沪港通数据
      */
-    public List<DongChaiNorthHoldShareDTO> queryLatestNorthHoldShares(List<String> stockCodeList, Boolean updateLocalData){
+    public List<DongChaiNorthHoldShareDTO> queryLatestNorthHoldShares(List<String> stockCodeList){
         if(CollectionUtils.isEmpty(stockCodeList)){
             return Lists.newArrayList();
-        }
-
-
-        if(Objects.equals(updateLocalData, true)){
-            // 先更新本地的沪股通持股数据
-            this.queryAndUpdateNorthHoldShareList();
         }
 
         // 查询最新的持股数据
@@ -809,6 +804,46 @@ public class LocalDataManagerImpl implements LocalDataManager {
         }
 
         return latestHoldShareDTOList;
+    }
+
+    @Override
+    public List<DongChaiNorthHoldShareDTO> queryLocalNorthHoldShareDTOs(String code, LocalDateTime endTradeTime, Integer count){
+        if(StringUtils.isBlank(code) || endTradeTime ==null || count ==null){
+            return Lists.newArrayList();
+        }
+
+        long endTimeMillis = endTradeTime.toInstant(ZoneOffset.of("+8")).toEpochMilli();
+
+        // 本地数据
+        try {
+            List<String> strList =Lists.newArrayList();
+            String fileName =String.format(StockConstant.NORTH_HOLD_SHARES_FILE, code);
+            File localFile = new File(fileName);
+            if(localFile.exists()){
+                strList =FileUtils.readLines(localFile, Charset.forName("UTF-8"));
+            }
+            List<DongChaiNorthHoldShareDTO> holdShareDTOList = Optional.ofNullable(strList).orElse(Lists.newArrayList()).stream()
+                    .map(str -> JSON.parseObject(str, DongChaiNorthHoldShareDTO.class))
+                    .filter(holdShareDTO -> holdShareDTO.getTradeDate() != null)
+                    .filter(holdShareDTO -> {
+                        DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+                        LocalDateTime tradeDateTime = LocalDate.parse(holdShareDTO.getTradeDate(), df).atStartOfDay();
+                        long tradeTimeMillis = tradeDateTime.toInstant(ZoneOffset.of("+8")).toEpochMilli();
+
+                        return tradeTimeMillis <= endTimeMillis;
+                    })
+                    .sorted(Comparator.comparing(DongChaiNorthHoldShareDTO::getTradeDate).reversed())
+                    .collect(Collectors.toList());
+            if(holdShareDTOList.size() <=count){
+                return holdShareDTOList;
+            }else {
+                return holdShareDTOList.subList(0, count);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return Lists.newArrayList();
     }
 
     /**
@@ -853,6 +888,44 @@ public class LocalDataManagerImpl implements LocalDataManager {
         }
 
         return industryHoldShareDTOList;
+    }
+
+    @Override
+    public DongChaiIndustryHoldShareDTO queryIndustryHoldShareDTO(String indName, String queryDate) {
+        if(StringUtils.isBlank(indName) || StringUtils.isBlank(queryDate)){
+            return null;
+        }
+
+        LocalDateTime queryDateTime = DateUtil.parseLocalDateTime(queryDate, DateUtil.DATE_TIME_FORMAT);
+        if(queryDateTime ==null){
+            return null;
+        }
+
+        try {
+            List<String> strList = Lists.newArrayList();
+            String fileName = String.format(StockConstant.NORTH_HOLD_SHARES_IND_FILE, indName);
+            File localFile = new File(fileName);
+            if (localFile.exists()) {
+                strList = FileUtils.readLines(localFile, Charset.forName("UTF-8"));
+            }
+
+            DongChaiIndustryHoldShareDTO industryHoldShareDTO = Optional.ofNullable(strList).orElse(Lists.newArrayList()).stream()
+                    .map(str -> JSON.parseObject(str, DongChaiIndustryHoldShareDTO.class))
+                    .filter(holdShareDTO -> holdShareDTO.getTradeDate() != null)
+                    .filter(holdShareDTO -> {
+                        LocalDateTime tradeDateTime = DateUtil.parseLocalDateTime(holdShareDTO.getTradeDate(), DateUtil.DATE_TIME_FORMAT);
+                        return tradeDateTime !=null && (tradeDateTime.isBefore(queryDateTime) || tradeDateTime.isEqual(queryDateTime));
+                    })
+                    .sorted(Comparator.comparing(DongChaiIndustryHoldShareDTO::getTradeDate).reversed())
+                    .findFirst()
+                    .orElse(null);
+
+            return industryHoldShareDTO;
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+        return null;
     }
 
     /**
@@ -961,12 +1034,15 @@ public class LocalDataManagerImpl implements LocalDataManager {
         String queryTradeDate = df.format(localDateTime.toLocalDate().atStartOfDay());
 
         Double totalMarketCap =0d;
-        Map<String, Double> indNameAndMarketCapMap = new HashMap<>();
+        Map<String, Double> indNameAndTotalMarketCapMap = Maps.newHashMap();
+        Double totalHoldMarketCap =0d;
+        Map<String, Double> indNameAndHoldMarketCapMap = new HashMap<>();
         for(String stockCode : stockCodeList){
             CompanyDTO companyDTO = this.getLocalCompanyDTO(stockCode);
             if(companyDTO ==null || StringUtils.isBlank(companyDTO.getInd_name())){
                 continue;
             }
+            String indName =companyDTO.getInd_name();
 
             List<DongChaiNorthHoldShareDTO> holdShareDTOList = this.queryLocalNorthHoldShareDTOs(stockCode, localDateTime, 1);
             if(CollectionUtils.isEmpty(holdShareDTOList)){
@@ -974,21 +1050,34 @@ public class LocalDataManagerImpl implements LocalDataManager {
             }
 
             DongChaiNorthHoldShareDTO holdShareDTO = holdShareDTOList.get(0);
-            if(holdShareDTO ==null || !StringUtils.equals(holdShareDTO.getTradeDate(), queryTradeDate) || holdShareDTO.getHoldMarketCap() ==null){
+            if(holdShareDTO ==null || !StringUtils.equals(holdShareDTO.getTradeDate(), queryTradeDate)){
                 continue;
             }
 
-            Double indMarketCap = indNameAndMarketCapMap.getOrDefault(companyDTO.getInd_name(), 0d);
-            indNameAndMarketCapMap.put(companyDTO.getInd_name(), indMarketCap + holdShareDTO.getHoldMarketCap());
+            // 行业市值数据
+            if(holdShareDTO.getHoldMarketCap() !=null && holdShareDTO.getHoldMarketCap() > 0
+                    && holdShareDTO.getTotalSharesRatio() !=null && holdShareDTO.getTotalSharesRatio() >0){
+                double stockTotalMarketCap = (holdShareDTO.getHoldMarketCap() / holdShareDTO.getTotalSharesRatio()) * 100;
+                Double indTotalMarketCap = indNameAndTotalMarketCapMap.getOrDefault(indName, 0d);
+                indNameAndTotalMarketCapMap.put(indName, indTotalMarketCap + stockTotalMarketCap);
 
-            totalMarketCap = totalMarketCap + holdShareDTO.getHoldMarketCap();
+                totalMarketCap = totalMarketCap + stockTotalMarketCap;
+            }
+
+            // 沪港通持股数据
+            if(holdShareDTO.getHoldMarketCap() !=null){
+                Double indHoldMarketCap = indNameAndHoldMarketCapMap.getOrDefault(indName, 0d);
+                indNameAndHoldMarketCapMap.put(indName, indHoldMarketCap + holdShareDTO.getHoldMarketCap());
+
+                totalHoldMarketCap = totalHoldMarketCap + holdShareDTO.getHoldMarketCap();
+            }
         }
-        indNameAndMarketCapMap.put("全行业", totalMarketCap);
+        indNameAndHoldMarketCapMap.put("全行业", totalHoldMarketCap);
 
-        for(Map.Entry<String, Double> entry : indNameAndMarketCapMap.entrySet()){
+        for(Map.Entry<String, Double> entry : indNameAndHoldMarketCapMap.entrySet()){
             String indName = entry.getKey();
-            Double indMarketCap = entry.getValue();
-            if(indMarketCap ==0d){
+            Double indHoldMarketCap = entry.getValue();
+            if(indHoldMarketCap ==0d){
                 continue;
             }
 
@@ -1007,8 +1096,15 @@ public class LocalDataManagerImpl implements LocalDataManager {
                     DongChaiIndustryHoldShareDTO industryDTO =new DongChaiIndustryHoldShareDTO();
                     industryDTO.setIndName(indName);
                     industryDTO.setTradeDate(queryTradeDate);
-                    industryDTO.setHoldMarketCap(NumberUtil.format(indMarketCap, 1));
-                    industryDTO.setIndustryRatio(NumberUtil.format(indMarketCap/totalMarketCap, 3));
+                    industryDTO.setHoldMarketCap(NumberUtil.format(indHoldMarketCap, 1));
+                    industryDTO.setIndustryRatio(NumberUtil.format(indHoldMarketCap/totalHoldMarketCap, 3));
+
+                    Double indTotalMarketCap = indNameAndTotalMarketCapMap.get(indName);
+                    if(indTotalMarketCap !=null && indTotalMarketCap >0 && totalMarketCap > 0){
+                        industryDTO.setIndTotalMarketCap(NumberUtil.format(indTotalMarketCap, 1));
+                        industryDTO.setIndTotalMarketRatio(NumberUtil.format(indTotalMarketCap/totalMarketCap, 3));
+                        industryDTO.setOverHoldRatio(NumberUtil.format(industryDTO.getIndustryRatio() - industryDTO.getIndTotalMarketRatio(), 3));
+                    }
 
                     tradeDateAndHoldShareMap.put(queryTradeDate, industryDTO);
                 }
@@ -1027,53 +1123,6 @@ public class LocalDataManagerImpl implements LocalDataManager {
                 e.printStackTrace();
             }
         }
-    }
-
-    /**
-     * 查询本地文件中的沪港通持股数据
-     *
-     * @param code 编码
-     * @param endTradeTime 交易日期
-     * @param count 截止到交易日期的查询数量（包含交易日期）
-     * @return
-     */
-    public List<DongChaiNorthHoldShareDTO> queryLocalNorthHoldShareDTOs(String code, LocalDateTime endTradeTime, Integer count){
-        if(StringUtils.isBlank(code) || endTradeTime ==null || count ==null){
-            return Lists.newArrayList();
-        }
-
-        long endTimeMillis = endTradeTime.toInstant(ZoneOffset.of("+8")).toEpochMilli();
-
-        // 本地数据
-        try {
-            List<String> strList =Lists.newArrayList();
-            String fileName =String.format(StockConstant.NORTH_HOLD_SHARES_FILE, code);
-            File localFile = new File(fileName);
-            if(localFile.exists()){
-                strList =FileUtils.readLines(localFile, Charset.forName("UTF-8"));
-            }
-            List<DongChaiNorthHoldShareDTO> holdShareDTOList = Optional.ofNullable(strList).orElse(Lists.newArrayList()).stream()
-                    .map(str -> JSON.parseObject(str, DongChaiNorthHoldShareDTO.class))
-                    .filter(holdShareDTO -> holdShareDTO.getTradeDate() != null)
-                    .filter(holdShareDTO -> {
-                        DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-                        LocalDateTime tradeDateTime = LocalDate.parse(holdShareDTO.getTradeDate(), df).atStartOfDay();
-                        long tradeTimeMillis = tradeDateTime.toInstant(ZoneOffset.of("+8")).toEpochMilli();
-
-                        return tradeTimeMillis <= endTimeMillis;
-                    })
-                    .sorted(Comparator.comparing(DongChaiNorthHoldShareDTO::getTradeDate).reversed())
-                    .collect(Collectors.toList());
-            if(holdShareDTOList.size() <=count){
-                return holdShareDTOList;
-            }else {
-                return holdShareDTOList.subList(0, count);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        return Lists.newArrayList();
     }
 
     /**

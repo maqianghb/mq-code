@@ -14,32 +14,52 @@ public class DongChaiIndustryHoldShareDTO {
     private String indName;
 
     /**
-     * 日期
+     * 日期(yyyy-MM-dd HH:mm:ss)
      */
     private String tradeDate;
 
     /**
-     * 行业市值（亿元）
+     * 行业总市值
+     */
+    private Double indTotalMarketCap;
+
+    /**
+     * 行业总市值占比
+     */
+    private Double indTotalMarketRatio;
+
+    /**
+     * 沪港通持有市值（亿元）
      */
     private Double holdMarketCap;
 
     /**
-     * 行业市值占全部北上资金的比例
+     * 沪港通持有市值占全部北上资金的比例
      */
     private Double industryRatio;
 
     /**
-     * 30天内的行业占比变化
+     * 沪港通超配比例
+     */
+    private Double overHoldRatio;
+
+    /**
+     * 7天内沪港通持股占比变化
+     */
+    private Double ind_ratio_chg_7;
+
+    /**
+     * 30天内沪港通持股占比变化
      */
     private Double ind_ratio_chg_30;
 
     /**
-     * 90天内的行业占比变化
+     * 90天内沪港通持股占比变化
      */
     private Double ind_ratio_chg_90;
 
     /**
-     * 360天内的行业占比变化
+     * 360天沪港通持股占比变化
      */
     private Double ind_ratio_chg_360;
 
