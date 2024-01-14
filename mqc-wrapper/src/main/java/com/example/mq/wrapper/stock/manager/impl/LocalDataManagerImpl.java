@@ -1032,6 +1032,7 @@ public class LocalDataManagerImpl implements LocalDataManager {
 
         DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         String queryTradeDate = df.format(localDateTime.toLocalDate().atStartOfDay());
+        System.out.println(String.format("updateLocalIndustryHoldShares start, queryTradeDate:%s", queryTradeDate));
 
         Double totalMarketCap =0d;
         Map<String, Double> indNameAndTotalMarketCapMap = Maps.newHashMap();
@@ -1118,7 +1119,7 @@ public class LocalDataManagerImpl implements LocalDataManager {
                     FileUtils.writeLines(localFile, strDataList, false);
                 }
 
-                System.out.println("updateLocalIndustryHoldShares end, indName: " + indName);
+                System.out.println(String.format("updateLocalIndustryHoldShares end, indName:%s", indName));
             } catch (IOException e) {
                 e.printStackTrace();
             }

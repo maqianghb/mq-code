@@ -36,7 +36,7 @@ public class CommonManager {
         LocalDataManager localDataManager =new LocalDataManagerImpl();
 
         // 更新本地文件的K线数据
-//        localDataManager.queryAndUpdateKLineList();
+        localDataManager.queryAndUpdateKLineList();
 
         // 更新本地文件的财务数据
         Boolean updateFinanceData =false;
