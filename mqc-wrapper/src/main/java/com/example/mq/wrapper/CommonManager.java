@@ -16,15 +16,16 @@ public class CommonManager {
         // 参数列表
         Integer reportYear =2023;
         FinanceReportTypeEnum reportTypeEnum =FinanceReportTypeEnum.QUARTER_3;
-        String kLineDate ="20231229";
+        String kLineDate ="20240119";
 
         LocalDataManager localDataManager =new LocalDataManagerImpl();
         List<String> stockCodeList =localDataManager.getLocalStockCodeList();
 //        List<String> stockCodeList =StockConstant.TEST_STOCK_CODE_LIST;
 
         StockIndicatorManager stockIndicatorManager =new StockIndicatorManagerImpl();
+
         // 指标数据
-//        stockIndicatorManager.calculateAndSaveAllAnalysisDTO(kLineDate, stockCodeList, reportYear ,reportTypeEnum);
+        stockIndicatorManager.calculateAndSaveAllAnalysisDTO(kLineDate, stockCodeList, reportYear ,reportTypeEnum);
 
         // 沪港通数据
         stockIndicatorManager.queryAndSaveLatestNorthHoldShares(stockCodeList);
