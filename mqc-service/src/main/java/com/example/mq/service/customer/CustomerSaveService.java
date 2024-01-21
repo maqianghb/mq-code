@@ -1,6 +1,7 @@
 package com.example.mq.service.customer;
 
 
+import com.example.mq.client.service.customer.dto.CustomerDTO;
 import com.example.mq.core.domain.customer.model.Customer;
 
 /**
@@ -13,6 +14,8 @@ import com.example.mq.core.domain.customer.model.Customer;
 
 public interface CustomerSaveService {
 
-	long saveCustomer(Customer customer) throws Exception;
+	CustomerDTO queryCustomer(CustomerDTO customerDTO);
+
+	long saveCustomer(CustomerDTO customerDTO) throws Exception;
 
 }

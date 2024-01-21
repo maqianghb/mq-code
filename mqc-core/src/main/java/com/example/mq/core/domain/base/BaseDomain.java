@@ -1,4 +1,4 @@
-package com.example.mq.core.domain;
+package com.example.mq.core.domain.base;
 
 import lombok.Data;
 
@@ -15,5 +15,7 @@ public class BaseDomain implements Serializable {
     private String operator;
 
     private Integer currentPage;
+    private Integer currentIndex;
     private Integer pageSize;
+
 }

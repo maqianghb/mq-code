@@ -1,8 +1,9 @@
-package com.example.mq.core.mapper.customer;
+package com.example.mq.data.mapper.customer;
+
+import com.example.mq.data.mapper.customer.model.CustomerOperateLogDO;
 
 import java.util.List;
 
-import com.example.mq.core.manager.customer.model.CustomerOperateLogDO;
 
 /**
  * @program: mq-code

@@ -2,7 +2,7 @@ package com.example.mq.core.domain.customer.model;
 
 import java.util.Date;
 
-import com.example.mq.core.domain.BaseDomain;
+import com.example.mq.core.domain.base.BaseDomain;
 import lombok.Data;
 
 /**

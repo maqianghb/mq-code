@@ -1,8 +1,8 @@
 package com.example.mq.core.manager.customer.impl;
 
 import com.example.mq.core.manager.customer.CustomerManager;
-import com.example.mq.core.manager.customer.model.CustomerDO;
-import com.example.mq.core.mapper.customer.CustomerMapper;
+import com.example.mq.data.mapper.customer.model.CustomerDO;
+import com.example.mq.data.mapper.customer.CustomerMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 

@@ -8,7 +8,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 import com.alibaba.fastjson.JSONObject;
-import com.example.mq.core.domain.customer.model.Customer;
+import com.example.mq.client.service.customer.dto.CustomerDTO;
 import com.example.mq.service.customer.CustomerSaveService;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import org.slf4j.Logger;
@@ -35,7 +35,7 @@ public class AsyncCustomerSaveServiceImpl implements CustomerSaveService {
 	/**
 	 * customer
 	 */
-	private static ConcurrentLinkedQueue<Customer> saveQueue =new ConcurrentLinkedQueue<>();
+	private static ConcurrentLinkedQueue<CustomerDTO> saveQueue =new ConcurrentLinkedQueue<>();
 
 	private ThreadFactory saveThreadFactory =new ThreadFactoryBuilder().setNameFormat("save-customer-pool-%d").build();
 	private ExecutorService saveExecutor = new ThreadPoolExecutor(
@@ -50,19 +50,24 @@ public class AsyncCustomerSaveServiceImpl implements CustomerSaveService {
 
 
 	@Override
-	public long saveCustomer(Customer customer) throws Exception {
-		if(null ==customer){
+	public CustomerDTO queryCustomer(CustomerDTO customerDTO) {
+		return null;
+	}
+
+	@Override
+	public long saveCustomer(CustomerDTO customerDTO) throws Exception {
+		if(null ==customerDTO){
 			throw new IllegalArgumentException(" saveCustomer 操作，参数为空！");
 		}
 		long result =1;
 		//save queue
 		if(saveQueue.size() >= MAX_LINKED_QUEUE_SIZE){
 			LOG.error(" saveQueue 队列已满, queueSize:{}|customer:{}", saveQueue.size(),
-					JSONObject.toJSONString(customer));
+					JSONObject.toJSONString(customerDTO));
 			result =0;
 		}else {
-			if(!saveQueue.offer(customer)){
-				LOG.error("saveQueue 添加数据失败，customer:{}", JSONObject.toJSONString(customer));
+			if(!saveQueue.offer(customerDTO)){
+				LOG.error("saveQueue 添加数据失败，customer:{}", JSONObject.toJSONString(customerDTO));
 				result =0;
 			}
 		}
@@ -70,7 +75,7 @@ public class AsyncCustomerSaveServiceImpl implements CustomerSaveService {
 		//execute
 		this.startExecutor();
 
-		LOG.info(" saveCustomer result, isSuccess:{}|customer:{}", result >0, JSONObject.toJSONString(customer));
+		LOG.info(" saveCustomer result, isSuccess:{}|customer:{}", result >0, JSONObject.toJSONString(customerDTO));
 		return result;
 	}
 
@@ -79,20 +84,20 @@ public class AsyncCustomerSaveServiceImpl implements CustomerSaveService {
 			@Override
 			public void run() {
 				while(saveQueue.size() >0){
-					Customer customer =saveQueue.poll();
-					if(null ==customer){
+					CustomerDTO customerDTO =saveQueue.poll();
+					if(null ==customerDTO){
 						break;
 					}
 
 					//execute
 					try {
-						if(doSaveCustomer(customer) <=0){
+						if(doSaveCustomer(customerDTO) <=0){
 							LOG.error(" doSaveCustomer 操作失败, thread:{}|customer:{}",
-									Thread.currentThread().getName(), customer);
+									Thread.currentThread().getName(), customerDTO);
 						}
 					} catch (Exception e) {
 						LOG.error(" doSaveCustomer 操作异常，thread:{}|customer:{}",
-								Thread.currentThread().getName(), customer, e);
+								Thread.currentThread().getName(), customerDTO, e);
 					}
 				}
 			}
@@ -100,7 +105,7 @@ public class AsyncCustomerSaveServiceImpl implements CustomerSaveService {
 		return ;
 	}
 
-	private long doSaveCustomer(Customer customer) throws Exception{
+	private long doSaveCustomer(CustomerDTO customerDTO) throws Exception{
 		return 0;
 	}
 }

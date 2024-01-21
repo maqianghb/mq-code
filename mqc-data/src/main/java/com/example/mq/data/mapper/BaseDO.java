@@ -1,4 +1,4 @@
-package com.example.mq.core.manager;
+package com.example.mq.data.mapper;
 
 import lombok.Data;
 

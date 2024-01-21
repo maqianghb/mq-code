@@ -1,8 +1,8 @@
 package com.example.mq.core.manager.seller.impl;
 
 import com.example.mq.core.manager.seller.SellerManager;
-import com.example.mq.core.manager.seller.model.SellerDO;
-import com.example.mq.core.mapper.seller.SellerMapper;
+import com.example.mq.data.mapper.seller.model.SellerDO;
+import com.example.mq.data.mapper.seller.SellerMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 

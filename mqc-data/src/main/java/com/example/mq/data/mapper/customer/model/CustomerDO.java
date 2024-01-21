@@ -1,8 +1,8 @@
-package com.example.mq.core.manager.customer.model;
+package com.example.mq.data.mapper.customer.model;
 
 
 import com.example.mq.common.utils.DateUtil;
-import com.example.mq.core.manager.BaseDO;
+import com.example.mq.data.mapper.BaseDO;
 import lombok.Data;
 
 import java.util.Date;

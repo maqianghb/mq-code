@@ -1,6 +1,6 @@
-package com.example.mq.core.manager.seller.model;
+package com.example.mq.data.mapper.seller.model;
 
-import com.example.mq.core.manager.BaseDO;
+import com.example.mq.data.mapper.BaseDO;
 import lombok.Data;
 
 @Data

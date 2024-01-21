@@ -1,7 +1,7 @@
-package com.example.mq.core.mapper.seller;
+package com.example.mq.data.mapper.seller;
 
 
-import com.example.mq.core.manager.seller.model.SellerDO;
+import com.example.mq.data.mapper.seller.model.SellerDO;
 
 /**
  * @program: mq-code

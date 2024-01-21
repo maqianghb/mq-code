@@ -1,6 +1,6 @@
 package com.example.mq.core.manager.seller;
 
-import com.example.mq.core.manager.seller.model.SellerDO;
+import com.example.mq.data.mapper.seller.model.SellerDO;
 
 public interface SellerManager {
 

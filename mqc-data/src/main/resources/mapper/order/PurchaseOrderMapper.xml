@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.mq.data.mapper.order.PurchaseOrderMapper">
+
+	<resultMap id="BaseResultMap" type="com.example.mq.data.mapper.order.model.PurchaseOrderDO">
+		<result column="id" property="id" />
+		<result column="gmt_create" property="gmtCreate"/>
+		<result column="gmt_modified" property="gmtModified"/>
+		<result column="creator" property="creator"/>
+		<result column="modifier" property="operator"/>
+
+		<result column="po_code" property="poCode"/>
+		<result column="order_source" property="orderSource"/>
+		<result column="purchaser" property="purchaser"/>
+		<result column="supplier_code" property="supplierCode"/>
+		<result column="remark" property="remark"/>
+		<result column="status" property="status"/>
+		<result column="feature" property="feature"/>
+		<result column="is_deleted" property="isDeleted"/>
+	</resultMap>
+
+	<sql id="Base_Column_List">
+		id, gmt_create, gmt_modified, creator, modifier, po_code, order_source,
+		purchaser, supplier_code, remark, status, feature, is_deleted
+	</sql>
+
+	<select id="countPurchaseOrder" resultType="Integer">
+		SELECT COUNT(*)
+		FROM mcq_purchase_order
+		<where>
+			is_delted =0
+			<if test = "poCode !=null">
+				and po_code = #{poCode}
+			</if>
+			<if test = "poCodeList !=null and poCodeList.size() >0">
+				and po_code in
+				<foreach collection="poCodeList" item="item" separator="," open="(" close=")">
+					#{item}
+				</foreach>
+			</if>
+		</where>
+	</select>
+
+	<select id="queryPurchaseOrderList" resultMap="BaseResultMap">
+		SELECT <include refid="Base_Column_List"/>
+		FROM mcq_purchase_order
+		<where>
+			is_delted =0
+			<if test = "poCode !=null">
+				and po_code = #{poCode}
+			</if>
+			<if test = "poCodeList !=null and poCodeList.size() >0">
+				and po_code in
+				<foreach collection="poCodeList" item="item" separator="," open="(" close=")">
+					#{item}
+				</foreach>
+			</if>
+		</where>
+		<if test="currentIndex !=null and pageSize !=null">
+			ORDER BY id DESC
+			LIMIT #{currentIndex}, #{pageSize}
+		</if>
+	</select>
+
+	<insert id="addPurchaseOrder" parameterType="com.example.mq.data.mapper.order.model.PurchaseOrderDO"
+			useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO mcq_purchase_order
+		(po_code, order_source, purchaser)
+		values
+		(#{poCode}, #{orderSource}, #{purchaser})
+	</insert>
+
+	<update id="updatePurchaseOrder" parameterType="com.example.mq.data.mapper.order.model.PurchaseOrderDO">
+		UPDATE mcq_purchase_order
+		<set>
+			<if test="poCode != null">
+				po_code = #{poCode},
+			</if>
+			<if test="orderSource != null">
+				order_source = #{orderSource},
+			</if>
+			gmt_modified = now()
+		</set>
+		<where>
+			where id = #{id}
+			<if test ="poCode !=null">
+				and po_code = #{poCode}
+			</if>
+		</where>
+	</update>
+
+</mapper>

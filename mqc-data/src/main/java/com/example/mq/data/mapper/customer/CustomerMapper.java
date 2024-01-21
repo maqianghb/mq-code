@@ -1,6 +1,7 @@
-package com.example.mq.core.mapper.customer;
+package com.example.mq.data.mapper.customer;
 
-import com.example.mq.core.manager.customer.model.CustomerDO;
+
+import com.example.mq.data.mapper.customer.model.CustomerDO;
 
 import java.util.List;
 

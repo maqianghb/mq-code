@@ -5,7 +5,6 @@ import java.util.concurrent.TimeUnit;
 
 import com.alibaba.fastjson.JSONObject;
 import com.example.mq.core.domain.customer.model.Customer;
-import com.example.mq.core.mapper.customer.CustomerMapper;
 import com.example.mq.data.zk.CuratorClientManager;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
