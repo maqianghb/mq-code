@@ -33,6 +33,9 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+		<maven.compiler.plugin.verson>3.8.0</maven.compiler.plugin.verson>
+		<maven.deploy.plugin.version>3.1.0</maven.deploy.plugin.version>
+		<maven.resources.plugin.version>3.1.0</maven.resources.plugin.version>
 		<maven.compiler.source>1.8</maven.compiler.source>
 		<maven.compiler.target>1.8</maven.compiler.target>
         <java.version>1.8</java.version>
@@ -43,6 +46,8 @@
 		<commons-io.version>2.5</commons-io.version>
 		<commons-lang3.version>3.3.1</commons-lang3.version>
 		<commons-collections4.version>4.1</commons-collections4.version>
+		<org.mapstrcut.version>1.5.0.Final</org.mapstrcut.version>
+
 		<commons-jexl3.version>3.1</commons-jexl3.version>
 		<mongo.java.driver.version>3.6.4</mongo.java.driver.version>
 		<codis-proxy.version>1.0.5</codis-proxy.version>
@@ -121,6 +126,19 @@
 			<version>${commons-collections4.version}</version>
 		</dependency>
 
+		<!-- mapstrcut -->
+		<dependency>
+			<groupId>org.mapstruct</groupId>
+			<artifactId>mapstruct</artifactId>
+			<version>${org.mapstrcut.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.mapstruct</groupId>
+			<artifactId>mapstruct-processor</artifactId>
+			<version>${org.mapstrcut.version}</version>
+		</dependency>
+
+
     </dependencies>
 
 
@@ -130,9 +148,10 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
+				<version>${maven.compiler.plugin.verson}</version>
 				<configuration>
-					<source>1.8</source>
-					<target>1.8</target>
+					<source>${maven.compiler.source}</source>
+					<target>#{maven.compiler.target}</target>
 					<encoding>UTF-8</encoding>
 					<compilerArgument>-Xlint:all</compilerArgument>
 					<showWarnings>true</showWarnings>
@@ -142,6 +161,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-deploy-plugin</artifactId>
+				<version>${maven.deploy.plugin.version}</version>
 				<configuration>
 					<skip>false</skip>
 				</configuration>
@@ -149,6 +169,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-resources-plugin</artifactId>
+				<version>${maven.resources.plugin.version}</version>
 				<configuration>
 					<encoding>UTF-8</encoding>
 				</configuration>

@@ -5,7 +5,6 @@ import com.example.mq.client.common.Result;
 import com.example.mq.controller.ControllerApplication;
 import com.example.mq.controller.web.CustomerController;
 import com.example.mq.controller.bean.CustomerVO;
-import com.example.mq.core.domain.customer.model.Customer;
 import com.example.mq.service.customer.CustomerDomainService;
 import org.assertj.core.util.Lists;
 import org.junit.Assert;
