@@ -30,6 +30,23 @@ public class CommonManager {
         // 沪港通数据
         stockIndicatorManager.queryAndSaveLatestNorthHoldShares(stockCodeList);
         stockIndicatorManager.queryAndSaveLatestIndustryHoldShares();
+
+    }
+
+    @Test
+    public void testQueryDongChaiData(){
+        LocalDataManager localDataManager =new LocalDataManagerImpl();
+
+        // 业绩预告数据
+        String reportDate ="2023-12-31";
+        localDataManager.queryAndSaveFinanceNotice(reportDate);
+
+        // by行业预告数据
+        localDataManager.queryAndSaveIndFinanceNotice(reportDate);
+
+        // 股东增减持数据
+//        localDataManager.queryAndSaveHolderIncreaseList();
+
     }
 
     @Test

@@ -46,9 +46,16 @@ public interface LocalDataManager {
     /**
      * 查询并保存业绩预告数据
      *
-     * @param reportDate
+     * @param reportDate（格式：2023-12-31）
      */
     void queryAndSaveFinanceNotice(String reportDate);
+
+    /**
+     * 查询并保存行业的业绩预告数据
+     *
+     * @param reportDate
+     */
+    void queryAndSaveIndFinanceNotice(String reportDate);
 
     /**
      * 查询并保存股东增减持数据

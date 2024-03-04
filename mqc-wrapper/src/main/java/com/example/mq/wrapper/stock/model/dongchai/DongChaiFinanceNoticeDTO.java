@@ -5,10 +5,6 @@ import lombok.Data;
 @Data
 public class DongChaiFinanceNoticeDTO {
 
-    private String code;
-
-    private String name;
-
     /**
      * 预告时间
      */
@@ -18,6 +14,15 @@ public class DongChaiFinanceNoticeDTO {
      * 报告期
      */
     private String report_date;
+
+    private String code;
+
+    private String name;
+
+    /**
+     * 行业
+     */
+    private String indName;
 
     /**
      * 预告指标

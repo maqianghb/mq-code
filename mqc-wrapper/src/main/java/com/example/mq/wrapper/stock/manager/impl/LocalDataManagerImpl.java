@@ -36,8 +36,9 @@ import java.util.stream.Collectors;
 
 public class LocalDataManagerImpl implements LocalDataManager {
 
-    private static final String NOTICE_HEADER ="编码,名称,预告时间,报告期,预告指标,预告类型,预告值(亿),预告值(亿)" +
+    private static final String FINANCE_NOTICE_HEADER ="预告时间,报告期,编码,名称,行业,预告指标,预告类型,预告值(亿),预告值(亿)" +
             ",同比变动,同比变动,环比变动,环比变动,上年同期值(亿),变动原因";
+    private static final String IND_FINANCE_NOTICE_HEADER ="预告时间,报告期,行业,预告指标,预告类型,行业股票数,预告股票数,占行业比例";
     private static final String HOLDER_INCREASE_HEADER ="编码,名称,预告时间,增减类型,增减数量(万股),减持开始时间,减持结束时间" +
             ",变动比例(%),变动后持股比例(%)";
 
@@ -369,11 +370,20 @@ public class LocalDataManagerImpl implements LocalDataManager {
             return ;
         }
 
+        Map<String, String> codeAndIndNameMap = stockCodeList.stream().map(stockCode -> this.getLocalCompanyDTO(stockCode))
+                .filter(companyDTO -> companyDTO != null && StringUtils.isNotBlank(companyDTO.getInd_name()))
+                .collect(Collectors.toMap(CompanyDTO::getCode, CompanyDTO::getInd_name, (val1, val2) -> val1));
+
         DongChaiDataManager dongChaiDataManager =new DongChaiDataManagerImpl();
         List<DongChaiFinanceNoticeDTO> noticeDTOList = dongChaiDataManager.queryFinanceNoticeDTO(reportDate);
         List<String> strNoticeList = Optional.ofNullable(noticeDTOList).orElse(Lists.newArrayList()).stream()
                 .filter(noticeDTO -> stockCodeList.contains(noticeDTO.getCode()))
                 .map(noticeDTO -> {
+                    String indName = codeAndIndNameMap.get(noticeDTO.getCode());
+                    if(StringUtils.isNotBlank(indName)){
+                        noticeDTO.setIndName(indName);
+                    }
+
                     try {
                         Field[] fields = DongChaiFinanceNoticeDTO.class.getDeclaredFields();
                         JSONObject jsonObject = JSON.parseObject(JSON.toJSONString(noticeDTO));
@@ -394,7 +404,7 @@ public class LocalDataManagerImpl implements LocalDataManager {
         }
 
         List<String> strDataList =Lists.newArrayList();
-        strDataList.add(NOTICE_HEADER);
+        strDataList.add(FINANCE_NOTICE_HEADER);
         strDataList.addAll(strNoticeList);
 
         // 记录结果
@@ -403,6 +413,95 @@ public class LocalDataManagerImpl implements LocalDataManager {
             LocalDateTime localDateTime = LocalDateTime.now();//当前时间
             String strDateTime = df.format(localDateTime);//格式化为字符串
             String filterListName =String.format(StockConstant.FINANCE_NOTICE_LIST, reportDate, strDateTime);
+            FileUtils.writeLines(new File(filterListName), "UTF-8", strDataList, true);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void queryAndSaveIndFinanceNotice(String reportDate) {
+        List<String> stockCodeList = this.getLocalStockCodeList();
+        if(CollectionUtils.isEmpty(stockCodeList)){
+            return ;
+        }
+
+        Map<String, String> codeAndIndNameMap = stockCodeList.stream().map(stockCode -> this.getLocalCompanyDTO(stockCode))
+                .filter(companyDTO -> companyDTO != null && StringUtils.isNotBlank(companyDTO.getInd_name()))
+                .collect(Collectors.toMap(CompanyDTO::getCode, CompanyDTO::getInd_name, (val1, val2) -> val1));
+
+        Map<String, Integer> indNameAndCodeNumMap =Maps.newHashMap();
+        for(Map.Entry<String, String> entry : codeAndIndNameMap.entrySet()){
+            Integer num = indNameAndCodeNumMap.getOrDefault(entry.getValue(), 0);
+            indNameAndCodeNumMap.put(entry.getValue(), num +1);
+        }
+
+        DongChaiDataManager dongChaiDataManager =new DongChaiDataManagerImpl();
+        List<DongChaiFinanceNoticeDTO> allFinanceNoticeDTOList = dongChaiDataManager.queryFinanceNoticeDTO(reportDate);
+        List<DongChaiFinanceNoticeDTO> financeNoticeDTOList = Optional.ofNullable(allFinanceNoticeDTOList).orElse(Lists.newArrayList()).stream()
+                .filter(financeNoticeDTO -> StockConstant.FINANCE_PREDICT_INDICATOR.contains(financeNoticeDTO.getPredict_indicator()))
+                .collect(Collectors.toList());
+        if(CollectionUtils.isEmpty(financeNoticeDTOList)){
+            return ;
+        }
+
+        Map<String, Integer> keyAndNoticeNumMap =Maps.newHashMap();
+        for(DongChaiFinanceNoticeDTO financeNoticeDTO : financeNoticeDTOList){
+            String indName = codeAndIndNameMap.get(financeNoticeDTO.getCode());
+            if(StringUtils.isBlank(indName)){
+                continue;
+            }
+
+            String key = new StringBuilder().append(indName)
+                    .append("_").append(financeNoticeDTO.getPredict_indicator())
+                    .append("_").append(financeNoticeDTO.getPredict_type())
+                    .toString();
+            Integer num = keyAndNoticeNumMap.getOrDefault(key, 0);
+            keyAndNoticeNumMap.put(key, num +1);
+        }
+        if(MapUtils.isEmpty(keyAndNoticeNumMap)){
+            return;
+        }
+
+        List<String> strNoticeNumList = Optional.ofNullable(keyAndNoticeNumMap).orElse(Maps.newHashMap()).entrySet().stream()
+                .map(keyAndNoticeNumEntry -> {
+                    String[] splitList = StringUtils.split(keyAndNoticeNumEntry.getKey(), "_");
+                    if(splitList ==null || splitList.length !=3){
+                        return StringUtils.EMPTY;
+                    }
+                    String indName = splitList[0];
+                    Integer codeNum = indNameAndCodeNumMap.get(indName);
+                    if(codeNum ==null || codeNum ==0){
+                        return StringUtils.EMPTY;
+                    }
+
+                    String strIndNoticeNum =new StringBuilder().append(financeNoticeDTOList.get(0).getNotice_date())
+                            .append(",").append(financeNoticeDTOList.get(0).getReport_date())
+                            .append(",").append(indName)
+                            .append(",").append(splitList[1])
+                            .append(",").append(splitList[2])
+                            .append(",").append(indNameAndCodeNumMap.get(indName))
+                            .append(",").append(keyAndNoticeNumEntry.getValue())
+                            .append(",").append(NumberUtil.format((keyAndNoticeNumEntry.getValue() * 1.0)/codeNum, 3))
+                            .toString();
+
+                    return strIndNoticeNum;
+                })
+                .collect(Collectors.toList());
+        if(CollectionUtils.isEmpty(strNoticeNumList)){
+            return;
+        }
+
+        List<String> strDataList =Lists.newArrayList();
+        strDataList.add(IND_FINANCE_NOTICE_HEADER);
+        strDataList.addAll(strNoticeNumList);
+
+        // 记录结果
+        try {
+            DateTimeFormatter df =DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss");
+            LocalDateTime localDateTime = LocalDateTime.now();//当前时间
+            String strDateTime = df.format(localDateTime);//格式化为字符串
+            String filterListName =String.format(StockConstant.IND_FINANCE_NOTICE_LIST, reportDate, strDateTime);
             FileUtils.writeLines(new File(filterListName), "UTF-8", strDataList, true);
         } catch (Exception e) {
             e.printStackTrace();
