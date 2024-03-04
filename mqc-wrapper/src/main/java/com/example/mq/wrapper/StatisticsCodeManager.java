@@ -30,12 +30,13 @@ public class StatisticsCodeManager {
         for(ImmutablePair<String, String> pair : StockConstant.STATISTICS_CODE_LIST){
             String statisticsCode =pair.getLeft();
             String statisticsName =pair.getRight();
-            Double percentValue = statisticsCodeManager.queryMa1000Percent(statisticsCode, queryDate, StockConstant.KLINE_DAY_COUNT);
+            ImmutablePair<Double, Double> curDiffPair = statisticsCodeManager.queryMa1000Percent(statisticsCode, queryDate, StockConstant.KLINE_DAY_COUNT);
             String msg =new StringBuilder()
                     .append("日期:").append(queryDate)
                     .append(", code:").append(statisticsCode)
                     .append(", name:").append(statisticsName)
-                    .append(", 均线差值百分位:").append(NumberUtil.format(percentValue, 2))
+                    .append(", 均线差值:").append(NumberUtil.format(curDiffPair.getLeft() * 100, 1)).append("%")
+                    .append(", 均线差值百分位:").append(NumberUtil.format(curDiffPair.getRight() * 100, 1)).append("%")
                     .append(";")
                     .toString();
             msgList.add(msg);
@@ -46,17 +47,17 @@ public class StatisticsCodeManager {
 
     /**
      * 计算K线和MA均线间距的分位值
-     * @param statisticsCode
+     * @param stockCode
      * @param totalCount
      * @return
      */
-    private Double queryMa1000Percent(String statisticsCode, String queryDate, Integer totalCount){
+    private ImmutablePair<Double, Double> queryMa1000Percent(String stockCode, String queryDate, Integer totalCount){
         DateTimeFormatter df =DateTimeFormatter.ofPattern("yyyyMMdd");
         LocalDateTime queryDateTime = LocalDate.parse(queryDate, df).atStartOfDay();
         long queryDateMills = queryDateTime.toInstant(ZoneOffset.of("+8")).toEpochMilli();
 
         XueQiuStockManager xueQiuStockManager =new XueQiuStockManagerImpl();
-        List<XueQiuStockKLineDTO> kLineDTOList = xueQiuStockManager.queryKLineList(statisticsCode, "day", queryDateMills, totalCount);
+        List<XueQiuStockKLineDTO> kLineDTOList = xueQiuStockManager.queryKLineList(stockCode, "day", queryDateMills, totalCount);
         if(CollectionUtils.isEmpty(kLineDTOList)){
             return null;
         }
@@ -67,6 +68,7 @@ public class StatisticsCodeManager {
                 .collect(Collectors.toList());
 
         Double curDifference =null;
+        Double curDiffRatio =null;
         List<Double> differenceList = Lists.newArrayList();
         for(int i=0; i<sortedKLinetDTOList.size()-1000; i++){
             XueQiuStockKLineDTO curKLineDTO = sortedKLinetDTOList.get(i);
@@ -75,6 +77,7 @@ public class StatisticsCodeManager {
             differenceList.add(curKLineDTO.getClose() -ma_1000_value);
             if(i ==0){
                 curDifference = curKLineDTO.getClose() -ma_1000_value;
+                curDiffRatio = (curKLineDTO.getClose() -ma_1000_value) / ma_1000_value;
             }
         }
         List<Double> sortedDifferenceList = differenceList.stream()
@@ -82,7 +85,8 @@ public class StatisticsCodeManager {
                 .collect(Collectors.toList());
         for(int i=0; i< sortedDifferenceList.size(); i++){
             if(Math.abs(curDifference -sortedDifferenceList.get(i)) <=0.01){
-                return i/(sortedDifferenceList.size()*1.0);
+                double percent = i / (sortedDifferenceList.size() * 1.0);
+                return new ImmutablePair<>(curDiffRatio, percent);
             }
         }
 

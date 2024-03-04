@@ -16,7 +16,7 @@ public class CommonManager {
         // 参数列表
         Integer reportYear =2023;
         FinanceReportTypeEnum reportTypeEnum =FinanceReportTypeEnum.QUARTER_3;
-        String kLineDate ="20240119";
+        String kLineDate ="20240208";
 
         LocalDataManager localDataManager =new LocalDataManagerImpl();
         List<String> stockCodeList =localDataManager.getLocalStockCodeList();
