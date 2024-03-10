@@ -1,5 +1,6 @@
 package com.example.mq.wrapper.stock.constant;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 
 import java.util.Arrays;
@@ -14,7 +15,7 @@ public class StockConstant {
     public static final String INDICATOR_URL ="https://stock.xueqiu.com/v5/stock/finance/cn/indicator.json";
     public static final String COMPANY_URL ="https://stock.xueqiu.com/v5/stock/f10/cn/company.json";
 
-    public static final String COOKIE ="cookiesu=551703859817291; device_id=d1c43ea5bef6f4cbab0c374859804514; xq_a_token=76d4e5ee97f60e0be2c9b6c094156d577fba5c5b; xqat=76d4e5ee97f60e0be2c9b6c094156d577fba5c5b; xq_r_token=2537d01490f74c00d7d4a37578ac84f1b7481ca1; xq_id_token=eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJ1aWQiOi0xLCJpc3MiOiJ1YyIsImV4cCI6MTcxMTA2ODM4MiwiY3RtIjoxNzA5NTYwNjE1ODU1LCJjaWQiOiJkOWQwbjRBWnVwIn0.Y1vLxMAgM17tzrxcjiruNsSf77NlJTqbH8Akk-B2calOGFtKCD0JsatUC7rXIyXv8QuMWpyAudpJUcr3LwZ3ucb_d-4uU3KRi19E_pa_3zVGrLqcdyfMtfwaCZv482MBaXM65dSo67_VFwVJ1QKOQkuxqT0itK5z7A_it3eaNKvp82CsOj28R-nKkO9wAt180RnljiuzdFeRqHnmtj1rr_n6hLEfJiB-aFNJlPAid5CwDtsuFe6W9yhxHOyvw9VqT0bfy2h3WnSM45Y9kDmwGdf2hIwrRDyQ6PW4d2b3WfAdb4-eKLLq5Qx8yogTTVuCNhNFHF11mcn9fjtb0Pl83Q; u=551703859817291; is_overseas=0";
+    public static final String COOKIE ="cookiesu=551703859817291; device_id=d1c43ea5bef6f4cbab0c374859804514; u=551703859817291; xq_a_token=52dfb79aed5f2cdd1e7c2cfc56054ac1f5b77fc3; xqat=52dfb79aed5f2cdd1e7c2cfc56054ac1f5b77fc3; xq_r_token=e20d82fd7b432e0f32c54be5af4c28605e8c191f; xq_id_token=eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJ1aWQiOi0xLCJpc3MiOiJ1YyIsImV4cCI6MTcxMjM2NDQwMSwiY3RtIjoxNzEwMDcyMDg1ODg5LCJjaWQiOiJkOWQwbjRBWnVwIn0.k48ftNPfs1qidLHMQIknlhC-nVWcxdQFu4_ng6u-kiO71SzK6Mj_vzFLoKuY_tXzu6vc7BYM2fmMhNWdg1vdpwmOKEMXMyagpnZ89hgXypyvILzw2g9X9ts5GkI6byiG6l8fsLrrjXeODxnSLRFA7B82PxOXMnjnZFQN9FAP61iL-Xe8hBRKdKZt40n8rtR1lIA4t4FYEAr-ZoBl6pRKCs-3OyXYxUDAc8gdiX8TpHqJu05UjGtl0OvAoHbHUEntOHh5eo3JWsqjZu1PGXWSDFyij6G_8tRHzo2C0q4Sa1rb2zGLvVW1OK10Tj9rbAtKQV6bxx5XRU5T7n6M9Wkz6Q; is_overseas=0";
 
     public static final List<ImmutablePair<String, String>> STATISTICS_CODE_LIST = Arrays.asList(
             new ImmutablePair<>("SH000016", "上证50"),
@@ -72,4 +73,27 @@ public class StockConstant {
 
     public static final String LATEST_HOLD_SHARES_FILE ="/Users/maqiang/Documents/002-stock_data/north_hold_shares_%s.csv";
     public static final String LATEST_IND_HOLD_SHARES_FILE ="/Users/maqiang/Documents/002-stock_data/industry_north_hold_shares_%s.csv";
+
+    public static final String STATISTICS_MA_1000_PERCENT_LIST ="/Users/maqiang/Documents/002-stock_data/statistics_ma_1000_percent_%s_%s.csv";
+
+    public static String getPredictIncreaseType(String predictType){
+        switch(predictType){
+            case "减亏":
+            case "略增":
+            case "扭亏":
+            case "续盈":
+            case "预增":{
+                return "好转";
+            }
+            case "略减":
+            case "首亏":
+            case "续亏":
+            case "预减":
+            case "增亏":{
+                return "恶化";
+            }
+        }
+
+        return StringUtils.EMPTY;
+    }
 }

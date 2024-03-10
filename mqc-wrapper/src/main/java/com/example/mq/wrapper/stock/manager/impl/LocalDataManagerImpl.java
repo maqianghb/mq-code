@@ -452,9 +452,14 @@ public class LocalDataManagerImpl implements LocalDataManager {
                 continue;
             }
 
+            String predictIncreaseType = StockConstant.getPredictIncreaseType(financeNoticeDTO.getPredict_type());
+            if(StringUtils.isBlank(predictIncreaseType)){
+                continue;
+            }
+
             String key = new StringBuilder().append(indName)
                     .append("_").append(financeNoticeDTO.getPredict_indicator())
-                    .append("_").append(financeNoticeDTO.getPredict_type())
+                    .append("_").append(predictIncreaseType)
                     .toString();
             Integer num = keyAndNoticeNumMap.getOrDefault(key, 0);
             keyAndNoticeNumMap.put(key, num +1);

@@ -7,8 +7,10 @@ import com.example.mq.wrapper.stock.manager.impl.XueQiuStockManagerImpl;
 import com.example.mq.wrapper.stock.model.XueQiuStockKLineDTO;
 import com.google.common.collect.Lists;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 
+import java.io.File;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
@@ -20,8 +22,14 @@ import java.util.stream.Collectors;
 public class StatisticsCodeManager {
 
     public static void main(String[] args) {
-        StatisticsCodeManager statisticsCodeManager =new StatisticsCodeManager();
+        StatisticsCodeManager statisticsCodeManager = new StatisticsCodeManager();
 
+        // ma_1000统计数据
+        statisticsCodeManager.queryAndSaveStatisticsMa1000PercentData();
+
+    }
+
+    private void queryAndSaveStatisticsMa1000PercentData(){
         DateTimeFormatter df =DateTimeFormatter.ofPattern("yyyyMMdd");
         LocalDateTime localDateTime = LocalDateTime.now();//当前时间
         String queryDate = df.format(localDateTime);//格式化为字符串
@@ -30,19 +38,29 @@ public class StatisticsCodeManager {
         for(ImmutablePair<String, String> pair : StockConstant.STATISTICS_CODE_LIST){
             String statisticsCode =pair.getLeft();
             String statisticsName =pair.getRight();
-            ImmutablePair<Double, Double> curDiffPair = statisticsCodeManager.queryMa1000Percent(statisticsCode, queryDate, StockConstant.KLINE_DAY_COUNT);
-            String msg =new StringBuilder()
-                    .append("日期:").append(queryDate)
-                    .append(", code:").append(statisticsCode)
-                    .append(", name:").append(statisticsName)
-                    .append(", 均线差值:").append(NumberUtil.format(curDiffPair.getLeft() * 100, 1)).append("%")
-                    .append(", 均线差值百分位:").append(NumberUtil.format(curDiffPair.getRight() * 100, 1)).append("%")
-                    .append(";")
+            ImmutablePair<Double, Double> curDiffPair = this.queryMa1000Percent(statisticsCode, queryDate, StockConstant.KLINE_DAY_COUNT);
+            String msg =new StringBuilder().append(queryDate)
+                    .append(",").append(statisticsCode)
+                    .append(",").append(statisticsName)
+                    .append(",").append(NumberUtil.format(curDiffPair.getLeft() * 100, 1)).append("%")
+                    .append(",").append(NumberUtil.format(curDiffPair.getRight() * 100, 1)).append("%")
                     .toString();
             msgList.add(msg);
         }
 
-        msgList.forEach(msg -> System.out.println(msg));
+        List<String> strDataList =Lists.newArrayList();
+        strDataList.add("日期,code,名称,均线差值,差值百分比");
+        strDataList.addAll(msgList);
+
+        // 记录结果
+        try {
+            DateTimeFormatter df1 =DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss");
+            String strDateTime = df1.format(localDateTime);//格式化为字符串
+            String filterListName =String.format(StockConstant.STATISTICS_MA_1000_PERCENT_LIST, queryDate, strDateTime);
+            FileUtils.writeLines(new File(filterListName), "UTF-8", strDataList, false);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     /**
