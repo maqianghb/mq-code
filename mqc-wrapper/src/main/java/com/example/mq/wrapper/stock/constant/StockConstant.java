@@ -55,9 +55,12 @@ public class StockConstant {
     public static final String INDICATOR_LIST_XQ ="/Users/maqiang/Documents/002-stock_data/xq_finance/xq_indicator_list.txt";
     public static final String INCOME_LIST_Q ="/Users/maqiang/Documents/002-stock_data/xq_finance/xq_income_list_q.txt";
 
-    public static final String INDICATOR_LIST_ANALYSIS ="/Users/maqiang/Documents/002-stock_data/analysis_%s_%s.csv";
+    public static final String INDICATOR_LIST_ANALYSIS ="/Users/maqiang/Documents/002-stock_data/analysis_all_%s_%s.csv";
+
+    public static final String INDICATOR_LIST_FILTER ="/Users/maqiang/Documents/002-stock_data/analysis_filter_%s_%d_%s.csv";
+
     public static final String INDICATOR_LIST_PERCENT ="/Users/maqiang/Documents/002-stock_data/percent_%s_%s.csv";
-    public static final String INDICATOR_LIST_FILTER ="/Users/maqiang/Documents/002-stock_data/filter_%s_%d_%s.csv";
+
 
     public static final String DONG_CHAI_URL ="https://datacenter-web.eastmoney.com/api/data/v1/get";
     public static final Integer DONG_CHAI_MAX_LIMIT =500;
