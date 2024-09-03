@@ -18,18 +18,16 @@ public class CommonManager {
     public void testUpdateStockData() {
         LocalDataManager localDataManager =new LocalDataManagerImpl();
 
-        Boolean updateKlineData =true;
+        // 更新本地文件的K线数据
+        Boolean updateKlineData =false;
         if(updateKlineData){
-            // 更新本地文件的K线数据
             localDataManager.queryAndUpdateKLineList();
-
-            // 更新北上持股数据
             localDataManager.queryAndUpdateNorthHoldShareList();
         }
 
+        // 更新本地文件的财务数据
         Boolean updateFinanceData =false;
         if(updateFinanceData){
-            // 更新本地文件的财务数据
             localDataManager.queryAndUpdateBalanceData();
             localDataManager.queryAndUpdateIncomeData();
             localDataManager.queryAndUpdateCashFlowData();
@@ -37,8 +35,13 @@ public class CommonManager {
         }
 
         // 更新业绩预告和增减持数据
-//        localDataManager.queryAndSaveFinanceNotice();
-//        localDataManager.queryAndSaveHolderIncreaseList();
+        Boolean updateFinanceNotice =false;
+        if(updateFinanceNotice){
+            String reportDate ="2024-06-30";
+            localDataManager.queryAndSaveFinanceNotice(reportDate);
+            localDataManager.queryAndSaveHolderIncreaseList();
+        }
+
     }
 
 
@@ -49,8 +52,8 @@ public class CommonManager {
     public void testQueryAnalysisData(){
         // 参数列表
         Integer reportYear =2024;
-        FinanceReportTypeEnum reportTypeEnum =FinanceReportTypeEnum.QUARTER_1;
-        String kLineDate ="20240520";
+        FinanceReportTypeEnum reportTypeEnum =FinanceReportTypeEnum.HALF_YEAR;
+        String kLineDate ="20240830";
 
         LocalDataManager localDataManager =new LocalDataManagerImpl();
         List<String> stockCodeList =localDataManager.getLocalStockCodeList();
