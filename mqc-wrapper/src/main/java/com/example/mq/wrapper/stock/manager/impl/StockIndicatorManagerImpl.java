@@ -558,16 +558,23 @@ public class StockIndicatorManagerImpl implements StockIndicatorManager {
                     return true;
                 })
                 .filter(indicatorDTO -> {
-                    // pb分位值在30%以下，或均线分位值在20%以下
-                    if (indicatorDTO.getPb_p_1000() != null && indicatorDTO.getPb_p_1000() > 0.3) {
-                        if (indicatorDTO.getMa_1000_diff_p() != null && indicatorDTO.getMa_1000_diff_p() < 0.2) {
-                            return true;
-                        }
-
-                        return false;
+                    // pb分位值在30%以下
+                    if(indicatorDTO.getPb_p_1000() !=null && indicatorDTO.getPb_p_1000() <=0.3){
+                        return true;
                     }
 
-                    return true;
+                    // 或均线分位值在20%以下
+                    if (indicatorDTO.getMa_1000_diff_p() != null && indicatorDTO.getMa_1000_diff_p() < 0.2) {
+                        return true;
+                    }
+
+                    // 营收和净利润双增，不受估值限制
+                    if(indicatorDTO.getCur_q_operating_income_yoy() != null && indicatorDTO.getCur_q_operating_income_yoy() >= 0.1
+                            && indicatorDTO.getCur_q_net_profit_atsopc_yoy() != null && indicatorDTO.getCur_q_net_profit_atsopc_yoy() >= 0.15){
+                        return true;
+                    }
+
+                    return false;
                 })
                 .filter(indicatorDTO -> {
                     if (indicatorDTO.getMarket_capital() != null && indicatorDTO.getMarket_capital() >= 1000) {
