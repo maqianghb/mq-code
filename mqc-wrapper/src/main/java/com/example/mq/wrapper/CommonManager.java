@@ -37,7 +37,7 @@ public class CommonManager {
         // 更新业绩预告和增减持数据
         Boolean updateFinanceNotice =false;
         if(updateFinanceNotice){
-            String reportDate ="2024-06-30";
+            String reportDate ="2024-09-30";
             localDataManager.queryAndSaveFinanceNotice(reportDate);
             localDataManager.queryAndSaveHolderIncreaseList();
         }

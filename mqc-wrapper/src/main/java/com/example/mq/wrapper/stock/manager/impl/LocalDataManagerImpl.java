@@ -63,7 +63,14 @@ public class LocalDataManagerImpl implements LocalDataManager {
         // 公司信息
         try {
             List<String> strCompanyDTOList = stockCodeList.stream()
-                    .map(stockCode -> xueQiuStockManager.queryCompanyDTO(stockCode))
+                    .map(stockCode -> {
+                        CompanyDTO companyDTO = this.getLocalCompanyDTO(stockCode);
+                        if(companyDTO !=null){
+                            return companyDTO;
+                        }
+
+                        return xueQiuStockManager.queryCompanyDTO(stockCode);
+                    })
                     .filter(companyDTO -> companyDTO != null)
                     .sorted(Comparator.comparing(CompanyDTO::getCode))
                     .map(balanceDTO -> JSON.toJSONString(balanceDTO))

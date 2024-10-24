@@ -210,7 +210,13 @@ public class XueQiuStockManagerImpl implements XueQiuStockManager {
                 .toString();
 
         String strResult = CloseableHttpClientUtil.doGet(url, StockConstant.COOKIE);
-        String stockName =this.getStockName(strResult);
+
+        String stockName = Optional.ofNullable(JSONObject.parseObject(strResult))
+                .map(jsonResult -> jsonResult.getJSONObject("data"))
+                .map(data -> data.getString("company"))
+                .map(strCompany -> JSON.parseObject(strCompany))
+                .map(jsonCompany -> jsonCompany.getString("org_short_name_cn"))
+                .orElse(StringUtils.EMPTY);
 
         String ind_name = Optional.ofNullable(JSONObject.parseObject(strResult))
                 .map(jsonResult -> jsonResult.getJSONObject("data"))
