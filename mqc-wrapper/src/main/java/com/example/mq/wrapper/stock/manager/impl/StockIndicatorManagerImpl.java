@@ -118,7 +118,7 @@ public class StockIndicatorManagerImpl implements StockIndicatorManager {
             return;
         }
 
-        String header = "行业,指标,10分位,25分位,50分位,75分位,90分位";
+        String header = "行业,指标,10分位,25分位,50分位,75分位,90分位,95分位";
         List<String> strPercentList = Lists.newArrayList();
         strPercentList.add(header);
 
@@ -399,6 +399,7 @@ public class StockIndicatorManagerImpl implements StockIndicatorManager {
                 .append(",").append(sortedIndicatorValueList.get(totalSize * 50 / 100))
                 .append(",").append(sortedIndicatorValueList.get(totalSize * 75 / 100))
                 .append(",").append(sortedIndicatorValueList.get(totalSize * 90 / 100))
+                .append(",").append(sortedIndicatorValueList.get(totalSize * 95 / 100))
                 .toString();
 
         return msg;
