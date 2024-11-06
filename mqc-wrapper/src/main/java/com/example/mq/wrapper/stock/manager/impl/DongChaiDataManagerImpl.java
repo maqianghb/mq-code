@@ -218,7 +218,7 @@ public class DongChaiDataManagerImpl implements DongChaiDataManager {
 
     @Override
     public List<DongChaiFreeShareDTO> queryFreeShareDTOList(Integer beforeMonthNum, Integer afterMonthNum) {
-        if(beforeMonthNum ==null || afterMonthNum <=0){
+        if(beforeMonthNum ==null || afterMonthNum ==null){
             return Lists.newArrayList();
         }
 
