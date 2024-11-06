@@ -19,6 +19,7 @@ import com.google.common.collect.Lists;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.time.DateUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 
 import java.io.File;
@@ -39,7 +40,7 @@ public class StockIndicatorManagerImpl implements StockIndicatorManager {
             ",固定资产同比,在建工程同比,商誉+无形/净资产,固定资产/净资产,在建工程/净资产" +
             ",现金等价物/短期负债,经营现金流入/营收,经营现金净额/净利润" +
             ",应付票据及应付账款,应收票据及应收账款,应付票据及应付账款/应收票据及应收账款,应收账款周转天数,存货周转天数" +
-            ",增减持类型,增减持数量(万股),变动比例(%),解禁时间,解禁数量(万股),占总市值的比例(%)" +
+            ",增减持预告时间,增减持类型,增减持数量(万股),变动比例(%),解禁时间,解禁数量(万股),占总市值的比例(%)" +
             ",近5季度的毛利率和净利率,近5季度的营收和利润(亿)" +
             ",K线日期,K线数量,收盘价,ma1000值,股东权益合计,营业收入,营业成本,经营现金流入,经营现金净额,净利润" +
             ",1月后股价波动,3月后股价波动,半年后股价波动,1年后股价波动";
@@ -540,7 +541,7 @@ public class StockIndicatorManagerImpl implements StockIndicatorManager {
                     String ind_name = indicatorDTO.getInd_name();
                     if (StringUtils.isNotBlank(ind_name)) {
                         // 农业、环保、建筑相关行业直接过滤掉
-                        if (ind_name.contains("农") || ind_name.contains("环保") || ind_name.contains("建筑")
+                        if (ind_name.contains("农") || ind_name.contains("养殖") || ind_name.contains("环保") || ind_name.contains("建筑")
                                 || ind_name.contains("保险") || ind_name.contains("纺织") || ind_name.contains("房地产")
                                 || ind_name.contains("服装")) {
                             return false;
@@ -558,30 +559,42 @@ public class StockIndicatorManagerImpl implements StockIndicatorManager {
                     return true;
                 })
                 .filter(indicatorDTO -> {
-                    // pb分位值在30%以下
-                    if(indicatorDTO.getPb_p_1000() !=null && indicatorDTO.getPb_p_1000() <=0.3){
-                        return true;
-                    }
-
-                    // 或均线分位值在20%以下
+                    // 均线分位值在20%以下
                     if (indicatorDTO.getMa_1000_diff_p() != null && indicatorDTO.getMa_1000_diff_p() < 0.2) {
                         return true;
                     }
 
-                    // 营收和净利润双增，不受估值限制
-                    if(indicatorDTO.getCur_q_operating_income_yoy() != null && indicatorDTO.getCur_q_operating_income_yoy() >= 0.1
-                            && indicatorDTO.getCur_q_net_profit_atsopc_yoy() != null && indicatorDTO.getCur_q_net_profit_atsopc_yoy() >= 0.15){
+                    // pb分位值在30%以下
+                    if(indicatorDTO.getPb_p_1000() !=null && indicatorDTO.getPb_p_1000() <=0.3){
                         return true;
+                    }else if(indicatorDTO.getPb_p_1000() !=null && indicatorDTO.getPb_p_1000() <=0.5){
+                        // pb分位值在30%～50%时，营收和净利润双增
+                        if(indicatorDTO.getCur_q_operating_income_yoy() !=null && indicatorDTO.getCur_q_operating_income_yoy() >= 0.1
+                                && indicatorDTO.getCur_q_net_profit_atsopc_yoy() !=null && indicatorDTO.getCur_q_net_profit_atsopc_yoy() >= 0.15){
+                            return true;
+                        }
+                    }else{
+                        // pb分位值>50%时，营收和净利润双增, 且毛利率和净利率有要求
+                        if(indicatorDTO.getCur_q_operating_income_yoy() !=null && indicatorDTO.getCur_q_operating_income_yoy() >= 0.1
+                                && indicatorDTO.getCur_q_net_profit_atsopc_yoy() !=null && indicatorDTO.getCur_q_net_profit_atsopc_yoy() >= 0.15
+                                && indicatorDTO.getCur_q_gross_margin_rate() !=null && indicatorDTO.getCur_q_gross_margin_rate() >= 0.30
+                                && indicatorDTO.getCur_q_net_selling_rate() !=null && indicatorDTO.getCur_q_net_selling_rate() >= 0.15){
+                            return true;
+                        }
                     }
 
                     return false;
                 })
                 .filter(indicatorDTO -> {
-                    if (indicatorDTO.getMarket_capital() != null && indicatorDTO.getMarket_capital() >= 1000) {
+                    if(indicatorDTO.getMarket_capital() ==null){
+                        return false;
+                    }
+
+                    if (indicatorDTO.getMarket_capital() >= 1000) {
                         // 市值千亿以上，毛利率和净利率条件放宽
                         return indicatorDTO.getCur_q_gross_margin_rate() != null && indicatorDTO.getCur_q_gross_margin_rate() >= 0.1
                                 && indicatorDTO.getCur_q_net_selling_rate() != null && indicatorDTO.getCur_q_net_selling_rate() >= 0.05;
-                    } else if (indicatorDTO.getMarket_capital() != null && indicatorDTO.getMarket_capital() <= 100) {
+                    } else if (indicatorDTO.getMarket_capital() >= 100) {
                         // 市值在100亿~1000亿间
                         return indicatorDTO.getCur_q_gross_margin_rate() != null && indicatorDTO.getCur_q_gross_margin_rate() >= 0.15
                                 && indicatorDTO.getCur_q_net_selling_rate() != null && indicatorDTO.getCur_q_net_selling_rate() >= 0.07;
@@ -602,6 +615,7 @@ public class StockIndicatorManagerImpl implements StockIndicatorManager {
 
                         return curMatchNum >= 1;
                     }
+
                 })
                 .collect(Collectors.toList());
 
@@ -754,6 +768,14 @@ public class StockIndicatorManagerImpl implements StockIndicatorManager {
         }
         if (analyseIndicatorDTO.getInventory_turnover_days() != null) {
             analyseIndicatorDTO.setInventory_turnover_days(NumberUtil.format(analyseIndicatorDTO.getInventory_turnover_days(), 1));
+        }
+        if(StringUtils.isNotBlank(analyseIndicatorDTO.getNotice_date()) && analyseIndicatorDTO.getNotice_date().length() >=10){
+            String noticeDate = StringUtils.substring(analyseIndicatorDTO.getNotice_date(), 0, 10);
+            analyseIndicatorDTO.setNotice_date(noticeDate);
+        }
+        if(StringUtils.isNotBlank(analyseIndicatorDTO.getFree_date()) && analyseIndicatorDTO.getFree_date().length() >=10){
+            String freeDate = StringUtils.substring(analyseIndicatorDTO.getFree_date(), 0, 10);
+            analyseIndicatorDTO.setFree_date(freeDate);
         }
     }
 
@@ -973,7 +995,7 @@ public class StockIndicatorManagerImpl implements StockIndicatorManager {
     }
 
     /**
-     * 增减持数据
+     * 6月内公告的增减持数据
      *
      * @param indicatorElement
      * @param code
@@ -986,7 +1008,13 @@ public class StockIndicatorManagerImpl implements StockIndicatorManager {
         DongChaiDataManager manager = new DongChaiDataManagerImpl();
         DongChaiHolderIncreaseDTO holderIncreaseDTO = manager.getHolderIncreaseDTO(code);
         if (holderIncreaseDTO != null) {
-            indicatorElement.setHolderIncreaseDTO(holderIncreaseDTO);
+            Date startDate = DateUtils.addDays(new Date(), -90);
+
+            String noticeDate = holderIncreaseDTO.getNotice_date();
+            Date date = DateUtil.parseDateTime(noticeDate, DateUtil.DATE_TIME_FORMAT);
+            if(date.after(startDate)){
+                indicatorElement.setHolderIncreaseDTO(holderIncreaseDTO);
+            }
         }
     }
 

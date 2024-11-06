@@ -26,10 +26,11 @@ public interface DongChaiDataManager {
     /**
      * 查询解禁数据
      *
-     * @param monthNum 前后N个月的数据
+     * @param beforeMonthNum 前N个月的数据
+     * @param afterMonthNum 后N个月的数据
      * @return
      */
-    List<DongChaiFreeShareDTO> queryFreeShareDTOList(Integer monthNum);
+    List<DongChaiFreeShareDTO> queryFreeShareDTOList(Integer beforeMonthNum, Integer afterMonthNum);
 
     /**
      * 查询沪港通持股数据
@@ -39,7 +40,7 @@ public interface DongChaiDataManager {
     List<DongChaiNorthHoldShareDTO> queryNorthHoldShareDTOList(String simpleCode);
 
     /**
-     * 增减持信息
+     * 最近的增减持信息
      *
      * @param code
      * @return
@@ -47,7 +48,7 @@ public interface DongChaiDataManager {
     DongChaiHolderIncreaseDTO getHolderIncreaseDTO(String code);
 
     /**
-     * 解禁信息
+     * 解禁信息(往前3个月，往后6个月)
      *
      * @param code
      * @return

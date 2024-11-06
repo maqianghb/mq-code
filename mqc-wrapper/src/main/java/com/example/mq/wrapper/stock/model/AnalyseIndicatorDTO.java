@@ -200,6 +200,11 @@ public class AnalyseIndicatorDTO {
     private Double inventory_turnover_days;
 
     /**
+     * 增减持预告时间
+     */
+    private String notice_date;
+
+    /**
      * 增减持类型
      */
     private String direction;

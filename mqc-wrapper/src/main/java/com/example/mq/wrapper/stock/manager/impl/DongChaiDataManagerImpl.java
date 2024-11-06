@@ -217,14 +217,14 @@ public class DongChaiDataManagerImpl implements DongChaiDataManager {
     }
 
     @Override
-    public List<DongChaiFreeShareDTO> queryFreeShareDTOList(Integer monthNum) {
-        if(monthNum ==null || monthNum <=0){
+    public List<DongChaiFreeShareDTO> queryFreeShareDTOList(Integer beforeMonthNum, Integer afterMonthNum) {
+        if(beforeMonthNum ==null || afterMonthNum <=0){
             return Lists.newArrayList();
         }
 
         LocalDate nowLocalDate = LocalDate.now();
-        String startDate =nowLocalDate.plusMonths(-monthNum).format(DateTimeFormatter.ISO_DATE);
-        String endDate =nowLocalDate.plusMonths(monthNum).format(DateTimeFormatter.ISO_DATE);
+        String startDate =nowLocalDate.plusMonths(-beforeMonthNum).format(DateTimeFormatter.ISO_DATE);
+        String endDate =nowLocalDate.plusMonths(afterMonthNum).format(DateTimeFormatter.ISO_DATE);
 
         int totalNum =5000;
         List<String> allColumnList =Lists.newArrayList();
@@ -393,7 +393,7 @@ public class DongChaiDataManagerImpl implements DongChaiDataManager {
     public DongChaiFreeShareDTO getFreeShareDTO(String code){
         try {
             if(CollectionUtils.isEmpty(freeShareDTOList)){
-                freeShareDTOList = this.queryFreeShareDTOList(6);
+                freeShareDTOList = this.queryFreeShareDTOList(3,6);
             }
 
             return Optional.ofNullable(freeShareDTOList).orElse(Lists.newArrayList()).stream()

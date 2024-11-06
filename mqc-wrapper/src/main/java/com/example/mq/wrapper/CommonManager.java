@@ -19,7 +19,7 @@ public class CommonManager {
         LocalDataManager localDataManager =new LocalDataManagerImpl();
 
         // 更新本地文件的K线数据
-        Boolean updateKlineData =false;
+        Boolean updateKlineData =true;
         if(updateKlineData){
             localDataManager.queryAndUpdateKLineList();
             localDataManager.queryAndUpdateNorthHoldShareList();
@@ -52,8 +52,8 @@ public class CommonManager {
     public void testQueryAnalysisData(){
         // 参数列表
         Integer reportYear =2024;
-        FinanceReportTypeEnum reportTypeEnum =FinanceReportTypeEnum.HALF_YEAR;
-        String kLineDate ="20240830";
+        FinanceReportTypeEnum reportTypeEnum =FinanceReportTypeEnum.QUARTER_3;
+        String kLineDate ="20241101";
 
         LocalDataManager localDataManager =new LocalDataManagerImpl();
         List<String> stockCodeList =localDataManager.getLocalStockCodeList();
