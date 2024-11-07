@@ -956,9 +956,9 @@ public class StockIndicatorManagerImpl implements StockIndicatorManager {
         LocalDateTime oneMonthDateTime = kLineDateTime.plusMonths(1);
         List<XueQiuStockKLineDTO> oneMonthKLineDTOList = localDataManager.getLocalKLineList(code, oneMonthDateTime, KLineTypeEnum.DAY, 1);
         if (CollectionUtils.isNotEmpty(oneMonthKLineDTOList)) {
-            XueQiuStockKLineDTO oneMonthKLineDTO = oneMonthKLineDTOList.get(0);
-            LocalDateTime oneMonthKLineDateTime = LocalDateTime.ofEpochSecond(oneMonthKLineDTO.getTimestamp() / 1000, 0, ZoneOffset.ofHours(8));
-            if (StringUtils.equals(oneMonthDateTime.format(df), oneMonthKLineDateTime.format(df))) {
+            Long oneMonthKLineTimestamp = oneMonthKLineDTOList.get(0).getTimestamp();
+            long oneMonthTimestamp = oneMonthDateTime.toInstant(ZoneOffset.of("+8")).toEpochMilli();
+            if(Math.abs(oneMonthTimestamp -oneMonthKLineTimestamp) <= 7 *24 *3600 *1000){
                 indicatorElement.setOneMonthKLineDTO(oneMonthKLineDTOList.get(0));
             }
         }
@@ -966,9 +966,9 @@ public class StockIndicatorManagerImpl implements StockIndicatorManager {
         LocalDateTime threeMonthDateTime = kLineDateTime.plusMonths(3);
         List<XueQiuStockKLineDTO> threeMonthKLineDTOList = localDataManager.getLocalKLineList(code, threeMonthDateTime, KLineTypeEnum.DAY, 1);
         if (CollectionUtils.isNotEmpty(threeMonthKLineDTOList)) {
-            XueQiuStockKLineDTO threeMonthKLineDTO = threeMonthKLineDTOList.get(0);
-            LocalDateTime threeMonthKLineDateTime = LocalDateTime.ofEpochSecond(threeMonthKLineDTO.getTimestamp() / 1000, 0, ZoneOffset.ofHours(8));
-            if (StringUtils.equals(threeMonthDateTime.format(df), threeMonthKLineDateTime.format(df))) {
+            Long threeMonthKLineTimestamp = threeMonthKLineDTOList.get(0).getTimestamp();
+            long threeMonthTimestamp = threeMonthDateTime.toInstant(ZoneOffset.of("+8")).toEpochMilli();
+            if(Math.abs(threeMonthTimestamp -threeMonthKLineTimestamp) <= 7 *24 *3600 *1000){
                 indicatorElement.setThreeMonthKLineDTO(threeMonthKLineDTOList.get(0));
             }
         }
@@ -976,9 +976,9 @@ public class StockIndicatorManagerImpl implements StockIndicatorManager {
         LocalDateTime halfYearDateTime = kLineDateTime.plusMonths(6);
         List<XueQiuStockKLineDTO> halfYearKLineDTOList = localDataManager.getLocalKLineList(code, halfYearDateTime, KLineTypeEnum.DAY, 1);
         if (CollectionUtils.isNotEmpty(halfYearKLineDTOList)) {
-            XueQiuStockKLineDTO halfYearKLineDTO = halfYearKLineDTOList.get(0);
-            LocalDateTime halfYearKLineDateTime = LocalDateTime.ofEpochSecond(halfYearKLineDTO.getTimestamp() / 1000, 0, ZoneOffset.ofHours(8));
-            if (StringUtils.equals(halfYearDateTime.format(df), halfYearKLineDateTime.format(df))) {
+            Long halfYearKLineTimestamp = halfYearKLineDTOList.get(0).getTimestamp();
+            long halfYearTimestamp = halfYearDateTime.toInstant(ZoneOffset.of("+8")).toEpochMilli();
+            if (Math.abs(halfYearTimestamp - halfYearKLineTimestamp) <= 7 *24 *3600 *1000) {
                 indicatorElement.setHalfYearKLineDTO(halfYearKLineDTOList.get(0));
             }
         }
@@ -986,9 +986,9 @@ public class StockIndicatorManagerImpl implements StockIndicatorManager {
         LocalDateTime oneYearDateTime = kLineDateTime.plusYears(1);
         List<XueQiuStockKLineDTO> oneYearKLineDTOList = localDataManager.getLocalKLineList(code, oneYearDateTime, KLineTypeEnum.DAY, 1);
         if (CollectionUtils.isNotEmpty(oneYearKLineDTOList)) {
-            XueQiuStockKLineDTO oneYearKLineDTO = oneYearKLineDTOList.get(0);
-            LocalDateTime oneYearKLineDateTime = LocalDateTime.ofEpochSecond(oneYearKLineDTO.getTimestamp() / 1000, 0, ZoneOffset.ofHours(8));
-            if (StringUtils.equals(oneYearDateTime.format(df), oneYearKLineDateTime.format(df))) {
+            Long oneYearKLineTimestamp = oneYearKLineDTOList.get(0).getTimestamp();
+            long oneYearTimestamp = oneYearDateTime.toInstant(ZoneOffset.of("+8")).toEpochMilli();
+            if (Math.abs(oneYearTimestamp - oneYearKLineTimestamp) <= 7 *24 *3600 *1000) {
                 indicatorElement.setOneYearKLineDTO(oneYearKLineDTOList.get(0));
             }
         }
@@ -1202,8 +1202,8 @@ public class StockIndicatorManagerImpl implements StockIndicatorManager {
 
         if (indicatorDTO.getCur_q_net_selling_rate() == null) {
             QuarterIncomeDTO curQuarterIncomeDTO = indicatorElement.getCurQuarterIncomeDTO();
-            if (curQuarterIncomeDTO != null && curQuarterIncomeDTO.getRevenue() != null && curQuarterIncomeDTO.getNet_profit() != null) {
-                double cur_q_net_selling_rate = curQuarterIncomeDTO.getNet_profit() / curQuarterIncomeDTO.getRevenue();
+            if (curQuarterIncomeDTO != null && curQuarterIncomeDTO.getRevenue() != null && curQuarterIncomeDTO.getContinous_operating_np() != null) {
+                double cur_q_net_selling_rate = curQuarterIncomeDTO.getContinous_operating_np() / curQuarterIncomeDTO.getRevenue();
                 indicatorDTO.setCur_q_net_selling_rate(cur_q_net_selling_rate);
             }
         }
@@ -1223,8 +1223,8 @@ public class StockIndicatorManagerImpl implements StockIndicatorManager {
             Double cur_q_net_selling_rate = indicatorDTO.getCur_q_net_selling_rate();
             if (cur_q_net_selling_rate != null) {
                 QuarterIncomeDTO lastYearQuarterIncomeDTO = indicatorElement.getLastYearQuarterIncomeDTO();
-                if (lastYearQuarterIncomeDTO != null && lastYearQuarterIncomeDTO.getRevenue() != null && lastYearQuarterIncomeDTO.getNet_profit() != null) {
-                    double last_year_cur_q_net_selling_rate = lastYearQuarterIncomeDTO.getNet_profit() / lastYearQuarterIncomeDTO.getRevenue();
+                if (lastYearQuarterIncomeDTO != null && lastYearQuarterIncomeDTO.getRevenue() != null && lastYearQuarterIncomeDTO.getContinous_operating_np() != null) {
+                    double last_year_cur_q_net_selling_rate = lastYearQuarterIncomeDTO.getContinous_operating_np() / lastYearQuarterIncomeDTO.getRevenue();
                     double cur_q_net_selling_rate_change = (cur_q_net_selling_rate - last_year_cur_q_net_selling_rate)
                             / Math.abs(last_year_cur_q_net_selling_rate);
                     indicatorDTO.setCur_q_net_selling_rate_change(cur_q_net_selling_rate_change);
@@ -1247,8 +1247,8 @@ public class StockIndicatorManagerImpl implements StockIndicatorManager {
             Double cur_q_net_selling_rate = indicatorDTO.getCur_q_net_selling_rate();
             if (cur_q_net_selling_rate != null) {
                 QuarterIncomeDTO lastPeriodQuarterIncomeDTO = indicatorElement.getLastPeriodQuarterIncomeDTO();
-                if (lastPeriodQuarterIncomeDTO != null && lastPeriodQuarterIncomeDTO.getRevenue() != null && lastPeriodQuarterIncomeDTO.getNet_profit() != null) {
-                    double last_period_cur_q_net_selling_rate = lastPeriodQuarterIncomeDTO.getNet_profit() / lastPeriodQuarterIncomeDTO.getRevenue();
+                if (lastPeriodQuarterIncomeDTO != null && lastPeriodQuarterIncomeDTO.getRevenue() != null && lastPeriodQuarterIncomeDTO.getContinous_operating_np() != null) {
+                    double last_period_cur_q_net_selling_rate = lastPeriodQuarterIncomeDTO.getContinous_operating_np() / lastPeriodQuarterIncomeDTO.getRevenue();
                     double cur_q_net_selling_rate_q_chg = (cur_q_net_selling_rate - last_period_cur_q_net_selling_rate)
                             / Math.abs(last_period_cur_q_net_selling_rate);
                     indicatorDTO.setCur_q_net_selling_rate_q_chg(cur_q_net_selling_rate_q_chg);
@@ -1269,7 +1269,7 @@ public class StockIndicatorManagerImpl implements StockIndicatorManager {
             QuarterIncomeDTO curQuarterIncomeDTO = indicatorElement.getCurQuarterIncomeDTO();
             QuarterIncomeDTO lastYearQuarterIncomeDTO = indicatorElement.getLastYearQuarterIncomeDTO();
             if (curQuarterIncomeDTO != null && lastYearQuarterIncomeDTO != null) {
-                double cur_q_net_profit_atsopc_yoy = (curQuarterIncomeDTO.getNet_profit() - lastYearQuarterIncomeDTO.getNet_profit())
+                double cur_q_net_profit_atsopc_yoy = (curQuarterIncomeDTO.getContinous_operating_np() - lastYearQuarterIncomeDTO.getContinous_operating_np())
                         / Math.abs(lastYearQuarterIncomeDTO.getNet_profit());
                 indicatorDTO.setCur_q_net_profit_atsopc_yoy(cur_q_net_profit_atsopc_yoy);
             }
@@ -1376,8 +1376,8 @@ public class StockIndicatorManagerImpl implements StockIndicatorManager {
                         builder.append(str_gross_rate);
                     }
                     builder.append("/");
-                    if (quarterIncomeDTO.getTotal_revenue() != null && quarterIncomeDTO.getNet_profit() != null) {
-                        double net_profit_rate = quarterIncomeDTO.getNet_profit() / quarterIncomeDTO.getTotal_revenue();
+                    if (quarterIncomeDTO.getTotal_revenue() != null && quarterIncomeDTO.getContinous_operating_np() != null) {
+                        double net_profit_rate = quarterIncomeDTO.getContinous_operating_np() / quarterIncomeDTO.getTotal_revenue();
                         String str_net_profit_rate = NumberUtil.format(net_profit_rate * 100, 1) + "%";
                         builder.append(str_net_profit_rate);
                     }
@@ -1404,7 +1404,7 @@ public class StockIndicatorManagerImpl implements StockIndicatorManager {
                     }
                     builder.append("/");
                     if (quarterIncomeDTO.getNet_profit() != null) {
-                        double net_profit = quarterIncomeDTO.getNet_profit() / (1.0 * 10000 * 10000);
+                        double net_profit = quarterIncomeDTO.getContinous_operating_np() / (1.0 * 10000 * 10000);
                         String str_net_profit = NumberUtil.format(net_profit, 1) + "";
                         builder.append(str_net_profit);
                     }
@@ -1457,7 +1457,9 @@ public class StockIndicatorManagerImpl implements StockIndicatorManager {
             return null;
         }
 
-        long startTimestamp = LocalDateTime.now().plusMonths(-3).toInstant(ZoneOffset.of("+8")).toEpochMilli();
+        DateTimeFormatter df =DateTimeFormatter.ofPattern("yyyyMMdd");
+        LocalDateTime klineDateTime = LocalDate.parse(indicatorDTO.getKLineDate(), df).atStartOfDay();
+        long startTimestamp = klineDateTime.plusMonths(-3).toInstant(ZoneOffset.of("+8")).toEpochMilli();
         List<XueQiuStockKLineDTO> matchedKLineDTOList = indicatorElement.getKLineDTOList().stream()
                 .filter(kLineDTO -> kLineDTO.getTimestamp() != null && kLineDTO.getTimestamp() >= startTimestamp)
                 .filter(kLineDTO -> {
@@ -1547,7 +1549,7 @@ public class StockIndicatorManagerImpl implements StockIndicatorManager {
                 .map(kLineDTO -> kLineDTO.getClose() - kLineDTO.getMa_1000_value())
                 .sorted()
                 .collect(Collectors.toList());
-        if (CollectionUtils.isEmpty(diffValueList) || diffValueList.size() < 1000) {
+        if (CollectionUtils.isEmpty(diffValueList) || diffValueList.size() < 500) {
             return null;
         }
 
