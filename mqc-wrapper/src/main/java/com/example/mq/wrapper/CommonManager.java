@@ -65,8 +65,8 @@ public class CommonManager {
         stockIndicatorManager.calculateAndSaveAllAnalysisDTO(kLineDate, stockCodeList, reportYear ,reportTypeEnum);
 
         // 沪港通数据
-        stockIndicatorManager.queryAndSaveLatestNorthHoldShares(stockCodeList);
-        stockIndicatorManager.queryAndSaveLatestIndustryHoldShares();
+        stockIndicatorManager.queryAndSaveNorthHoldShares(stockCodeList, kLineDate);
+        stockIndicatorManager.queryAndSaveIndustryHoldShares(kLineDate);
 
     }
 

@@ -882,12 +882,15 @@ public class LocalDataManagerImpl implements LocalDataManager {
     }
 
     /**
-     * 查询最近日期的沪港通数据
+     * 查询指定日期的沪港通数据
      */
-    public List<DongChaiNorthHoldShareDTO> queryLatestNorthHoldShares(List<String> stockCodeList){
+    public List<DongChaiNorthHoldShareDTO> queryNorthHoldShares(List<String> stockCodeList, String queryDate){
         if(CollectionUtils.isEmpty(stockCodeList)){
             return Lists.newArrayList();
         }
+
+        LocalDateTime queryDateTime = DateUtil.parseLocalDate(queryDate, DateUtil.DATE_FORMAT).atStartOfDay();
+        long queryTimestamp = queryDateTime.toInstant(ZoneOffset.of("+8")).toEpochMilli();
 
         // 查询最新的持股数据
         List<DongChaiNorthHoldShareDTO> latestHoldShareDTOList =Lists.newArrayList();
@@ -901,6 +904,15 @@ public class LocalDataManagerImpl implements LocalDataManager {
                 }
                 DongChaiNorthHoldShareDTO tmpHoldShareDTO = Optional.ofNullable(strList).orElse(Lists.newArrayList()).stream()
                         .map(str -> JSON.parseObject(str, DongChaiNorthHoldShareDTO.class))
+                        .filter(holdShareDTO -> {
+                            if(holdShareDTO.getTradeDate() ==null){
+                                return false;
+                            }
+
+                            LocalDateTime tradeDateTime = DateUtil.parseLocalDateTime(holdShareDTO.getTradeDate(), DateUtil.DATE_TIME_FORMAT);
+                            long tradeTimestamp = tradeDateTime.toInstant(ZoneOffset.of("+8")).toEpochMilli();
+                            return tradeTimestamp <= queryTimestamp;
+                        })
                         .sorted(Comparator.comparing(DongChaiNorthHoldShareDTO::getTradeDate).reversed())
                         .findFirst()
                         .orElse(null);
@@ -908,7 +920,7 @@ public class LocalDataManagerImpl implements LocalDataManager {
                     latestHoldShareDTOList.add(tmpHoldShareDTO);
                 }
 
-                System.out.println(" queryLatestNorthHoldShares end, tmpHoldShareDTO: " + JSON.toJSONString(tmpHoldShareDTO));
+                System.out.println(" queryNorthHoldShares end, tmpHoldShareDTO: " + JSON.toJSONString(tmpHoldShareDTO));
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -937,8 +949,7 @@ public class LocalDataManagerImpl implements LocalDataManager {
                     .map(str -> JSON.parseObject(str, DongChaiNorthHoldShareDTO.class))
                     .filter(holdShareDTO -> holdShareDTO.getTradeDate() != null)
                     .filter(holdShareDTO -> {
-                        DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-                        LocalDateTime tradeDateTime = LocalDate.parse(holdShareDTO.getTradeDate(), df).atStartOfDay();
+                        LocalDateTime tradeDateTime = DateUtil.parseLocalDateTime(holdShareDTO.getTradeDate(), DateUtil.DATE_TIME_FORMAT);
                         long tradeTimeMillis = tradeDateTime.toInstant(ZoneOffset.of("+8")).toEpochMilli();
 
                         return tradeTimeMillis <= endTimeMillis;
@@ -962,7 +973,7 @@ public class LocalDataManagerImpl implements LocalDataManager {
      *
      * @return
      */
-    public List<DongChaiIndustryHoldShareDTO> queryLatestIndustryHoldShareDTO(){
+    public List<DongChaiIndustryHoldShareDTO> queryIndustryHoldShareDTO(String queryDate){
         List<String> stockCodeList = this.getLocalStockCodeList();
         List<String> indNameList =Optional.ofNullable(stockCodeList).orElse(Lists.newArrayList()).stream()
                 .map(stockCode -> this.getLocalCompanyDTO(stockCode))
@@ -972,6 +983,9 @@ public class LocalDataManagerImpl implements LocalDataManager {
         if(CollectionUtils.isEmpty(indNameList)){
             return Lists.newArrayList();
         }
+
+        LocalDateTime queryDateTime = DateUtil.parseLocalDate(queryDate, DateUtil.DATE_FORMAT).atStartOfDay();
+        long queryTimestamp = queryDateTime.toInstant(ZoneOffset.of("+8")).toEpochMilli();
 
         List<DongChaiIndustryHoldShareDTO> industryHoldShareDTOList =Lists.newArrayList();
         for(String indName : indNameList){
@@ -985,7 +999,15 @@ public class LocalDataManagerImpl implements LocalDataManager {
 
                 DongChaiIndustryHoldShareDTO industryHoldShareDTO = Optional.ofNullable(strList).orElse(Lists.newArrayList()).stream()
                         .map(str -> JSON.parseObject(str, DongChaiIndustryHoldShareDTO.class))
-                        .filter(holdShareDTO -> holdShareDTO.getTradeDate() != null)
+                        .filter(holdShareDTO -> {
+                            if(holdShareDTO.getTradeDate() ==null){
+                                return false;
+                            }
+
+                            LocalDateTime tradeDateTime = DateUtil.parseLocalDateTime(holdShareDTO.getTradeDate(), DateUtil.DATE_TIME_FORMAT);
+                            long tradeTimestamp = tradeDateTime.toInstant(ZoneOffset.of("+8")).toEpochMilli();
+                            return tradeTimestamp <= queryTimestamp;
+                        })
                         .sorted(Comparator.comparing(DongChaiIndustryHoldShareDTO::getTradeDate).reversed())
                         .findFirst()
                         .orElse(null);

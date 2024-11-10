@@ -159,12 +159,13 @@ public interface LocalDataManager {
     XueQiuStockIndicatorDTO getLocalXqIndicatorDTO(String code, Integer year, FinanceReportTypeEnum typeEnum);
 
     /**
-     * 查询最近日期的沪港通数据
+     * 查询指定日期的沪港通数据
      *
      * @param stockCodeList
+     * @param queryDate 格式：yyyyMMdd
      * @return
      */
-    List<DongChaiNorthHoldShareDTO> queryLatestNorthHoldShares(List<String> stockCodeList);
+    List<DongChaiNorthHoldShareDTO> queryNorthHoldShares(List<String> stockCodeList, String queryDate);
 
     /**
      * 查询本地文件中的沪港通持股数据
@@ -177,17 +178,18 @@ public interface LocalDataManager {
     List<DongChaiNorthHoldShareDTO> queryLocalNorthHoldShareDTOs(String code, LocalDateTime endTradeTime, Integer count);
 
     /**
-     * 查询最新的行业持股数据
+     * 查询指定日期的行业持股数据
      *
+     * @param queryDate 格式：yyyyMMdd
      * @return
      */
-    List<DongChaiIndustryHoldShareDTO> queryLatestIndustryHoldShareDTO();
+    List<DongChaiIndustryHoldShareDTO> queryIndustryHoldShareDTO(String queryDate);
 
     /**
      * by行业持股数据
      *
      * @param indName
-     * @param queryDate
+     * @param queryDate 格式：yyyyMMdd
      * @return
      */
     DongChaiIndustryHoldShareDTO queryIndustryHoldShareDTO(String indName, String queryDate);

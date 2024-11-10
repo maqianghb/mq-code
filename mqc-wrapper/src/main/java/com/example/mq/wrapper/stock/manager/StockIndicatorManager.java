@@ -17,16 +17,18 @@ public interface StockIndicatorManager {
     void calculateAndSaveAllAnalysisDTO(String kLineDate, List<String> stockCodeList, Integer reportYear, FinanceReportTypeEnum reportTypeEnum);
 
     /**
-     * 查询并保存最新的沪港通持股数据
+     * 查询并保存指定日期的沪港通持股数据
      *
      * @param stockCodeList
+     * @param queryDate 格式：yyyyMMdd
      */
-    void queryAndSaveLatestNorthHoldShares(List<String> stockCodeList);
+    void queryAndSaveNorthHoldShares(List<String> stockCodeList, String queryDate);
 
     /**
      * by行业查询并保存沪港通数据
      *
+     * @param queryDate 格式：yyyyMMdd
      */
-    void queryAndSaveLatestIndustryHoldShares();
+    void queryAndSaveIndustryHoldShares(String queryDate);
 
 }

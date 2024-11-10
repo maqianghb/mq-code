@@ -668,7 +668,7 @@ public class StockIndicatorManagerImpl implements StockIndicatorManager {
             analyseIndicatorDTO.setTotal_holders_equity(NumberUtil.format(analyseIndicatorDTO.getTotal_holders_equity() / (10000 * 10000), 1));
         }
         if (analyseIndicatorDTO.getMa_1000_diff_p() != null) {
-            analyseIndicatorDTO.setMa_1000_diff_p(NumberUtil.format(analyseIndicatorDTO.getMa_1000_diff_p(), 9));
+            analyseIndicatorDTO.setMa_1000_diff_p(NumberUtil.format(analyseIndicatorDTO.getMa_1000_diff_p(), 3));
         }
         if (analyseIndicatorDTO.getAvg_roe_ttm() != null) {
             analyseIndicatorDTO.setAvg_roe_ttm(NumberUtil.format(analyseIndicatorDTO.getAvg_roe_ttm(), 3));
@@ -1202,9 +1202,14 @@ public class StockIndicatorManagerImpl implements StockIndicatorManager {
 
         if (indicatorDTO.getCur_q_net_selling_rate() == null) {
             QuarterIncomeDTO curQuarterIncomeDTO = indicatorElement.getCurQuarterIncomeDTO();
-            if (curQuarterIncomeDTO != null && curQuarterIncomeDTO.getRevenue() != null && curQuarterIncomeDTO.getContinous_operating_np() != null) {
-                double cur_q_net_selling_rate = curQuarterIncomeDTO.getContinous_operating_np() / curQuarterIncomeDTO.getRevenue();
-                indicatorDTO.setCur_q_net_selling_rate(cur_q_net_selling_rate);
+            if (curQuarterIncomeDTO != null) {
+                Double revenue = curQuarterIncomeDTO.getRevenue();
+                Double profit = curQuarterIncomeDTO.getContinous_operating_np() != null
+                        ? curQuarterIncomeDTO.getContinous_operating_np() : curQuarterIncomeDTO.getNet_profit();
+                if(revenue !=null && profit !=null){
+                    double cur_q_net_selling_rate = profit / revenue;
+                    indicatorDTO.setCur_q_net_selling_rate(cur_q_net_selling_rate);
+                }
             }
         }
 
@@ -1223,11 +1228,16 @@ public class StockIndicatorManagerImpl implements StockIndicatorManager {
             Double cur_q_net_selling_rate = indicatorDTO.getCur_q_net_selling_rate();
             if (cur_q_net_selling_rate != null) {
                 QuarterIncomeDTO lastYearQuarterIncomeDTO = indicatorElement.getLastYearQuarterIncomeDTO();
-                if (lastYearQuarterIncomeDTO != null && lastYearQuarterIncomeDTO.getRevenue() != null && lastYearQuarterIncomeDTO.getContinous_operating_np() != null) {
-                    double last_year_cur_q_net_selling_rate = lastYearQuarterIncomeDTO.getContinous_operating_np() / lastYearQuarterIncomeDTO.getRevenue();
-                    double cur_q_net_selling_rate_change = (cur_q_net_selling_rate - last_year_cur_q_net_selling_rate)
-                            / Math.abs(last_year_cur_q_net_selling_rate);
-                    indicatorDTO.setCur_q_net_selling_rate_change(cur_q_net_selling_rate_change);
+                if (lastYearQuarterIncomeDTO != null) {
+                    Double lastYearQuarterRevenue = lastYearQuarterIncomeDTO.getRevenue();
+                    Double lastYearQuarterProfit = lastYearQuarterIncomeDTO.getContinous_operating_np() != null
+                            ? lastYearQuarterIncomeDTO.getContinous_operating_np() : lastYearQuarterIncomeDTO.getNet_profit();
+                    if(lastYearQuarterRevenue !=null && lastYearQuarterProfit !=null){
+                        double last_year_cur_q_net_selling_rate = lastYearQuarterProfit / lastYearQuarterRevenue;
+                        double cur_q_net_selling_rate_change = (cur_q_net_selling_rate - last_year_cur_q_net_selling_rate)
+                                / Math.abs(last_year_cur_q_net_selling_rate);
+                        indicatorDTO.setCur_q_net_selling_rate_change(cur_q_net_selling_rate_change);
+                    }
                 }
             }
         }
@@ -1247,11 +1257,16 @@ public class StockIndicatorManagerImpl implements StockIndicatorManager {
             Double cur_q_net_selling_rate = indicatorDTO.getCur_q_net_selling_rate();
             if (cur_q_net_selling_rate != null) {
                 QuarterIncomeDTO lastPeriodQuarterIncomeDTO = indicatorElement.getLastPeriodQuarterIncomeDTO();
-                if (lastPeriodQuarterIncomeDTO != null && lastPeriodQuarterIncomeDTO.getRevenue() != null && lastPeriodQuarterIncomeDTO.getContinous_operating_np() != null) {
-                    double last_period_cur_q_net_selling_rate = lastPeriodQuarterIncomeDTO.getContinous_operating_np() / lastPeriodQuarterIncomeDTO.getRevenue();
-                    double cur_q_net_selling_rate_q_chg = (cur_q_net_selling_rate - last_period_cur_q_net_selling_rate)
-                            / Math.abs(last_period_cur_q_net_selling_rate);
-                    indicatorDTO.setCur_q_net_selling_rate_q_chg(cur_q_net_selling_rate_q_chg);
+                if (lastPeriodQuarterIncomeDTO != null ) {
+                    Double lastPeriodQuarterRevenue = lastPeriodQuarterIncomeDTO.getRevenue();
+                    Double lastPeriodQuarterProfit = lastPeriodQuarterIncomeDTO.getContinous_operating_np() != null
+                            ? lastPeriodQuarterIncomeDTO.getContinous_operating_np() : lastPeriodQuarterIncomeDTO.getNet_profit();
+                    if(lastPeriodQuarterRevenue !=null && lastPeriodQuarterProfit !=null){
+                        double last_period_cur_q_net_selling_rate = lastPeriodQuarterProfit / lastPeriodQuarterRevenue;
+                        double cur_q_net_selling_rate_q_chg = (cur_q_net_selling_rate - last_period_cur_q_net_selling_rate)
+                                / Math.abs(last_period_cur_q_net_selling_rate);
+                        indicatorDTO.setCur_q_net_selling_rate_q_chg(cur_q_net_selling_rate_q_chg);
+                    }
                 }
             }
         }
@@ -1269,8 +1284,11 @@ public class StockIndicatorManagerImpl implements StockIndicatorManager {
             QuarterIncomeDTO curQuarterIncomeDTO = indicatorElement.getCurQuarterIncomeDTO();
             QuarterIncomeDTO lastYearQuarterIncomeDTO = indicatorElement.getLastYearQuarterIncomeDTO();
             if (curQuarterIncomeDTO != null && lastYearQuarterIncomeDTO != null) {
-                double cur_q_net_profit_atsopc_yoy = (curQuarterIncomeDTO.getContinous_operating_np() - lastYearQuarterIncomeDTO.getContinous_operating_np())
-                        / Math.abs(lastYearQuarterIncomeDTO.getNet_profit());
+                Double curQuarterProfit = curQuarterIncomeDTO.getContinous_operating_np() != null
+                        ? curQuarterIncomeDTO.getContinous_operating_np() : curQuarterIncomeDTO.getNet_profit();
+                Double lastYearQuarterProfit = lastYearQuarterIncomeDTO.getContinous_operating_np() != null
+                        ? lastYearQuarterIncomeDTO.getContinous_operating_np() : lastYearQuarterIncomeDTO.getNet_profit();
+                double cur_q_net_profit_atsopc_yoy = (curQuarterProfit - lastYearQuarterProfit) / Math.abs(lastYearQuarterProfit);
                 indicatorDTO.setCur_q_net_profit_atsopc_yoy(cur_q_net_profit_atsopc_yoy);
             }
         }
@@ -1370,16 +1388,21 @@ public class StockIndicatorManagerImpl implements StockIndicatorManager {
 
                 StringBuilder builder = new StringBuilder();
                 for (QuarterIncomeDTO quarterIncomeDTO : sortedQuarterDTOList) {
-                    if (quarterIncomeDTO.getTotal_revenue() != null && quarterIncomeDTO.getOperating_cost() != null) {
-                        double gross_rate = 1 - quarterIncomeDTO.getOperating_cost() / quarterIncomeDTO.getTotal_revenue();
-                        String str_gross_rate = NumberUtil.format(gross_rate * 100, 1) + "%";
-                        builder.append(str_gross_rate);
-                    }
-                    builder.append("/");
-                    if (quarterIncomeDTO.getTotal_revenue() != null && quarterIncomeDTO.getContinous_operating_np() != null) {
-                        double net_profit_rate = quarterIncomeDTO.getContinous_operating_np() / quarterIncomeDTO.getTotal_revenue();
-                        String str_net_profit_rate = NumberUtil.format(net_profit_rate * 100, 1) + "%";
-                        builder.append(str_net_profit_rate);
+                    if(quarterIncomeDTO.getTotal_revenue() !=null){
+                        if (quarterIncomeDTO.getOperating_cost() != null) {
+                            double gross_rate = 1 - quarterIncomeDTO.getOperating_cost() / quarterIncomeDTO.getTotal_revenue();
+                            String str_gross_rate = NumberUtil.format(gross_rate * 100, 1) + "%";
+                            builder.append(str_gross_rate);
+                        }
+                        builder.append("/");
+
+                        Double profit = quarterIncomeDTO.getContinous_operating_np() != null
+                                ? quarterIncomeDTO.getContinous_operating_np() : quarterIncomeDTO.getNet_profit();
+                        if(profit !=null){
+                            double net_profit_rate = profit / quarterIncomeDTO.getTotal_revenue();
+                            String str_net_profit_rate = NumberUtil.format(net_profit_rate * 100, 1) + "%";
+                            builder.append(str_net_profit_rate);
+                        }
                     }
                     builder.append("; ");
                 }
@@ -1403,8 +1426,11 @@ public class StockIndicatorManagerImpl implements StockIndicatorManager {
                         builder.append(str_total_revenue);
                     }
                     builder.append("/");
-                    if (quarterIncomeDTO.getNet_profit() != null) {
-                        double net_profit = quarterIncomeDTO.getContinous_operating_np() / (1.0 * 10000 * 10000);
+
+                    Double profit = quarterIncomeDTO.getContinous_operating_np() != null
+                            ? quarterIncomeDTO.getContinous_operating_np() : quarterIncomeDTO.getNet_profit();
+                    if (profit !=null) {
+                        double net_profit = profit / (1.0 * 10000 * 10000);
                         String str_net_profit = NumberUtil.format(net_profit, 1) + "";
                         builder.append(str_net_profit);
                     }
@@ -1703,14 +1729,14 @@ public class StockIndicatorManagerImpl implements StockIndicatorManager {
     }
 
     @Override
-    public void queryAndSaveLatestNorthHoldShares(List<String> stockCodeList) {
-        if (CollectionUtils.isEmpty(stockCodeList)) {
+    public void queryAndSaveNorthHoldShares(List<String> stockCodeList, String queryDate) {
+        if (CollectionUtils.isEmpty(stockCodeList) || StringUtils.isBlank(queryDate)) {
             return;
         }
 
         // 查询最新的沪港通持股数据
         LocalDataManager localDataManager = new LocalDataManagerImpl();
-        List<DongChaiNorthHoldShareDTO> holdShareDTOList = localDataManager.queryLatestNorthHoldShares(stockCodeList);
+        List<DongChaiNorthHoldShareDTO> holdShareDTOList = localDataManager.queryNorthHoldShares(stockCodeList, queryDate);
         if (CollectionUtils.isEmpty(holdShareDTOList)) {
             return;
         }
@@ -1750,7 +1776,7 @@ public class StockIndicatorManagerImpl implements StockIndicatorManager {
             DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss");
             LocalDateTime localDateTime = LocalDateTime.now();//当前时间
             String strDateTime = df.format(localDateTime);//格式化为字符串
-            String resultFileName = String.format(StockConstant.LATEST_HOLD_SHARES_FILE, strDateTime);
+            String resultFileName = String.format(StockConstant.LATEST_HOLD_SHARES_FILE, queryDate, strDateTime);
             FileUtils.writeLines(new File(resultFileName), "UTF-8", strHoldSharesList, true);
         } catch (Exception e) {
             e.printStackTrace();
@@ -1758,10 +1784,14 @@ public class StockIndicatorManagerImpl implements StockIndicatorManager {
     }
 
     @Override
-    public void queryAndSaveLatestIndustryHoldShares() {
+    public void queryAndSaveIndustryHoldShares(String queryDate) {
+        if(StringUtils.isBlank(queryDate)){
+            return ;
+        }
+
         // 查询最新的行业持股数据
         LocalDataManager localDataManager = new LocalDataManagerImpl();
-        List<DongChaiIndustryHoldShareDTO> industryHoldShareDTOList = localDataManager.queryLatestIndustryHoldShareDTO();
+        List<DongChaiIndustryHoldShareDTO> industryHoldShareDTOList = localDataManager.queryIndustryHoldShareDTO(queryDate);
         if (CollectionUtils.isEmpty(industryHoldShareDTOList)) {
             return;
         }
@@ -1795,7 +1825,7 @@ public class StockIndicatorManagerImpl implements StockIndicatorManager {
             DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss");
             LocalDateTime localDateTime = LocalDateTime.now();//当前时间
             String strDateTime = df.format(localDateTime);//格式化为字符串
-            String resultFileName = String.format(StockConstant.LATEST_IND_HOLD_SHARES_FILE, strDateTime);
+            String resultFileName = String.format(StockConstant.LATEST_IND_HOLD_SHARES_FILE, queryDate, strDateTime);
             FileUtils.writeLines(new File(resultFileName), "UTF-8", strHoldSharesList, true);
         } catch (Exception e) {
             e.printStackTrace();
@@ -1818,28 +1848,6 @@ public class StockIndicatorManagerImpl implements StockIndicatorManager {
         List<DongChaiNorthHoldShareDTO> historyHoldShareDTOList = localDataManager.queryLocalNorthHoldShareDTOs(holdShareDTO.getCode(), tradeDateTime, 400);
         if(CollectionUtils.isEmpty(historyHoldShareDTOList)){
             return;
-        }
-
-        // 1日前的持股数据
-        DongChaiNorthHoldShareDTO holdShareDTODay1 = this.getBeforeNorthHoldShareDTO(holdShareDTO, historyHoldShareDTOList, 1);
-        if(holdShareDTODay1 !=null){
-            if(holdShareDTO.getHoldShares() !=null && holdShareDTODay1.getHoldShares() !=null){
-                holdShareDTO.setCurIncreaseShares(NumberUtil.format(holdShareDTO.getHoldShares() - holdShareDTODay1.getHoldShares(), 1));
-            }
-            if(holdShareDTO.getTotalSharesRatio() !=null && holdShareDTODay1.getTotalSharesRatio() !=null){
-                holdShareDTO.setCurIncreaseRatio(NumberUtil.format(holdShareDTO.getTotalSharesRatio() - holdShareDTODay1.getTotalSharesRatio(), 2));
-            }
-        }
-
-        // 7日前的持股数据
-        DongChaiNorthHoldShareDTO holdShareDTODay7 = this.getBeforeNorthHoldShareDTO(holdShareDTO, historyHoldShareDTOList, 7);
-        if(holdShareDTODay7 !=null){
-            if(holdShareDTO.getHoldShares() !=null && holdShareDTODay7.getHoldShares() !=null){
-                holdShareDTO.setIncreaseShares_7(NumberUtil.format(holdShareDTO.getHoldShares() - holdShareDTODay7.getHoldShares(), 1));
-            }
-            if(holdShareDTO.getTotalSharesRatio() !=null && holdShareDTODay7.getTotalSharesRatio() !=null){
-                holdShareDTO.setIncreaseRatio_7(NumberUtil.format(holdShareDTO.getTotalSharesRatio() - holdShareDTODay7.getTotalSharesRatio(), 2));
-            }
         }
 
         // 30日前的持股数据

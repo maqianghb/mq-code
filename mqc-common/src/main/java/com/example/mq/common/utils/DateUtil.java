@@ -1,10 +1,10 @@
 package com.example.mq.common.utils;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
@@ -12,6 +12,7 @@ import java.util.Date;
 @Slf4j
 public class DateUtil {
 
+    public static final String DATE_FORMAT ="yyyyMMdd";
     public static final String DATE_TIME_FORMAT ="yyyy-MM-dd HH:mm:ss";
 
     /**
@@ -44,6 +45,11 @@ public class DateUtil {
     public static final LocalDateTime parseLocalDateTime(String strDateTime, String format){
         DateTimeFormatter df = DateTimeFormatter.ofPattern(format);
         return LocalDateTime.parse(strDateTime, df);
+    }
+
+    public static final LocalDate parseLocalDate(String strDate, String format){
+        DateTimeFormatter df = DateTimeFormatter.ofPattern(format);
+        return LocalDate.parse(strDate, df);
     }
 
 }

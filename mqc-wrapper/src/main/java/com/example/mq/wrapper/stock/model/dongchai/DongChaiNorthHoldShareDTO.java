@@ -18,7 +18,7 @@ public class DongChaiNorthHoldShareDTO {
     private String indName;
 
     /**
-     * 日期
+     * 日期, 格式：yyyy-MM-dd HH:mm:ss
      */
     private String tradeDate;
 
