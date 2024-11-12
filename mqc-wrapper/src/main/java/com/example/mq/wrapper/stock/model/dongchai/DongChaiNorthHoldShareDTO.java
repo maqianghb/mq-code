@@ -73,6 +73,16 @@ public class DongChaiNorthHoldShareDTO {
     private Double increaseRatio_90;
 
     /**
+     * 近180天的增减持数量(万股)
+     */
+    private Double increaseShares_180;
+
+    /**
+     * 近180天的增持比例(%)
+     */
+    private Double increaseRatio_180;
+
+    /**
      * 近360天的增减持数量(万股)
      */
     private Double increaseShares_360;
@@ -81,15 +91,5 @@ public class DongChaiNorthHoldShareDTO {
      * 近360天的增持比例(%)
      */
     private Double increaseRatio_360;
-
-    /**
-     * 当天增减持数量(万股)
-     */
-    private Double curIncreaseShares;
-
-    /**
-     * 当天增持比例(%)
-     */
-    private Double curIncreaseRatio;
 
 }

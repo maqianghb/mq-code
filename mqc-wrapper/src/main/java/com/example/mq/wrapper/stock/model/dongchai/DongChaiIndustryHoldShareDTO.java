@@ -59,6 +59,11 @@ public class DongChaiIndustryHoldShareDTO {
     private Double ind_ratio_chg_90;
 
     /**
+     * 180天内沪港通持股占比变化
+     */
+    private Double ind_ratio_chg_180;
+
+    /**
      * 360天沪港通持股占比变化
      */
     private Double ind_ratio_chg_360;

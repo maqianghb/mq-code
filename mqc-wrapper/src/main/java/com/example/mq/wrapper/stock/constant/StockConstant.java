@@ -15,7 +15,7 @@ public class StockConstant {
     public static final String INDICATOR_URL ="https://stock.xueqiu.com/v5/stock/finance/cn/indicator.json";
     public static final String COMPANY_URL ="https://stock.xueqiu.com/v5/stock/f10/cn/company.json";
 
-    public static final String COOKIE ="cookiesu=551703859817291; device_id=d1c43ea5bef6f4cbab0c374859804514; xq_a_token=ea6ef3abf0b64fa4ec4343c5608361ed54114204; xqat=ea6ef3abf0b64fa4ec4343c5608361ed54114204; xq_r_token=38fbe8417b7b1b21f8f4c0a40a8e75e1f538990a; xq_id_token=eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJ1aWQiOi0xLCJpc3MiOiJ1YyIsImV4cCI6MTcxNzU0ODcxMCwiY3RtIjoxNzE1Nzc5NDQ2MTMwLCJjaWQiOiJkOWQwbjRBWnVwIn0.l_rgWckGPLO-GetkZ80Elc3u9qzz2T9dOR1oEzr8pLpv5GnlzQa7iVIpJbMx79pX5hX-N8mX1nGiYKWWkhEkqcRrHb29V79QV6KerMVIa2h6-oDZ9YbfdDB0zIJVYZxMIPWATaSr7_KwAWQnLxAn17KDJ7mSUcy22UgUKc4p4nPKdQQx6pUpIt9oN-hykNPl3k3Qz0Tdn5Md4kjWa91kpLOeh9_g-BwRYjVKL8t5kV5BCmeWovpZEbJzficCCuOJjo-eG9WA6JB33zV3lJG74zJxjhaE-ShXR5L_geWploSpiliWPmjWyv7slTgA3FLl2BeSkHsRSeEXs1rUm7LfSw; u=551703859817291; s=c117ssz7g3; is_overseas=0";
+    public static final String COOKIE ="cookiesu=551703859817291; device_id=d1c43ea5bef6f4cbab0c374859804514; s=c117ssz7g3; u=551703859817291; Hm_lvt_1db88642e346389874251b5a1eded6e3=1729691081,1729714911; HMACCOUNT=C04B42F6BEF1AFBB; xq_a_token=7716f523735d1e47a3dd5ec748923068ab8198a8; xqat=7716f523735d1e47a3dd5ec748923068ab8198a8; xq_r_token=0483ea3986e45954e03c9294444a1af14d7579d3; xq_id_token=eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJ1aWQiOi0xLCJpc3MiOiJ1YyIsImV4cCI6MTczMzEwMDgxNywiY3RtIjoxNzMwNTUzNzkwOTYzLCJjaWQiOiJkOWQwbjRBWnVwIn0.gMyi4Bn7AMqcupUcqRFrlC_Qvdy4FRnKD5vrRXK5NEdhtqRyluHXJoRTVkycpZtyBba0OfdmOsmXZ2XvVmb7TYarm05uqifSEtllI9N8WduBS22Vh5ycC8pbOZqR6549NwjmQqDnzP3dJwJZgvdAR6kKP_6KcdORv0HCiYkDy95CEwOACGTLjPFJ-60NygEFwmcWC3POXE5d3a97vfG2r1NxqGuN0SZAjYtGJxrIFNGZXsbvwi9po3cj-k7WGF5R7ai2MkDWzbG3KnaktfNa9SXBb7MPKBY8xuBJj2YYFIv4Y3Bg5NrXPADqma0jqAg2JQAFMtmaCyYfU34GsRSN0g; is_overseas=0;";
 
     public static final List<ImmutablePair<String, String>> STATISTICS_CODE_LIST = Arrays.asList(
             new ImmutablePair<>("SH000016", "上证50"),
@@ -61,6 +61,8 @@ public class StockConstant {
 
     public static final String INDICATOR_LIST_PERCENT ="/Users/maqiang/Documents/002-stock_data/percent_%s_%s.csv";
 
+    public static final String INDICATOR_LIST_PERCENT_IND ="/Users/maqiang/Documents/002-stock_data/percent_ind_%s_%s.csv";
+
 
     public static final String DONG_CHAI_URL ="https://datacenter-web.eastmoney.com/api/data/v1/get";
     public static final Integer DONG_CHAI_MAX_LIMIT =500;
@@ -74,8 +76,8 @@ public class StockConstant {
     public static final String NORTH_HOLD_SHARES_FILE ="/Users/maqiang/Documents/002-stock_data/dc_north_hold_shares/north_hold_shares_%s.txt";
     public static final String NORTH_HOLD_SHARES_IND_FILE ="/Users/maqiang/Documents/002-stock_data/dc_north_hold_shares_ind/north_hold_shares_ind_%s.txt";
 
-    public static final String LATEST_HOLD_SHARES_FILE ="/Users/maqiang/Documents/002-stock_data/north_hold_shares_%s.csv";
-    public static final String LATEST_IND_HOLD_SHARES_FILE ="/Users/maqiang/Documents/002-stock_data/north_hold_shares_ind_%s.csv";
+    public static final String LATEST_HOLD_SHARES_FILE ="/Users/maqiang/Documents/002-stock_data/north_hold_shares_%s_%s.csv";
+    public static final String LATEST_IND_HOLD_SHARES_FILE ="/Users/maqiang/Documents/002-stock_data/north_hold_shares_ind_%s_%s.csv";
 
     public static final String STATISTICS_MA_1000_PERCENT_LIST ="/Users/maqiang/Documents/002-stock_data/statistics_ma_1000_percent_%s_%s.csv";
 
