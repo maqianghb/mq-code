@@ -10,7 +10,7 @@ public class DongChaiHolderIncreaseDTO {
     private String name;
 
     /**
-     * 预告时间
+     * 预告时间, 格式：yyyy-MM-dd HH:mm:ss
      */
     private String notice_date;
 

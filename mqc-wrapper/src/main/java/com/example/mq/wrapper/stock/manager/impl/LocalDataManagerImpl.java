@@ -569,7 +569,7 @@ public class LocalDataManagerImpl implements LocalDataManager {
         for(String stockCode : stockCodeList){
             try {
                 // 查询数据
-                List<DongChaiNorthHoldShareDTO> tmpHoldShareDTOList = dongChaiDataManager.queryNorthHoldShareDTOList(stockCode.substring(2));
+                List<DongChaiNorthHoldShareDTO> tmpHoldShareDTOList = dongChaiDataManager.queryNorthHoldShareDTOList(stockCode);
                 if(CollectionUtils.isEmpty(tmpHoldShareDTOList)){
                     continue;
                 }

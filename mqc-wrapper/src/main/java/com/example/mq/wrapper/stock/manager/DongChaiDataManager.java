@@ -5,6 +5,7 @@ import com.example.mq.wrapper.stock.model.dongchai.DongChaiFreeShareDTO;
 import com.example.mq.wrapper.stock.model.dongchai.DongChaiHolderIncreaseDTO;
 import com.example.mq.wrapper.stock.model.dongchai.DongChaiNorthHoldShareDTO;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 public interface DongChaiDataManager {
@@ -26,33 +27,37 @@ public interface DongChaiDataManager {
     /**
      * 查询解禁数据
      *
-     * @param beforeMonthNum 前N个月的数据
-     * @param afterMonthNum 后N个月的数据
+     * @param startDateTime
+     * @param endDateTime
      * @return
      */
-    List<DongChaiFreeShareDTO> queryFreeShareDTOList(Integer beforeMonthNum, Integer afterMonthNum);
+    List<DongChaiFreeShareDTO> queryFreeShareDTOList(LocalDateTime startDateTime, LocalDateTime endDateTime);
 
     /**
      * 查询沪港通持股数据
      *
      * @return
      */
-    List<DongChaiNorthHoldShareDTO> queryNorthHoldShareDTOList(String simpleCode);
+    List<DongChaiNorthHoldShareDTO> queryNorthHoldShareDTOList(String stockCode);
 
     /**
-     * 最近的增减持信息
+     * by时间范围查询最大的增减持信息
      *
      * @param code
+     * @param startDateTime
+     * @param endDateTime
      * @return
      */
-    DongChaiHolderIncreaseDTO getHolderIncreaseDTO(String code);
+    DongChaiHolderIncreaseDTO getMaxHolderIncreaseDTO(String code, LocalDateTime startDateTime, LocalDateTime endDateTime);
 
     /**
-     * 解禁信息(往前3个月，往后6个月)
+     * 最大的解禁信息
      *
      * @param code
+     * @param startDateTime
+     * @param endDateTime
      * @return
      */
-    DongChaiFreeShareDTO getFreeShareDTO(String code);
+    DongChaiFreeShareDTO getMaxFreeShareDTO(String code, LocalDateTime startDateTime, LocalDateTime endDateTime);
 
 }

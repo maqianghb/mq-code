@@ -3,6 +3,7 @@ package com.example.mq.wrapper.stock.manager.impl;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.example.mq.common.utils.CloseableHttpClientUtil;
+import com.example.mq.common.utils.DateUtil;
 import com.example.mq.common.utils.NumberUtil;
 import com.example.mq.wrapper.stock.constant.StockConstant;
 import com.example.mq.wrapper.stock.manager.DongChaiDataManager;
@@ -15,6 +16,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.assertj.core.util.Lists;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Comparator;
 import java.util.List;
@@ -217,14 +219,13 @@ public class DongChaiDataManagerImpl implements DongChaiDataManager {
     }
 
     @Override
-    public List<DongChaiFreeShareDTO> queryFreeShareDTOList(Integer beforeMonthNum, Integer afterMonthNum) {
-        if(beforeMonthNum ==null || afterMonthNum ==null){
+    public List<DongChaiFreeShareDTO> queryFreeShareDTOList(LocalDateTime startDateTime, LocalDateTime endDateTime) {
+        if(startDateTime ==null || endDateTime ==null){
             return Lists.newArrayList();
         }
 
-        LocalDate nowLocalDate = LocalDate.now();
-        String startDate =nowLocalDate.plusMonths(-beforeMonthNum).format(DateTimeFormatter.ISO_DATE);
-        String endDate =nowLocalDate.plusMonths(afterMonthNum).format(DateTimeFormatter.ISO_DATE);
+        String startDate =startDateTime.format(DateTimeFormatter.ISO_DATE);
+        String endDate =endDateTime.format(DateTimeFormatter.ISO_DATE);
 
         int totalNum =5000;
         List<String> allColumnList =Lists.newArrayList();
@@ -302,23 +303,19 @@ public class DongChaiDataManagerImpl implements DongChaiDataManager {
     }
 
     @Override
-    public List<DongChaiNorthHoldShareDTO> queryNorthHoldShareDTOList(String simpleCode) {
-        LocalDate nowLocalDate = LocalDate.now();
-        String startDate =nowLocalDate.plusYears(-1).format(DateTimeFormatter.ISO_DATE);
-
+    public List<DongChaiNorthHoldShareDTO> queryNorthHoldShareDTOList(String stockCode) {
         String url = new StringBuilder().append(StockConstant.DONG_CHAI_URL)
 //                .append("?callback=").append("jQuery1123093599956891065_1689992754007")
                 .append("?sortColumns=").append("TRADE_DATE")
                 .append("&sortTypes=").append("-1")
                 .append("&pageSize=").append(StockConstant.DONG_CHAI_MAX_LIMIT)
                 .append("&pageNumber=").append(1)
-                .append("&reportName=").append("RPT_MUTUAL_HOLDSTOCKNORTH_STA")
+                .append("&reportName=").append("RPT_MUTUAL_HOLDSTOCKNDATE_STA")
                 .append("&columns=").append("ALL")
                 .append("&source=").append("WEB")
                 .append("&client=").append("WEB")
-                .append("&filter=").append("(SECURITY_CODE%3D%22")
-                .append(simpleCode).append("%22)(TRADE_DATE%3E%3D%27")
-                .append(startDate).append("%27)")
+                .append("&filter=").append("(SECUCODE%3D%22")
+                .append(stockCode.substring(2)).append(".").append(stockCode.substring(0,2)).append("%22)(INTERVAL_TYPE%3D%221%22)")
                 .toString();
 
         String strResult = CloseableHttpClientUtil.doGet(url, StringUtils.EMPTY);
@@ -370,7 +367,11 @@ public class DongChaiDataManagerImpl implements DongChaiDataManager {
     }
 
     @Override
-    public DongChaiHolderIncreaseDTO getHolderIncreaseDTO(String code){
+    public DongChaiHolderIncreaseDTO getMaxHolderIncreaseDTO(String code, LocalDateTime startDateTime, LocalDateTime endDateTime){
+        if(StringUtils.isBlank(code) || startDateTime ==null || endDateTime ==null){
+            return null;
+        }
+
         try {
             if(CollectionUtils.isEmpty(holderIncreaseDTOList)){
                 holderIncreaseDTOList = this.queryHolderIncreaseList();
@@ -378,8 +379,17 @@ public class DongChaiDataManagerImpl implements DongChaiDataManager {
 
             return Optional.ofNullable(holderIncreaseDTOList).orElse(Lists.newArrayList()).stream()
                     .filter(balanceDTO -> Objects.equals(balanceDTO.getCode(), code))
-                    .filter(balanceDTO -> balanceDTO.getChange_num() >50 || balanceDTO.getAfter_change_rate() >0.05)
-                    .sorted(Comparator.comparing(DongChaiHolderIncreaseDTO::getNotice_date).reversed())
+                    .filter(balanceDTO ->{
+                        if(StringUtils.isBlank(balanceDTO.getNotice_date())){
+                            return false;
+                        }
+
+                        LocalDateTime noticeDateTime = DateUtil.parseLocalDateTime(balanceDTO.getNotice_date(), DateUtil.DATE_TIME_FORMAT);
+
+                        return (noticeDateTime.isAfter(startDateTime) || noticeDateTime.isEqual(startDateTime))
+                                && noticeDateTime.isBefore(endDateTime);
+                    })
+                    .sorted(Comparator.comparing(DongChaiHolderIncreaseDTO::getChange_num).reversed())
                     .findFirst()
                     .orElse(null);
         } catch (Exception e) {
@@ -390,15 +400,19 @@ public class DongChaiDataManagerImpl implements DongChaiDataManager {
     }
 
     @Override
-    public DongChaiFreeShareDTO getFreeShareDTO(String code){
+    public DongChaiFreeShareDTO getMaxFreeShareDTO(String code, LocalDateTime startDateTime, LocalDateTime endDateTime){
+        if(StringUtils.isBlank(code) || startDateTime ==null || endDateTime ==null){
+            return null;
+        }
+
         try {
             if(CollectionUtils.isEmpty(freeShareDTOList)){
-                freeShareDTOList = this.queryFreeShareDTOList(3,6);
+                freeShareDTOList = this.queryFreeShareDTOList(startDateTime, endDateTime);
             }
 
             return Optional.ofNullable(freeShareDTOList).orElse(Lists.newArrayList()).stream()
-                    .filter(balanceDTO -> Objects.equals(balanceDTO.getCode(), code))
-                    .filter(balanceDTO -> balanceDTO.getFree_share_num() >100 || balanceDTO.getTotal_ratio() >0.1)
+                    .filter(balanceDTO -> StringUtils.equals(balanceDTO.getCode(), code))
+                    .filter(balanceDTO -> balanceDTO.getTotal_ratio() !=null)
                     .sorted(Comparator.comparing(DongChaiFreeShareDTO::getTotal_ratio).reversed())
                     .findFirst()
                     .orElse(null);
