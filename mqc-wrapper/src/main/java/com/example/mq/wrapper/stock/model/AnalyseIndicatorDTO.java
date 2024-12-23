@@ -85,6 +85,16 @@ public class AnalyseIndicatorDTO {
     private Double cur_q_net_profit_atsopc_yoy;
 
     /**
+     * 上一季的营收同比
+     */
+    private Double last_q_operating_income_yoy;
+
+    /**
+     * 上一季的净利润同比
+     */
+    private Double last_q_net_profit_atsopc_yoy;
+
+    /**
      * 当季销售毛利率
      */
     private Double cur_q_gross_margin_rate;
@@ -95,22 +105,22 @@ public class AnalyseIndicatorDTO {
     private Double cur_q_net_selling_rate;
 
     /**
-     * 当季销售毛利率同比
+     * 当季销售毛利率同比（绝对值）
      */
     private Double cur_q_gross_margin_rate_change;
 
     /**
-     * 当季销售净利率同比
+     * 当季销售净利率同比（绝对值）
      */
     private Double cur_q_net_selling_rate_change;
 
     /**
-     * 当季销售毛利率环比
+     * 当季销售毛利率环比（绝对值）
      */
     private Double cur_q_gross_margin_rate_q_chg;
 
     /**
-     * 当季销售净利率环比
+     * 当季销售净利率环比（绝对值）
      */
     private Double cur_q_net_selling_rate_q_chg;
 
@@ -198,6 +208,16 @@ public class AnalyseIndicatorDTO {
      * 存货周转天数
      */
     private Double inventory_turnover_days;
+
+    /**
+     * 应收账款周转天数同比
+     */
+    private Double receivable_turnover_days_rate;
+
+    /**
+     * 存货周转天数同比
+     */
+    private Double inventory_turnover_days_rate;
 
     /**
      * 增减持预告时间

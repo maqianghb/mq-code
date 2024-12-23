@@ -1,5 +1,6 @@
 package com.example.mq.wrapper;
 
+import com.example.mq.wrapper.stock.constant.StockConstant;
 import com.example.mq.wrapper.stock.enums.FinanceReportTypeEnum;
 import com.example.mq.wrapper.stock.manager.LocalDataManager;
 import com.example.mq.wrapper.stock.manager.StockIndicatorManager;
@@ -7,6 +8,7 @@ import com.example.mq.wrapper.stock.manager.impl.LocalDataManagerImpl;
 import com.example.mq.wrapper.stock.manager.impl.StockIndicatorManagerImpl;
 import org.junit.Test;
 
+import java.util.Arrays;
 import java.util.List;
 
 public class CommonManager {
@@ -51,13 +53,14 @@ public class CommonManager {
     @Test
     public void testQueryAnalysisData(){
         // 参数列表
-        Integer reportYear =2024;
-        FinanceReportTypeEnum reportTypeEnum =FinanceReportTypeEnum.QUARTER_3;
-        String kLineDate ="20241101";
+        Integer reportYear =2022;
+        FinanceReportTypeEnum reportTypeEnum =FinanceReportTypeEnum.QUARTER_1;
+        String kLineDate ="20220501";
 
         LocalDataManager localDataManager =new LocalDataManagerImpl();
         List<String> stockCodeList =localDataManager.getLocalStockCodeList();
-//        List<String> stockCodeList =StockConstant.TEST_STOCK_CODE_LIST;
+//        List<String> stockCodeList = StockConstant.TEST_STOCK_CODE_LIST;
+//        List<String> stockCodeList = Arrays.asList("SZ300165");
 
         StockIndicatorManager stockIndicatorManager =new StockIndicatorManagerImpl();
 
@@ -67,7 +70,6 @@ public class CommonManager {
         // 沪港通数据
         stockIndicatorManager.queryAndSaveNorthHoldShares(stockCodeList, kLineDate);
         stockIndicatorManager.queryAndSaveIndustryHoldShares(kLineDate);
-
     }
 
     /**
