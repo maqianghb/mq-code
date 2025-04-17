@@ -15,7 +15,7 @@ public class StockConstant {
     public static final String INDICATOR_URL ="https://stock.xueqiu.com/v5/stock/finance/cn/indicator.json";
     public static final String COMPANY_URL ="https://stock.xueqiu.com/v5/stock/f10/cn/company.json";
 
-    public static final String COOKIE ="cookiesu=551703859817291; device_id=d1c43ea5bef6f4cbab0c374859804514; s=c117ssz7g3; u=551703859817291; HMACCOUNT=C04B42F6BEF1AFBB; Hm_lvt_1db88642e346389874251b5a1eded6e3=1732719195; xq_a_token=cccb558956c11f5aaf8b9a30bcf1f214117e8d67; xqat=cccb558956c11f5aaf8b9a30bcf1f214117e8d67; xq_r_token=4e5ca4e31de699c97d46d00138f4460861fd1778; xq_id_token=eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJ1aWQiOi0xLCJpc3MiOiJ1YyIsImV4cCI6MTczNjk4ODkwMCwiY3RtIjoxNzM0NDc5MDE3MDgyLCJjaWQiOiJkOWQwbjRBWnVwIn0.NppJIa3yjMjpmfFLCdLR8lh9G5ZZ8HM4j1YZEpQoJmI2ctEEgVQuz9A_Bzd9iGIznYum4QKSUOeCvJlPhsIQkL8tPQ2T_M1RPM2rMI8Hvgkj9i83kFTw586Vd6u0hyp0jacnNo1oLOMwhK4FasnmXvGs2-HkDjn3wyqyNm8dxMmMoJGRUNOB1Pc1oYIqzhfb5iQpkMVSFwtfHv1dBSq4O9hO73PR_Rbip04OWMaJWKWBZOs-bEHrJPnpPrw2zxLZG6ajAXQ8NAz1sNen41b8Jx8DyMzuQh7q7lSiTCYaMPZedgF29EX_fgHpZwLLqzXGar7fd7KprEJc0IWr3zWYNw; is_overseas=0;";
+    public static final String COOKIE ="s=c117ssz7g3; u=551703859817291; HMACCOUNT=C04B42F6BEF1AFBB; cookiesu=781737983540813; device_id=631f3b7f2c8df1f45644448b974585f1; xq_a_token=9773bacc11404cb5ac8b0847c564eda3730e6b61; xqat=9773bacc11404cb5ac8b0847c564eda3730e6b61; xq_r_token=caf75c71460c20a680e6e3c455cadcca5c1be14a; xq_id_token=eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJ1aWQiOi0xLCJpc3MiOiJ1YyIsImV4cCI6MTc0NzM1NzE4MywiY3RtIjoxNzQ0ODk3MDYxODIxLCJjaWQiOiJkOWQwbjRBWnVwIn0.i4_HRt-z7SzRcNnDwT67Y4DkV137bx85p8RK3bVHBV9KA5kWRitQKNkEiKXkps7PjkDIBtieRjosMVaIP2SHXHoducGLANkVSMhqPIpFhSQGb-hv8GC4RQtPQKFZPc_a1tXYykjx7B9Cc3VigndliHOzkLVNyTzOMP6S0fLQ9PJUuKaMjQByTZ2RceyCyKb1pIEyLBUN4Ik65SSnWtblFufm_T0DvBDGQG95ojKSqUnuRCBc1n2wKTDMg37u29_qX6ajtvxAC9BE9QE2iEb6jSIzFWfjT8WgqRy-ajAKWd5C9w485XiLWTISBzV1eDgVUU1UbLf4SzQv1GIx4qkNYQ; is_overseas=0;";
 
     public static final List<ImmutablePair<String, String>> STATISTICS_CODE_LIST = Arrays.asList(
             new ImmutablePair<>("SH000016", "上证50"),
@@ -37,6 +37,8 @@ public class StockConstant {
     public static final List<String> TEST_STOCK_CODE_LIST = Arrays.asList("SZ002001", "SZ002415", "SZ002508", "SH600486", "SZ002507");
 
     public static final List<String> FINANCE_PREDICT_INDICATOR =Arrays.asList("营业收入", "扣除非经常性损益后的净利润");
+
+    public static final List<String> FINANCE_PREDICT_INCREASE =Arrays.asList("减亏", "略增", "扭亏", "续赢", "预增");
 
     public static final Integer FINANCE_REPORT_COUNT =30;
     public static final Integer KLINE_DAY_COUNT =2000;

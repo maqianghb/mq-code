@@ -36,8 +36,8 @@ import java.util.stream.Collectors;
 
 public class LocalDataManagerImpl implements LocalDataManager {
 
-    private static final String FINANCE_NOTICE_HEADER ="预告时间,报告期,编码,名称,行业,预告指标,预告类型,预告值(亿),预告值(亿)" +
-            ",同比变动,同比变动,环比变动,环比变动,上年同期值(亿),变动原因";
+    private static final String FINANCE_NOTICE_HEADER ="预告时间,报告期,编码,名称,行业,预告指标,预告类型,预告值_低(亿),预告值_高(亿)" +
+            ",同比变动_低,同比变动_高,环比变动_低,环比变动_高,上年同期值(亿),变动原因";
     private static final String IND_FINANCE_NOTICE_HEADER ="预告时间,报告期,行业,预告指标,预告类型,行业股票数,预告股票数,占行业比例";
     private static final String HOLDER_INCREASE_HEADER ="编码,名称,预告时间,增减类型,增减数量(万股),减持开始时间,减持结束时间" +
             ",变动比例(%),变动后持股比例(%)";
@@ -95,14 +95,14 @@ public class LocalDataManagerImpl implements LocalDataManager {
         XueQiuStockManager xueQiuStockManager =new XueQiuStockManagerImpl();
 
         // 查询
-        for(String stockCode : stockCodeList){
+        stockCodeList.parallelStream().forEach(stockCode ->{
             String kLineFileName =String.format(StockConstant.KLINE_LIST_DAY, stockCode);
             try {
                 // 查询新的数据
                 List<XueQiuStockKLineDTO> tmpKLineDTOList = xueQiuStockManager.queryKLineList(stockCode, "day"
                         , System.currentTimeMillis(), StockConstant.KLINE_DAY_COUNT);
                 if(CollectionUtils.isEmpty(tmpKLineDTOList)){
-                    continue;
+                    return;
                 }
 
                 // 补全Ma20指标
@@ -137,7 +137,7 @@ public class LocalDataManagerImpl implements LocalDataManager {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-        }
+        });
     }
 
     @Override
@@ -152,7 +152,7 @@ public class LocalDataManagerImpl implements LocalDataManager {
         // 资产负债数据
         try {
             // 最新的数据
-            List<XueQiuStockBalanceDTO> balanceDTOList = stockCodeList.stream()
+            List<XueQiuStockBalanceDTO> balanceDTOList = stockCodeList.parallelStream()
                     .map(stockCode -> xueQiuStockManager.queryBalanceList(stockCode, StockConstant.FINANCE_REPORT_COUNT))
                     .filter(list -> CollectionUtils.isNotEmpty(list))
                     .flatMap(list -> list.stream())
@@ -209,7 +209,7 @@ public class LocalDataManagerImpl implements LocalDataManager {
         XueQiuStockManager xueQiuStockManager =new XueQiuStockManagerImpl();
         try {
             // 最新数据
-            List<XueQiuStockIncomeDTO> incomeDTOList = stockCodeList.stream()
+            List<XueQiuStockIncomeDTO> incomeDTOList = stockCodeList.parallelStream()
                     .map(stockCode -> xueQiuStockManager.queryIncomeList(stockCode, StockConstant.FINANCE_REPORT_COUNT))
                     .filter(list -> CollectionUtils.isNotEmpty(list))
                     .flatMap(list -> list.stream())
@@ -268,7 +268,7 @@ public class LocalDataManagerImpl implements LocalDataManager {
         XueQiuStockManager xueQiuStockManager =new XueQiuStockManagerImpl();
         try {
             // 最新的数据
-            List<XueQiuStockCashFlowDTO> cashFlowDTOList = stockCodeList.stream()
+            List<XueQiuStockCashFlowDTO> cashFlowDTOList = stockCodeList.parallelStream()
                     .map(stockCode -> xueQiuStockManager.queryCashFlowList(stockCode, StockConstant.FINANCE_REPORT_COUNT))
                     .filter(list -> CollectionUtils.isNotEmpty(list))
                     .flatMap(list -> list.stream())
@@ -324,7 +324,7 @@ public class LocalDataManagerImpl implements LocalDataManager {
         XueQiuStockManager xueQiuStockManager =new XueQiuStockManagerImpl();
         try {
             // 最新数据
-            List<XueQiuStockIndicatorDTO> indicatorDTOList = stockCodeList.stream()
+            List<XueQiuStockIndicatorDTO> indicatorDTOList = stockCodeList.parallelStream()
                     .map(stockCode -> xueQiuStockManager.queryIndicatorList(stockCode, StockConstant.FINANCE_REPORT_COUNT))
                     .filter(list -> CollectionUtils.isNotEmpty(list))
                     .flatMap(list -> list.stream())
@@ -385,6 +385,8 @@ public class LocalDataManagerImpl implements LocalDataManager {
         List<DongChaiFinanceNoticeDTO> noticeDTOList = dongChaiDataManager.queryFinanceNoticeDTO(reportDate);
         List<String> strNoticeList = Optional.ofNullable(noticeDTOList).orElse(Lists.newArrayList()).stream()
                 .filter(noticeDTO -> stockCodeList.contains(noticeDTO.getCode()))
+                .filter(financeNoticeDTO -> StockConstant.FINANCE_PREDICT_INDICATOR.contains(financeNoticeDTO.getPredict_indicator()))
+                .filter(financeNoticeDTO -> StockConstant.FINANCE_PREDICT_INCREASE.contains(financeNoticeDTO.getPredict_type()))
                 .map(noticeDTO -> {
                     String indName = codeAndIndNameMap.get(noticeDTO.getCode());
                     if(StringUtils.isNotBlank(indName)){
@@ -446,7 +448,9 @@ public class LocalDataManagerImpl implements LocalDataManager {
         DongChaiDataManager dongChaiDataManager =new DongChaiDataManagerImpl();
         List<DongChaiFinanceNoticeDTO> allFinanceNoticeDTOList = dongChaiDataManager.queryFinanceNoticeDTO(reportDate);
         List<DongChaiFinanceNoticeDTO> financeNoticeDTOList = Optional.ofNullable(allFinanceNoticeDTOList).orElse(Lists.newArrayList()).stream()
+                .filter(financeNoticeDTO -> stockCodeList.contains(financeNoticeDTO.getCode()))
                 .filter(financeNoticeDTO -> StockConstant.FINANCE_PREDICT_INDICATOR.contains(financeNoticeDTO.getPredict_indicator()))
+                .filter(financeNoticeDTO -> StockConstant.FINANCE_PREDICT_INCREASE.contains(financeNoticeDTO.getPredict_type()))
                 .collect(Collectors.toList());
         if(CollectionUtils.isEmpty(financeNoticeDTOList)){
             return ;

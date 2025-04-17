@@ -24,7 +24,7 @@ public class CommonManager {
         Boolean updateKlineData =true;
         if(updateKlineData){
             localDataManager.queryAndUpdateKLineList();
-            localDataManager.queryAndUpdateNorthHoldShareList();
+//            localDataManager.queryAndUpdateNorthHoldShareList();
         }
 
         // 更新本地文件的财务数据
@@ -39,7 +39,7 @@ public class CommonManager {
         // 更新业绩预告和增减持数据
         Boolean updateFinanceNotice =false;
         if(updateFinanceNotice){
-            String reportDate ="2024-09-30";
+            String reportDate ="2025-03-31";
             localDataManager.queryAndSaveFinanceNotice(reportDate);
             localDataManager.queryAndSaveHolderIncreaseList();
         }
@@ -53,9 +53,9 @@ public class CommonManager {
     @Test
     public void testQueryAnalysisData(){
         // 参数列表
-        Integer reportYear =2022;
-        FinanceReportTypeEnum reportTypeEnum =FinanceReportTypeEnum.QUARTER_1;
-        String kLineDate ="20220501";
+        Integer reportYear =2024;
+        FinanceReportTypeEnum reportTypeEnum =FinanceReportTypeEnum.QUARTER_3;
+        String kLineDate ="20241101";
 
         LocalDataManager localDataManager =new LocalDataManagerImpl();
         List<String> stockCodeList =localDataManager.getLocalStockCodeList();
@@ -68,8 +68,8 @@ public class CommonManager {
         stockIndicatorManager.calculateAndSaveAllAnalysisDTO(kLineDate, stockCodeList, reportYear ,reportTypeEnum);
 
         // 沪港通数据
-        stockIndicatorManager.queryAndSaveNorthHoldShares(stockCodeList, kLineDate);
-        stockIndicatorManager.queryAndSaveIndustryHoldShares(kLineDate);
+//        stockIndicatorManager.queryAndSaveNorthHoldShares(stockCodeList, kLineDate);
+//        stockIndicatorManager.queryAndSaveIndustryHoldShares(kLineDate);
     }
 
     /**

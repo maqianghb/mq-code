@@ -53,18 +53,25 @@ public class StockIndicatorManagerImpl implements StockIndicatorManager {
     @Override
     public void calculateAndSaveAllAnalysisDTO(String kLineDate, List<String> stockCodeList, Integer reportYear, FinanceReportTypeEnum reportTypeEnum) {
         // 获取全部股票的指标数据
-        List<AnalyseIndicatorDTO> allIndicatorDTOList = Lists.newArrayList();
-        for (String stockCode : stockCodeList) {
-            try {
-                AnalyseIndicatorElement indicatorElement = this.getIndicatorElement(stockCode, reportYear, reportTypeEnum, kLineDate);
-                AnalyseIndicatorDTO analyseIndicatorDTO = this.getAnalyseIndicatorDTO(indicatorElement);
-                this.formatAnalyseIndicatorDTO(analyseIndicatorDTO);
+        List<AnalyseIndicatorDTO> allIndicatorDTOList = stockCodeList.parallelStream()
+                .map(stockCode -> {
+                    try {
+                        AnalyseIndicatorElement indicatorElement = this.getIndicatorElement(stockCode, reportYear, reportTypeEnum, kLineDate);
+                        AnalyseIndicatorDTO analyseIndicatorDTO = this.getAnalyseIndicatorDTO(indicatorElement);
+                        this.formatAnalyseIndicatorDTO(analyseIndicatorDTO);
 
-                allIndicatorDTOList.add(analyseIndicatorDTO);
-            } catch (Exception e) {
-                System.out.println("errCode: " + stockCode);
-                e.printStackTrace();
-            }
+                        return analyseIndicatorDTO;
+                    } catch (Exception e) {
+                        System.out.println("errCode: " + stockCode);
+                        e.printStackTrace();
+                    }
+
+                    return null;
+                })
+                .filter(analyseIndicatorDTO -> analyseIndicatorDTO != null)
+                .collect(Collectors.toList());
+        if(CollectionUtils.isEmpty(allIndicatorDTOList)){
+            return ;
         }
 
         // 生成结果
@@ -79,6 +86,7 @@ public class StockIndicatorManagerImpl implements StockIndicatorManager {
                     Object value = jsonObject.get(field.getName());
                     indicatorBuilder.append(",").append(value);
                 }
+
                 strIndicatorList.add(indicatorBuilder.toString().substring(1));
             } catch (Exception e) {
                 e.printStackTrace();
@@ -95,8 +103,6 @@ public class StockIndicatorManagerImpl implements StockIndicatorManager {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-        System.out.println("indicatorList: " + JSON.toJSONString(strIndicatorList));
 
         // 全市场百分位数据
         this.getAndSaveIndicatorDTOPercent(kLineDate, allIndicatorDTOList);
