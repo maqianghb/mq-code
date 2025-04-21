@@ -14,7 +14,7 @@ import java.util.List;
 public class CommonManager {
 
     /**
-     * 更新k线和财务数据
+     * 更新k线和财务基础数据
      */
     @Test
     public void testUpdateStockData() {
@@ -53,9 +53,9 @@ public class CommonManager {
     @Test
     public void testQueryAnalysisData(){
         // 参数列表
-        Integer reportYear =2024;
-        FinanceReportTypeEnum reportTypeEnum =FinanceReportTypeEnum.QUARTER_3;
-        String kLineDate ="20241101";
+        Integer reportYear =2025;
+        FinanceReportTypeEnum reportTypeEnum =FinanceReportTypeEnum.QUARTER_1;
+        String kLineDate ="20250420";
 
         LocalDataManager localDataManager =new LocalDataManagerImpl();
         List<String> stockCodeList =localDataManager.getLocalStockCodeList();

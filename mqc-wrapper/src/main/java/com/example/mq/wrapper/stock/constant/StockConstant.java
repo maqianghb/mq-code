@@ -15,7 +15,7 @@ public class StockConstant {
     public static final String INDICATOR_URL ="https://stock.xueqiu.com/v5/stock/finance/cn/indicator.json";
     public static final String COMPANY_URL ="https://stock.xueqiu.com/v5/stock/f10/cn/company.json";
 
-    public static final String COOKIE ="s=c117ssz7g3; u=551703859817291; HMACCOUNT=C04B42F6BEF1AFBB; cookiesu=781737983540813; device_id=631f3b7f2c8df1f45644448b974585f1; xq_a_token=9773bacc11404cb5ac8b0847c564eda3730e6b61; xqat=9773bacc11404cb5ac8b0847c564eda3730e6b61; xq_r_token=caf75c71460c20a680e6e3c455cadcca5c1be14a; xq_id_token=eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJ1aWQiOi0xLCJpc3MiOiJ1YyIsImV4cCI6MTc0NzM1NzE4MywiY3RtIjoxNzQ0ODk3MDYxODIxLCJjaWQiOiJkOWQwbjRBWnVwIn0.i4_HRt-z7SzRcNnDwT67Y4DkV137bx85p8RK3bVHBV9KA5kWRitQKNkEiKXkps7PjkDIBtieRjosMVaIP2SHXHoducGLANkVSMhqPIpFhSQGb-hv8GC4RQtPQKFZPc_a1tXYykjx7B9Cc3VigndliHOzkLVNyTzOMP6S0fLQ9PJUuKaMjQByTZ2RceyCyKb1pIEyLBUN4Ik65SSnWtblFufm_T0DvBDGQG95ojKSqUnuRCBc1n2wKTDMg37u29_qX6ajtvxAC9BE9QE2iEb6jSIzFWfjT8WgqRy-ajAKWd5C9w485XiLWTISBzV1eDgVUU1UbLf4SzQv1GIx4qkNYQ; is_overseas=0;";
+    public static final String COOKIE ="s=c117ssz7g3; u=551703859817291; HMACCOUNT=C04B42F6BEF1AFBB; cookiesu=781737983540813; device_id=631f3b7f2c8df1f45644448b974585f1; xq_a_token=9773bacc11404cb5ac8b0847c564eda3730e6b61; xqat=9773bacc11404cb5ac8b0847c564eda3730e6b61; xq_r_token=caf75c71460c20a680e6e3c455cadcca5c1be14a; xq_id_token=eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJ1aWQiOi0xLCJpc3MiOiJ1YyIsImV4cCI6MTc0NzM1NzE4MywiY3RtIjoxNzQ0ODk3MDYxODIxLCJjaWQiOiJkOWQwbjRBWnVwIn0.i4_HRt-z7SzRcNnDwT67Y4DkV137bx85p8RK3bVHBV9KA5kWRitQKNkEiKXkps7PjkDIBtieRjosMVaIP2SHXHoducGLANkVSMhqPIpFhSQGb-hv8GC4RQtPQKFZPc_a1tXYykjx7B9Cc3VigndliHOzkLVNyTzOMP6S0fLQ9PJUuKaMjQByTZ2RceyCyKb1pIEyLBUN4Ik65SSnWtblFufm_T0DvBDGQG95ojKSqUnuRCBc1n2wKTDMg37u29_qX6ajtvxAC9BE9QE2iEb6jSIzFWfjT8WgqRy-ajAKWd5C9w485XiLWTISBzV1eDgVUU1UbLf4SzQv1GIx4qkNYQ; Hm_lvt_1db88642e346389874251b5a1eded6e3=1744897093; is_overseas=0;";
 
     public static final List<ImmutablePair<String, String>> STATISTICS_CODE_LIST = Arrays.asList(
             new ImmutablePair<>("SH000016", "上证50"),
@@ -43,19 +43,19 @@ public class StockConstant {
     public static final Integer FINANCE_REPORT_COUNT =30;
     public static final Integer KLINE_DAY_COUNT =2000;
 
-    public static final String STOCK_LIST ="/Users/maqiang/Documents/002-stock_data/stock_list.txt";
-    public static final String COMPANY_LIST ="/Users/maqiang/Documents/002-stock_data/company_list.txt";
+    public static final String STOCK_LIST ="/Users/maqiang/Documents/002-stock_data/001_stock_list/stock_list.txt";
+    public static final String COMPANY_LIST ="/Users/maqiang/Documents/002-stock_data/001_stock_list/company_list.txt";
 
-    public static final String STOCK_LIST_WHITE ="/Users/maqiang/Documents/002-stock_data/stock_list_white.txt";
-    public static final String STOCK_LIST_BLACK ="/Users/maqiang/Documents/002-stock_data/stock_list_black.txt";
+    public static final String STOCK_LIST_WHITE ="/Users/maqiang/Documents/002-stock_data/001_stock_list/stock_list_white.txt";
+    public static final String STOCK_LIST_BLACK ="/Users/maqiang/Documents/002-stock_data/001_stock_list/stock_list_black.txt";
 
-    public static final String KLINE_LIST_DAY ="/Users/maqiang/Documents/002-stock_data/xq_k_line/k_line_list_day_%s.txt";
+    public static final String KLINE_LIST_DAY ="/Users/maqiang/Documents/002-stock_data/002_xq_k_line/k_line_list_day_%s.txt";
 
-    public static final String BALANCE_LIST ="/Users/maqiang/Documents/002-stock_data/xq_finance/xq_balance_list.txt";
-    public static final String INCOME_LIST ="/Users/maqiang/Documents/002-stock_data/xq_finance/xq_income_list.txt";
-    public static final String CASH_FLOW_LIST ="/Users/maqiang/Documents/002-stock_data/xq_finance/xq_cash_flow_list.txt";
-    public static final String INDICATOR_LIST_XQ ="/Users/maqiang/Documents/002-stock_data/xq_finance/xq_indicator_list.txt";
-    public static final String INCOME_LIST_Q ="/Users/maqiang/Documents/002-stock_data/xq_finance/xq_income_list_q.txt";
+    public static final String BALANCE_LIST ="/Users/maqiang/Documents/002-stock_data/003_xq_finance_balance/xq_balance_%s.txt";
+    public static final String INCOME_LIST ="/Users/maqiang/Documents/002-stock_data/004_xq_finance_income/xq_income_%s.txt";
+    public static final String CASH_FLOW_LIST ="/Users/maqiang/Documents/002-stock_data/006_xq_finance_cash_flow/xq_cash_flow_%s.txt";
+    public static final String INDICATOR_LIST_XQ ="/Users/maqiang/Documents/002-stock_data/007_xq_finance_indicator/xq_indicator_%s.txt";
+    public static final String INCOME_LIST_Q ="/Users/maqiang/Documents/002-stock_data/005_xq_finance_income_q/xq_income_q_%s.txt";
 
     public static final String INDICATOR_LIST_ANALYSIS ="/Users/maqiang/Documents/002-stock_data/analysis_all_%s_%s.csv";
 
@@ -75,8 +75,8 @@ public class StockConstant {
     public static final String HOLDER_INCREASE_LIST ="/Users/maqiang/Documents/002-stock_data/dc_holder_increase_%s.csv";
 
 
-    public static final String NORTH_HOLD_SHARES_FILE ="/Users/maqiang/Documents/002-stock_data/dc_north_hold_shares/north_hold_shares_%s.txt";
-    public static final String NORTH_HOLD_SHARES_IND_FILE ="/Users/maqiang/Documents/002-stock_data/dc_north_hold_shares_ind/north_hold_shares_ind_%s.txt";
+    public static final String NORTH_HOLD_SHARES_FILE ="/Users/maqiang/Documents/002-stock_data/008_dc_north_hold_shares/north_hold_shares_%s.txt";
+    public static final String NORTH_HOLD_SHARES_IND_FILE ="/Users/maqiang/Documents/002-stock_data/009_dc_north_hold_shares_ind/north_hold_shares_ind_%s.txt";
 
     public static final String LATEST_HOLD_SHARES_FILE ="/Users/maqiang/Documents/002-stock_data/north_hold_shares_%s_%s.csv";
     public static final String LATEST_IND_HOLD_SHARES_FILE ="/Users/maqiang/Documents/002-stock_data/north_hold_shares_ind_%s_%s.csv";

@@ -809,6 +809,7 @@ public class StockIndicatorManagerImpl implements StockIndicatorManager {
         strIndicatorList.add(HEADER);
 
         filterIndicatorDTOList = Optional.ofNullable(filterIndicatorDTOList).orElse(Lists.newArrayList()).stream()
+                .filter(analyseIndicatorDTO -> analyseIndicatorDTO.getCur_q_operating_income_yoy() !=null)
                 .sorted(Comparator.comparing(AnalyseIndicatorDTO::getCur_q_operating_income_yoy).reversed())
                 .collect(Collectors.toList());
         for (AnalyseIndicatorDTO indicatorDTO : filterIndicatorDTOList) {
