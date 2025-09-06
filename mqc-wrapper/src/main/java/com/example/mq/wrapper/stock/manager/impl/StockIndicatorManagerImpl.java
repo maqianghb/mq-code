@@ -380,7 +380,7 @@ public class StockIndicatorManagerImpl implements StockIndicatorManager {
 
         String header = "行业,ROE_TTM,ROE_TTM_V1,PE_TTM,pe百分位,市净率,PB百分位,当季营收同比,当季净利润同比,上一季的营收同比,上一季的净利润同比,营收同比,净利润同比" +
                 ",当季毛利率,当季净利率,当季毛利率同比,当季净利率同比,当季毛利率环比,当季净利率环比,毛利率,净利率" +
-                ",应收周转天数,存货周转天数,市值,近1月股价变化,近3月股价变化,近6月股价变化,近1年股价变化";
+                ",应收周转天数,存货周转天数,应收周转天数同比,存货周转天数同比,市值,近1月股价变化,近3月股价变化,近6月股价变化,近1年股价变化";
         List<String> strPercentList = Lists.newArrayList();
         strPercentList.add(header);
 
@@ -663,6 +663,30 @@ public class StockIndicatorManagerImpl implements StockIndicatorManager {
             if (CollectionUtils.isNotEmpty(inventory_turnover_days_list)) {
                 int totalSize = inventory_turnover_days_list.size();
                 Double value = inventory_turnover_days_list.get(totalSize * 50 / 100);
+                msgBuilder.append(",").append(value);
+            }
+
+            // 应收周转天数同比
+            List<Double> receivable_turnover_days_rate_list = tmpIndicatorDTOList.stream()
+                    .filter(indicatorDTO -> indicatorDTO.getReceivable_turnover_days_rate() != null)
+                    .sorted(Comparator.comparing(AnalyseIndicatorDTO::getReceivable_turnover_days_rate))
+                    .map(AnalyseIndicatorDTO::getReceivable_turnover_days_rate)
+                    .collect(Collectors.toList());
+            if (CollectionUtils.isNotEmpty(receivable_turnover_days_rate_list)) {
+                int totalSize = receivable_turnover_days_rate_list.size();
+                Double value = receivable_turnover_days_rate_list.get(totalSize * 50 / 100);
+                msgBuilder.append(",").append(value);
+            }
+
+            // 存货周转天数
+            List<Double> inventory_turnover_days_rate_list = tmpIndicatorDTOList.stream()
+                    .filter(indicatorDTO -> indicatorDTO.getInventory_turnover_days_rate() != null)
+                    .sorted(Comparator.comparing(AnalyseIndicatorDTO::getInventory_turnover_days_rate))
+                    .map(AnalyseIndicatorDTO::getInventory_turnover_days_rate)
+                    .collect(Collectors.toList());
+            if (CollectionUtils.isNotEmpty(inventory_turnover_days_rate_list)) {
+                int totalSize = inventory_turnover_days_rate_list.size();
+                Double value = inventory_turnover_days_rate_list.get(totalSize * 50 / 100);
                 msgBuilder.append(",").append(value);
             }
 
