@@ -1,4 +1,4 @@
-package com.example.mq.wrapper.stock;
+package com.example.mq.wrapper.stock.utils;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
@@ -409,22 +409,22 @@ public class StockCalculateUtils {
                 .findFirst()
                 .orElse(null);
         if (queryDateKLineDTO != null && queryDateKLineDTO.getClose() != null && queryDateKLineDTO.getClose() != 0) {
-            XueQiuStockKLineDTO oneMonthKLineDTO = indicatorElement.getOneMonthKLineDTO();
+            XueQiuStockKLineDTO oneMonthKLineDTO = indicatorElement.getOneMonthLaterKLineDTO();
             if (oneMonthKLineDTO != null && oneMonthKLineDTO.getClose() != null) {
                 indicatorDTO.setOne_month_price_change(oneMonthKLineDTO.getClose() / queryDateKLineDTO.getClose() - 1);
             }
 
-            XueQiuStockKLineDTO threeMonthKLineDTO = indicatorElement.getThreeMonthKLineDTO();
+            XueQiuStockKLineDTO threeMonthKLineDTO = indicatorElement.getThreeMonthLaterKLineDTO();
             if (threeMonthKLineDTO != null && threeMonthKLineDTO.getClose() != null) {
                 indicatorDTO.setThree_month_price_change(threeMonthKLineDTO.getClose() / queryDateKLineDTO.getClose() - 1);
             }
 
-            XueQiuStockKLineDTO halfYearKLineDTO = indicatorElement.getHalfYearKLineDTO();
+            XueQiuStockKLineDTO halfYearKLineDTO = indicatorElement.getHalfYearLaterKLineDTO();
             if (halfYearKLineDTO != null && halfYearKLineDTO.getClose() != null) {
                 indicatorDTO.setHalf_year_price_change(halfYearKLineDTO.getClose() / queryDateKLineDTO.getClose() - 1);
             }
 
-            XueQiuStockKLineDTO oneYearKLineDTO = indicatorElement.getOneYearKLineDTO();
+            XueQiuStockKLineDTO oneYearKLineDTO = indicatorElement.getOneYearLaterKLineDTO();
             if (oneYearKLineDTO != null && oneYearKLineDTO.getClose() != null) {
                 indicatorDTO.setOne_year_price_change(oneYearKLineDTO.getClose() / queryDateKLineDTO.getClose() - 1);
             }

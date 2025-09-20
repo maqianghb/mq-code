@@ -6,6 +6,9 @@ import lombok.Data;
 
 import java.util.List;
 
+/**
+ * 指标计算源数据
+ */
 @Data
 public class AnalyseIndicatorElement {
 
@@ -94,13 +97,25 @@ public class AnalyseIndicatorElement {
      */
     private List<XueQiuStockKLineDTO> kLineDTOList;
 
-    private XueQiuStockKLineDTO oneMonthKLineDTO;
+    /**
+     * 1月后k线数据
+     */
+    private XueQiuStockKLineDTO oneMonthLaterKLineDTO;
 
-    private XueQiuStockKLineDTO threeMonthKLineDTO;
+    /**
+     * 3月后k线数据
+     */
+    private XueQiuStockKLineDTO threeMonthLaterKLineDTO;
 
-    private XueQiuStockKLineDTO halfYearKLineDTO;
+    /**
+     * 半年后k线数据
+     */
+    private XueQiuStockKLineDTO halfYearLaterKLineDTO;
 
-    private XueQiuStockKLineDTO oneYearKLineDTO;
+    /**
+     * 1年后k线数据
+     */
+    private XueQiuStockKLineDTO oneYearLaterKLineDTO;
 
     /**
      * 最新的增减持信息

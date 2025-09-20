@@ -57,13 +57,13 @@ public class StockConstant {
     public static final String INDICATOR_LIST_XQ ="/Users/maqiang/Documents/002-stock_data/007_xq_finance_indicator/xq_indicator_%s.txt";
     public static final String INCOME_LIST_Q ="/Users/maqiang/Documents/002-stock_data/005_xq_finance_income_q/xq_income_q_%s.txt";
 
-    public static final String INDICATOR_LIST_ANALYSIS ="/Users/maqiang/Documents/002-stock_data/analysis_all_%s_%s.csv";
+    public static final String INDICATOR_LIST_ANALYSIS ="/Users/maqiang/Documents/002-stock_data/analysis_all_%s.csv";
 
-    public static final String INDICATOR_LIST_FILTER ="/Users/maqiang/Documents/002-stock_data/analysis_filter_%s_%d_%s.csv";
+    public static final String INDICATOR_LIST_FILTER ="/Users/maqiang/Documents/002-stock_data/analysis_filter_%s_%d.csv";
 
-    public static final String INDICATOR_LIST_PERCENT ="/Users/maqiang/Documents/002-stock_data/percent_%s_%s.csv";
+    public static final String INDICATOR_LIST_PERCENT ="/Users/maqiang/Documents/002-stock_data/percent_%s.csv";
 
-    public static final String INDICATOR_LIST_PERCENT_IND ="/Users/maqiang/Documents/002-stock_data/percent_ind_%s_%s.csv";
+    public static final String INDICATOR_LIST_PERCENT_IND ="/Users/maqiang/Documents/002-stock_data/percent_ind_%s.csv";
 
 
     public static final String DONG_CHAI_URL ="https://datacenter-web.eastmoney.com/api/data/v1/get";
@@ -78,10 +78,10 @@ public class StockConstant {
     public static final String NORTH_HOLD_SHARES_FILE ="/Users/maqiang/Documents/002-stock_data/008_dc_north_hold_shares/north_hold_shares_%s.txt";
     public static final String NORTH_HOLD_SHARES_IND_FILE ="/Users/maqiang/Documents/002-stock_data/009_dc_north_hold_shares_ind/north_hold_shares_ind_%s.txt";
 
-    public static final String LATEST_HOLD_SHARES_FILE ="/Users/maqiang/Documents/002-stock_data/north_hold_shares_%s_%s.csv";
-    public static final String LATEST_IND_HOLD_SHARES_FILE ="/Users/maqiang/Documents/002-stock_data/north_hold_shares_ind_%s_%s.csv";
+    public static final String LATEST_HOLD_SHARES_FILE ="/Users/maqiang/Documents/002-stock_data/north_hold_shares_%s.csv";
+    public static final String LATEST_IND_HOLD_SHARES_FILE ="/Users/maqiang/Documents/002-stock_data/north_hold_shares_ind_%s.csv";
 
-    public static final String STATISTICS_MA_1000_PERCENT_LIST ="/Users/maqiang/Documents/002-stock_data/statistics_ma_1000_percent_%s_%s.csv";
+    public static final String STATISTICS_MA_1000_PERCENT_LIST ="/Users/maqiang/Documents/002-stock_data/statistics_ma_1000_percent_%s.csv";
 
     public static String getPredictIncreaseType(String predictType){
         switch(predictType){
