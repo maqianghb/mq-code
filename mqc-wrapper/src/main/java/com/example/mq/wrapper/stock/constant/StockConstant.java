@@ -59,7 +59,7 @@ public class StockConstant {
 
     public static final String INDICATOR_LIST_ANALYSIS ="/Users/maqiang/Documents/002-stock_data/analysis_all_%s.csv";
 
-    public static final String INDICATOR_LIST_FILTER ="/Users/maqiang/Documents/002-stock_data/analysis_filter_%s_%d.csv";
+    public static final String INDICATOR_LIST_FILTER ="/Users/maqiang/Documents/002-stock_data/analysis_filter_%s.csv";
 
     public static final String INDICATOR_LIST_PERCENT ="/Users/maqiang/Documents/002-stock_data/percent_%s.csv";
 
@@ -69,9 +69,9 @@ public class StockConstant {
     public static final String DONG_CHAI_URL ="https://datacenter-web.eastmoney.com/api/data/v1/get";
     public static final Integer DONG_CHAI_MAX_LIMIT =500;
 
-    public static final String FINANCE_NOTICE_LIST ="/Users/maqiang/Documents/002-stock_data/dc_finance_%s_%s.csv";
+    public static final String FINANCE_NOTICE_LIST ="/Users/maqiang/Documents/002-stock_data/dc_finance_%s.csv";
 
-    public static final String IND_FINANCE_NOTICE_LIST ="/Users/maqiang/Documents/002-stock_data/dc_finance_ind_%s_%s.csv";
+    public static final String IND_FINANCE_NOTICE_LIST ="/Users/maqiang/Documents/002-stock_data/dc_finance_ind_%s.csv";
     public static final String HOLDER_INCREASE_LIST ="/Users/maqiang/Documents/002-stock_data/dc_holder_increase_%s.csv";
 
 

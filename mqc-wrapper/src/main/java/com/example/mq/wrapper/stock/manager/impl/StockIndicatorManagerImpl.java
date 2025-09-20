@@ -156,7 +156,7 @@ public class StockIndicatorManagerImpl implements StockIndicatorManager {
 
 
         // 记录结果
-        String fileName = String.format(StockConstant.INDICATOR_LIST_FILTER, kLineDate, 0);
+        String fileName = String.format(StockConstant.INDICATOR_LIST_FILTER, kLineDate);
         FileOperateUtils.saveLocalFile(fileName, INDICATOR_HEADER, strIndicatorDTOList, false);
     }
 

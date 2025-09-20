@@ -15,6 +15,7 @@ import com.example.mq.wrapper.stock.model.dongchai.DongChaiFinanceNoticeDTO;
 import com.example.mq.wrapper.stock.model.dongchai.DongChaiHolderIncreaseDTO;
 import com.example.mq.wrapper.stock.model.dongchai.DongChaiIndustryHoldShareDTO;
 import com.example.mq.wrapper.stock.model.dongchai.DongChaiNorthHoldShareDTO;
+import com.example.mq.wrapper.stock.utils.FileOperateUtils;
 import com.google.common.collect.Maps;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
@@ -409,15 +410,8 @@ public class LocalDataManagerImpl implements LocalDataManager {
         strDataList.addAll(strNoticeList);
 
         // 记录结果
-        try {
-            DateTimeFormatter df =DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss");
-            LocalDateTime localDateTime = LocalDateTime.now();//当前时间
-            String strDateTime = df.format(localDateTime);//格式化为字符串
-            String filterListName =String.format(StockConstant.FINANCE_NOTICE_LIST, reportDate, strDateTime);
-            FileUtils.writeLines(new File(filterListName), "UTF-8", strDataList, true);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        String fileName =String.format(StockConstant.FINANCE_NOTICE_LIST, reportDate);
+        FileOperateUtils.saveLocalFile(fileName, FINANCE_NOTICE_HEADER, strNoticeList, true);
     }
 
     @Override
@@ -500,20 +494,9 @@ public class LocalDataManagerImpl implements LocalDataManager {
             return;
         }
 
-        List<String> strDataList =Lists.newArrayList();
-        strDataList.add(IND_FINANCE_NOTICE_HEADER);
-        strDataList.addAll(strNoticeNumList);
-
         // 记录结果
-        try {
-            DateTimeFormatter df =DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss");
-            LocalDateTime localDateTime = LocalDateTime.now();//当前时间
-            String strDateTime = df.format(localDateTime);//格式化为字符串
-            String filterListName =String.format(StockConstant.IND_FINANCE_NOTICE_LIST, reportDate, strDateTime);
-            FileUtils.writeLines(new File(filterListName), "UTF-8", strDataList, true);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        String fileName =String.format(StockConstant.IND_FINANCE_NOTICE_LIST, reportDate);
+        FileOperateUtils.saveLocalFile(fileName, IND_FINANCE_NOTICE_HEADER, strNoticeNumList, true);
     }
 
     @Override
