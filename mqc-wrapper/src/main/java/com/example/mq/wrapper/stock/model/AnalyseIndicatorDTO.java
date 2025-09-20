@@ -317,12 +317,39 @@ public class AnalyseIndicatorDTO {
      */
     private Double net_profit_atsopc;
 
+    /**
+     * k线日期近1周的价格变化
+     */
+    private Double one_week_before_price_change;
+
+    /**
+     * k线日期近1个月的价格变化
+     */
+    private Double one_month_before_price_change;
+
+    /**
+     * k线日期近3月的价格变化
+     */
+    private Double three_month_before_price_change;
+
+    /**
+     * 1个月后的价格变化
+     */
     private Double one_month_price_change;
 
+    /**
+     * 3个月后的价格变化
+     */
     private Double three_month_price_change;
 
+    /**
+     * 半年后的价格变化
+     */
     private Double half_year_price_change;
 
+    /**
+     * 1年后的价格变化
+     */
     private Double one_year_price_change;
 
 }

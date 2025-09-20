@@ -39,7 +39,7 @@ public class CommonManager {
         // 更新业绩预告和增减持数据
         Boolean updateFinanceNotice =true;
         if(updateFinanceNotice){
-            String reportDate ="2025-06-30";
+            String reportDate ="2025-09-30";
             localDataManager.queryAndSaveFinanceNotice(reportDate);
             localDataManager.queryAndSaveHolderIncreaseList();
         }
@@ -54,8 +54,8 @@ public class CommonManager {
     public void testQueryAnalysisData(){
         // 参数列表
         Integer reportYear =2025;
-        FinanceReportTypeEnum reportTypeEnum =FinanceReportTypeEnum.HALF_YEAR;
-        String kLineDate ="20250901";
+        FinanceReportTypeEnum reportTypeEnum =FinanceReportTypeEnum.QUARTER_1;
+        String kLineDate ="20250501";
 
         LocalDataManager localDataManager =new LocalDataManagerImpl();
         List<String> stockCodeList =localDataManager.getLocalStockCodeList();

@@ -403,27 +403,49 @@ public class StockCalculateUtils {
             }
         }
 
-        //
+        // 查询日期当天的k线
         XueQiuStockKLineDTO queryDateKLineDTO = Optional.ofNullable(indicatorElement.getKLineDTOList()).orElse(Lists.newArrayList()).stream()
                 .sorted(Comparator.comparing(XueQiuStockKLineDTO::getTimestamp).reversed())
                 .findFirst()
                 .orElse(null);
         if (queryDateKLineDTO != null && queryDateKLineDTO.getClose() != null && queryDateKLineDTO.getClose() != 0) {
+            // k线日期近1周的价格变化
+            XueQiuStockKLineDTO oneWeekBeforeKLineDTO = indicatorElement.getOneWeekBeforeKLineDTO();
+            if (oneWeekBeforeKLineDTO != null && oneWeekBeforeKLineDTO.getClose() != null) {
+                indicatorDTO.setOne_week_before_price_change(queryDateKLineDTO.getClose() / oneWeekBeforeKLineDTO.getClose() - 1);
+            }
+
+            // k线日期近1月的价格变化
+            XueQiuStockKLineDTO oneMonthBeforeKLineDTO = indicatorElement.getOneMonthBeforeKLineDTO();
+            if (oneMonthBeforeKLineDTO != null && oneMonthBeforeKLineDTO.getClose() != null) {
+                indicatorDTO.setOne_month_before_price_change(queryDateKLineDTO.getClose() / oneMonthBeforeKLineDTO.getClose()  - 1);
+            }
+
+            // k线日期近3月的价格变化
+            XueQiuStockKLineDTO threeMonthBeforeKLineDTO = indicatorElement.getThreeMonthBeforeKLineDTO();
+            if (threeMonthBeforeKLineDTO != null && threeMonthBeforeKLineDTO.getClose() != null) {
+                indicatorDTO.setThree_month_before_price_change(queryDateKLineDTO.getClose() / threeMonthBeforeKLineDTO.getClose() - 1);
+            }
+
+            // 1个月后的价格变化
             XueQiuStockKLineDTO oneMonthKLineDTO = indicatorElement.getOneMonthLaterKLineDTO();
             if (oneMonthKLineDTO != null && oneMonthKLineDTO.getClose() != null) {
                 indicatorDTO.setOne_month_price_change(oneMonthKLineDTO.getClose() / queryDateKLineDTO.getClose() - 1);
             }
 
+            // 3个月后的价格变化
             XueQiuStockKLineDTO threeMonthKLineDTO = indicatorElement.getThreeMonthLaterKLineDTO();
             if (threeMonthKLineDTO != null && threeMonthKLineDTO.getClose() != null) {
                 indicatorDTO.setThree_month_price_change(threeMonthKLineDTO.getClose() / queryDateKLineDTO.getClose() - 1);
             }
 
+            // 半年后的价格变化
             XueQiuStockKLineDTO halfYearKLineDTO = indicatorElement.getHalfYearLaterKLineDTO();
             if (halfYearKLineDTO != null && halfYearKLineDTO.getClose() != null) {
                 indicatorDTO.setHalf_year_price_change(halfYearKLineDTO.getClose() / queryDateKLineDTO.getClose() - 1);
             }
 
+            // 1年后的价格变化
             XueQiuStockKLineDTO oneYearKLineDTO = indicatorElement.getOneYearLaterKLineDTO();
             if (oneYearKLineDTO != null && oneYearKLineDTO.getClose() != null) {
                 indicatorDTO.setOne_year_price_change(oneYearKLineDTO.getClose() / queryDateKLineDTO.getClose() - 1);
@@ -819,6 +841,18 @@ public class StockCalculateUtils {
     public static void formatAnalyseIndicatorDTO(AnalyseIndicatorDTO analyseIndicatorDTO) {
         if (analyseIndicatorDTO == null) {
             return;
+        }
+
+        if (analyseIndicatorDTO.getOne_week_before_price_change() != null) {
+            analyseIndicatorDTO.setOne_week_before_price_change(NumberUtil.format(analyseIndicatorDTO.getOne_week_before_price_change(), 3));
+        }
+
+        if (analyseIndicatorDTO.getOne_month_before_price_change() != null) {
+            analyseIndicatorDTO.setOne_month_before_price_change(NumberUtil.format(analyseIndicatorDTO.getOne_month_before_price_change(), 3));
+        }
+
+        if (analyseIndicatorDTO.getThree_month_before_price_change() != null) {
+            analyseIndicatorDTO.setThree_month_before_price_change(NumberUtil.format(analyseIndicatorDTO.getThree_month_before_price_change(), 3));
         }
 
         if (analyseIndicatorDTO.getOne_month_price_change() != null) {

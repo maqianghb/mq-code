@@ -1,5 +1,6 @@
 package com.example.mq.wrapper.stock.utils;
 
+import com.example.mq.common.utils.NumberUtil;
 import com.example.mq.wrapper.stock.constant.StockConstant;
 import com.example.mq.wrapper.stock.model.AnalyseIndicatorDTO;
 import com.google.common.collect.Lists;
@@ -30,11 +31,11 @@ public class PercentDataUtils {
             return;
         }
 
-        String header = "行业,指标,10分位,25分位,50分位,75分位,90分位,95分位";
-        List<String> strPercentList = Lists.newArrayList();
-
         // 全行业数据
         String indName ="全行业";
+        String msgHeader = "行业,指标,10分位,25分位,50分位,75分位,90分位,95分位";
+
+        List<String> percentMsgList = Lists.newArrayList();
 
         // ROE_TTM
         List<Double> avg_roe_ttm_list = indicatorDTOList.stream()
@@ -42,11 +43,9 @@ public class PercentDataUtils {
                 .sorted(Comparator.comparing(AnalyseIndicatorDTO::getAvg_roe_ttm))
                 .map(AnalyseIndicatorDTO::getAvg_roe_ttm)
                 .collect(Collectors.toList());
-        if (CollectionUtils.isNotEmpty(avg_roe_ttm_list)) {
-            String msg = getIndicatorPercentValue(indName, "ROE_TTM", avg_roe_ttm_list);
-            if (StringUtils.isNotBlank(msg)) {
-                strPercentList.add(msg);
-            }
+        String percent_msg_roe_ttm = getIndicatorPercentMsg(indName, "ROE_TTM", avg_roe_ttm_list);
+        if(StringUtils.isNotBlank(percent_msg_roe_ttm)){
+            percentMsgList.add(percent_msg_roe_ttm);
         }
 
         // ROE_TTM_V1
@@ -55,11 +54,9 @@ public class PercentDataUtils {
                 .sorted(Comparator.comparing(AnalyseIndicatorDTO::getAvg_roe_ttm_v1))
                 .map(AnalyseIndicatorDTO::getAvg_roe_ttm_v1)
                 .collect(Collectors.toList());
-        if (CollectionUtils.isNotEmpty(avg_roe_ttm_v1_list)) {
-            String msg = getIndicatorPercentValue(indName, "ROE_TTM_v1", avg_roe_ttm_v1_list);
-            if (StringUtils.isNotBlank(msg)) {
-                strPercentList.add(msg);
-            }
+        String percent_msg_roe_ttm_v1 = getIndicatorPercentMsg(indName, "ROE_TTM_V1", avg_roe_ttm_v1_list);
+        if(StringUtils.isNotBlank(percent_msg_roe_ttm_v1)){
+            percentMsgList.add(percent_msg_roe_ttm_v1);
         }
 
         // pe
@@ -68,11 +65,9 @@ public class PercentDataUtils {
                 .sorted(Comparator.comparing(AnalyseIndicatorDTO::getPe))
                 .map(AnalyseIndicatorDTO::getPe)
                 .collect(Collectors.toList());
-        if (CollectionUtils.isNotEmpty(pe_list)) {
-            String msg = getIndicatorPercentValue(indName, "pe", pe_list);
-            if (StringUtils.isNotBlank(msg)) {
-                strPercentList.add(msg);
-            }
+        String percent_msg_pe = getIndicatorPercentMsg(indName, "PE", pe_list);
+        if(StringUtils.isNotBlank(percent_msg_pe)){
+            percentMsgList.add(percent_msg_pe);
         }
 
         // pe_p_1000
@@ -81,11 +76,9 @@ public class PercentDataUtils {
                 .sorted(Comparator.comparing(AnalyseIndicatorDTO::getPe_p_1000))
                 .map(AnalyseIndicatorDTO::getPe_p_1000)
                 .collect(Collectors.toList());
-        if (CollectionUtils.isNotEmpty(pe_p_1000_list)) {
-            String msg = getIndicatorPercentValue(indName, "pe_p_1000", pe_p_1000_list);
-            if (StringUtils.isNotBlank(msg)) {
-                strPercentList.add(msg);
-            }
+        String percent_msg_pe_p_1000 = getIndicatorPercentMsg(indName, "pe_p_1000", pe_p_1000_list);
+        if(StringUtils.isNotBlank(percent_msg_pe_p_1000)){
+            percentMsgList.add(percent_msg_pe_p_1000);
         }
 
         // pb
@@ -94,24 +87,20 @@ public class PercentDataUtils {
                 .sorted(Comparator.comparing(AnalyseIndicatorDTO::getPb))
                 .map(AnalyseIndicatorDTO::getPb)
                 .collect(Collectors.toList());
-        if (CollectionUtils.isNotEmpty(pb_list)) {
-            String msg = getIndicatorPercentValue(indName, "pb", pb_list);
-            if (StringUtils.isNotBlank(msg)) {
-                strPercentList.add(msg);
-            }
+        String percent_msg_pb = getIndicatorPercentMsg(indName, "pb", pb_list);
+        if (StringUtils.isNotBlank(percent_msg_pb)) {
+            percentMsgList.add(percent_msg_pb);
         }
 
-        // pb_p_100
+        // pb_p_1000
         List<Double> pb_p_1000_list = indicatorDTOList.stream()
                 .filter(indicatorDTO -> indicatorDTO.getPb_p_1000() != null)
                 .sorted(Comparator.comparing(AnalyseIndicatorDTO::getPb_p_1000))
                 .map(AnalyseIndicatorDTO::getPb_p_1000)
                 .collect(Collectors.toList());
-        if (CollectionUtils.isNotEmpty(pb_p_1000_list)) {
-            String msg = getIndicatorPercentValue(indName, "pb_p_1000", pb_p_1000_list);
-            if (StringUtils.isNotBlank(msg)) {
-                strPercentList.add(msg);
-            }
+        String percent_msg_pb_p_1000 = getIndicatorPercentMsg(indName, "pb_p_1000", pb_p_1000_list);
+        if (StringUtils.isNotBlank(percent_msg_pb_p_1000)) {
+            percentMsgList.add(percent_msg_pb_p_1000);
         }
 
         // 毛利率
@@ -120,11 +109,9 @@ public class PercentDataUtils {
                 .sorted(Comparator.comparing(AnalyseIndicatorDTO::getGross_margin_rate))
                 .map(AnalyseIndicatorDTO::getGross_margin_rate)
                 .collect(Collectors.toList());
-        if (CollectionUtils.isNotEmpty(gross_margin_rate_list)) {
-            String msg = getIndicatorPercentValue(indName, "毛利率", gross_margin_rate_list);
-            if (StringUtils.isNotBlank(msg)) {
-                strPercentList.add(msg);
-            }
+        String percent_msg_gross_margin_rate = getIndicatorPercentMsg(indName, "毛利率", gross_margin_rate_list);
+        if (StringUtils.isNotBlank(percent_msg_gross_margin_rate)) {
+            percentMsgList.add(percent_msg_gross_margin_rate);
         }
 
         // 净利率
@@ -133,11 +120,9 @@ public class PercentDataUtils {
                 .sorted(Comparator.comparing(AnalyseIndicatorDTO::getNet_selling_rate))
                 .map(AnalyseIndicatorDTO::getNet_selling_rate)
                 .collect(Collectors.toList());
-        if (CollectionUtils.isNotEmpty(net_selling_rate_list)) {
-            String msg = getIndicatorPercentValue(indName, "净利率", net_selling_rate_list);
-            if (StringUtils.isNotBlank(msg)) {
-                strPercentList.add(msg);
-            }
+        String percent_msg_net_selling_rate = getIndicatorPercentMsg(indName, "净利率", net_selling_rate_list);
+        if (StringUtils.isNotBlank(percent_msg_net_selling_rate)) {
+            percentMsgList.add(percent_msg_net_selling_rate);
         }
 
         // 营收同比
@@ -146,11 +131,9 @@ public class PercentDataUtils {
                 .sorted(Comparator.comparing(AnalyseIndicatorDTO::getOperating_income_yoy))
                 .map(AnalyseIndicatorDTO::getOperating_income_yoy)
                 .collect(Collectors.toList());
-        if (CollectionUtils.isNotEmpty(operating_income_yoy_list)) {
-            String msg = getIndicatorPercentValue(indName, "营收同比", operating_income_yoy_list);
-            if (StringUtils.isNotBlank(msg)) {
-                strPercentList.add(msg);
-            }
+        String percent_msg_operating_income_yoy = getIndicatorPercentMsg(indName, "营收同比", operating_income_yoy_list);
+        if (StringUtils.isNotBlank(percent_msg_operating_income_yoy)) {
+            percentMsgList.add(percent_msg_operating_income_yoy);
         }
 
         // 净利润同比
@@ -159,11 +142,9 @@ public class PercentDataUtils {
                 .sorted(Comparator.comparing(AnalyseIndicatorDTO::getNet_profit_atsopc_yoy))
                 .map(AnalyseIndicatorDTO::getNet_profit_atsopc_yoy)
                 .collect(Collectors.toList());
-        if (CollectionUtils.isNotEmpty(net_profit_atsopc_yoy_list)) {
-            String msg = getIndicatorPercentValue(indName, "净利润同比", net_profit_atsopc_yoy_list);
-            if (StringUtils.isNotBlank(msg)) {
-                strPercentList.add(msg);
-            }
+        String percent_msg_net_profit_atsopc_yoy = getIndicatorPercentMsg(indName, "净利润同比", net_profit_atsopc_yoy_list);
+        if (StringUtils.isNotBlank(percent_msg_net_profit_atsopc_yoy)) {
+            percentMsgList.add(percent_msg_net_profit_atsopc_yoy);
         }
 
         // 当季毛利率
@@ -172,11 +153,9 @@ public class PercentDataUtils {
                 .sorted(Comparator.comparing(AnalyseIndicatorDTO::getCur_q_gross_margin_rate))
                 .map(AnalyseIndicatorDTO::getCur_q_gross_margin_rate)
                 .collect(Collectors.toList());
-        if (CollectionUtils.isNotEmpty(cur_q_gross_margin_rate_list)) {
-            String msg = getIndicatorPercentValue(indName, "当季毛利率", cur_q_gross_margin_rate_list);
-            if (StringUtils.isNotBlank(msg)) {
-                strPercentList.add(msg);
-            }
+        String percent_msg_cur_q_gross_margin_rate = getIndicatorPercentMsg(indName, "当季毛利率", cur_q_gross_margin_rate_list);
+        if (StringUtils.isNotBlank(percent_msg_cur_q_gross_margin_rate)) {
+            percentMsgList.add(percent_msg_cur_q_gross_margin_rate);
         }
 
         // 当季净利率
@@ -185,11 +164,9 @@ public class PercentDataUtils {
                 .sorted(Comparator.comparing(AnalyseIndicatorDTO::getCur_q_net_selling_rate))
                 .map(AnalyseIndicatorDTO::getCur_q_net_selling_rate)
                 .collect(Collectors.toList());
-        if (CollectionUtils.isNotEmpty(cur_q_net_selling_rate_list)) {
-            String msg = getIndicatorPercentValue(indName, "当季净利率", cur_q_net_selling_rate_list);
-            if (StringUtils.isNotBlank(msg)) {
-                strPercentList.add(msg);
-            }
+        String percent_msg_cur_q_net_selling_rate = getIndicatorPercentMsg(indName, "当季净利率", cur_q_net_selling_rate_list);
+        if (StringUtils.isNotBlank(percent_msg_cur_q_net_selling_rate)) {
+            percentMsgList.add(percent_msg_cur_q_net_selling_rate);
         }
 
         // 当季营收同比
@@ -198,11 +175,9 @@ public class PercentDataUtils {
                 .sorted(Comparator.comparing(AnalyseIndicatorDTO::getCur_q_operating_income_yoy))
                 .map(AnalyseIndicatorDTO::getCur_q_operating_income_yoy)
                 .collect(Collectors.toList());
-        if (CollectionUtils.isNotEmpty(cur_q_operating_income_yoy_list)) {
-            String msg = getIndicatorPercentValue(indName, "当季营收同比", cur_q_operating_income_yoy_list);
-            if (StringUtils.isNotBlank(msg)) {
-                strPercentList.add(msg);
-            }
+        String percent_msg_cur_q_operating_income_yoy = getIndicatorPercentMsg(indName, "当季营收同比", cur_q_operating_income_yoy_list);
+        if (StringUtils.isNotBlank(percent_msg_cur_q_operating_income_yoy)) {
+            percentMsgList.add(percent_msg_cur_q_operating_income_yoy);
         }
 
         // 当季净利润同比
@@ -211,24 +186,20 @@ public class PercentDataUtils {
                 .sorted(Comparator.comparing(AnalyseIndicatorDTO::getCur_q_net_profit_atsopc_yoy))
                 .map(AnalyseIndicatorDTO::getCur_q_net_profit_atsopc_yoy)
                 .collect(Collectors.toList());
-        if (CollectionUtils.isNotEmpty(cur_q_net_profit_atsopc_yoy_list)) {
-            String msg = getIndicatorPercentValue(indName, "当季净利润同比", cur_q_net_profit_atsopc_yoy_list);
-            if (StringUtils.isNotBlank(msg)) {
-                strPercentList.add(msg);
-            }
+        String percent_msg_cur_q_net_profit_atsopc_yoy = getIndicatorPercentMsg(indName, "当季净利润同比", cur_q_net_profit_atsopc_yoy_list);
+        if (StringUtils.isNotBlank(percent_msg_cur_q_net_profit_atsopc_yoy)) {
+            percentMsgList.add(percent_msg_cur_q_net_profit_atsopc_yoy);
         }
 
-        // 当季净利润同比
+        // 应收周转天数
         List<Double> receivable_turnover_days_list = indicatorDTOList.stream()
                 .filter(indicatorDTO -> indicatorDTO.getReceivable_turnover_days() != null)
                 .sorted(Comparator.comparing(AnalyseIndicatorDTO::getReceivable_turnover_days))
                 .map(AnalyseIndicatorDTO::getReceivable_turnover_days)
                 .collect(Collectors.toList());
-        if (CollectionUtils.isNotEmpty(receivable_turnover_days_list)) {
-            String msg = getIndicatorPercentValue(indName, "应收周转天数", receivable_turnover_days_list);
-            if (StringUtils.isNotBlank(msg)) {
-                strPercentList.add(msg);
-            }
+        String percent_msg_receivable_turnover_days = getIndicatorPercentMsg(indName, "应收周转天数", receivable_turnover_days_list);
+        if (StringUtils.isNotBlank(percent_msg_receivable_turnover_days)) {
+            percentMsgList.add(percent_msg_receivable_turnover_days);
         }
 
         // 存货周转天数
@@ -237,11 +208,9 @@ public class PercentDataUtils {
                 .sorted(Comparator.comparing(AnalyseIndicatorDTO::getInventory_turnover_days))
                 .map(AnalyseIndicatorDTO::getInventory_turnover_days)
                 .collect(Collectors.toList());
-        if (CollectionUtils.isNotEmpty(inventory_turnover_days_list)) {
-            String msg = getIndicatorPercentValue(indName, "存货周转天数", inventory_turnover_days_list);
-            if (StringUtils.isNotBlank(msg)) {
-                strPercentList.add(msg);
-            }
+        String percent_msg_inventory_turnover_days = getIndicatorPercentMsg(indName, "存货周转天数", inventory_turnover_days_list);
+        if (StringUtils.isNotBlank(percent_msg_inventory_turnover_days)) {
+            percentMsgList.add(percent_msg_inventory_turnover_days);
         }
 
         // 市值
@@ -250,16 +219,14 @@ public class PercentDataUtils {
                 .sorted(Comparator.comparing(AnalyseIndicatorDTO::getMarket_capital))
                 .map(AnalyseIndicatorDTO::getMarket_capital)
                 .collect(Collectors.toList());
-        if (CollectionUtils.isNotEmpty(market_capital_list)) {
-            String msg = getIndicatorPercentValue(indName, "市值", market_capital_list);
-            if (StringUtils.isNotBlank(msg)) {
-                strPercentList.add(msg);
-            }
+        String percent_msg_market_capital = getIndicatorPercentMsg(indName, "市值", market_capital_list);
+        if (StringUtils.isNotBlank(percent_msg_market_capital)) {
+            percentMsgList.add(percent_msg_market_capital);
         }
 
         // 记录结果
         String percentListName = String.format(StockConstant.INDICATOR_LIST_PERCENT, kLineDate);
-        FileOperateUtils.saveLocalFile(percentListName, header, strPercentList, false);
+        FileOperateUtils.saveLocalFile(percentListName, msgHeader, percentMsgList, false);
     }
 
     /**
@@ -270,7 +237,7 @@ public class PercentDataUtils {
      * @param indicatorValueList
      * @return
      */
-    public static String getIndicatorPercentValue(String indName, String indicatorName, List<Double> indicatorValueList) {
+    public static String getIndicatorPercentMsg(String indName, String indicatorName, List<Double> indicatorValueList) {
         if (StringUtils.isBlank(indName) || StringUtils.isBlank(indicatorName) || CollectionUtils.isEmpty(indicatorValueList)) {
             return StringUtils.EMPTY;
         }
@@ -280,17 +247,16 @@ public class PercentDataUtils {
                 .collect(Collectors.toList());
 
         int totalSize = sortedIndicatorValueList.size();
-        String msg = new StringBuilder().append(indName)
-                .append(",").append(indicatorName)
-                .append(",").append(sortedIndicatorValueList.get(totalSize * 10 / 100))
-                .append(",").append(sortedIndicatorValueList.get(totalSize * 25 / 100))
-                .append(",").append(sortedIndicatorValueList.get(totalSize * 50 / 100))
-                .append(",").append(sortedIndicatorValueList.get(totalSize * 75 / 100))
-                .append(",").append(sortedIndicatorValueList.get(totalSize * 90 / 100))
-                .append(",").append(sortedIndicatorValueList.get(totalSize * 95 / 100))
-                .toString();
 
-        return msg;
+        List<Double> percentValueList =Lists.newArrayList();
+        percentValueList.add(sortedIndicatorValueList.get(totalSize * 10 / 100));
+        percentValueList.add(sortedIndicatorValueList.get(totalSize * 25 / 100));
+        percentValueList.add(sortedIndicatorValueList.get(totalSize * 50 / 100));
+        percentValueList.add(sortedIndicatorValueList.get(totalSize * 75 / 100));
+        percentValueList.add(sortedIndicatorValueList.get(totalSize * 90 / 100));
+        percentValueList.add(sortedIndicatorValueList.get(totalSize * 95 / 100));
+
+        return indName + "," + indicatorName + "," + StringUtils.join(percentValueList, ",");
     }
 
     /**
@@ -306,7 +272,8 @@ public class PercentDataUtils {
 
         String header = "行业,ROE_TTM,ROE_TTM_V1,PE_TTM,pe百分位,市净率,PB百分位,当季营收同比,当季净利润同比,上一季的营收同比,上一季的净利润同比,营收同比,净利润同比" +
                 ",当季毛利率,当季净利率,当季毛利率同比,当季净利率同比,当季毛利率环比,当季净利率环比,毛利率,净利率" +
-                ",应收周转天数,存货周转天数,应收周转天数同比,存货周转天数同比,市值,近1月股价变化,近3月股价变化,近6月股价变化,近1年股价变化";
+                ",应收周转天数,存货周转天数,应收周转天数同比,存货周转天数同比,市值" +
+                ",近1周的股价变化,近1月的股价变化,近3月的股价变化,1月后的股价变化,3月后的股价变化,半年后的股价变化,1年后的股价变化";
         List<String> strPercentList = Lists.newArrayList();
 
         // 加上全行业的数据
@@ -627,7 +594,43 @@ public class PercentDataUtils {
                 msgBuilder.append(",").append(value);
             }
 
-            // 近1月股价变化
+            // 近1周的股价变化
+            List<Double> one_week_before_price_change_list = tmpIndicatorDTOList.stream()
+                    .filter(indicatorDTO -> indicatorDTO.getOne_week_before_price_change() != null)
+                    .sorted(Comparator.comparing(AnalyseIndicatorDTO::getOne_week_before_price_change))
+                    .map(AnalyseIndicatorDTO::getOne_week_before_price_change)
+                    .collect(Collectors.toList());
+            if (CollectionUtils.isNotEmpty(one_week_before_price_change_list)) {
+                int totalSize = one_week_before_price_change_list.size();
+                Double value = one_week_before_price_change_list.get(totalSize * 50 / 100);
+                msgBuilder.append(",").append(value);
+            }
+
+            // 近1月的股价变化
+            List<Double> one_month_before_price_change_list = tmpIndicatorDTOList.stream()
+                    .filter(indicatorDTO -> indicatorDTO.getOne_month_before_price_change() != null)
+                    .sorted(Comparator.comparing(AnalyseIndicatorDTO::getOne_month_before_price_change))
+                    .map(AnalyseIndicatorDTO::getOne_month_before_price_change)
+                    .collect(Collectors.toList());
+            if (CollectionUtils.isNotEmpty(one_month_before_price_change_list)) {
+                int totalSize = one_month_before_price_change_list.size();
+                Double value = one_month_before_price_change_list.get(totalSize * 50 / 100);
+                msgBuilder.append(",").append(value);
+            }
+
+            // 近3月的股价变化
+            List<Double> three_month_before_price_change_list = tmpIndicatorDTOList.stream()
+                    .filter(indicatorDTO -> indicatorDTO.getThree_month_before_price_change() != null)
+                    .sorted(Comparator.comparing(AnalyseIndicatorDTO::getThree_month_before_price_change))
+                    .map(AnalyseIndicatorDTO::getThree_month_before_price_change)
+                    .collect(Collectors.toList());
+            if (CollectionUtils.isNotEmpty(three_month_before_price_change_list)) {
+                int totalSize = three_month_before_price_change_list.size();
+                Double value = three_month_before_price_change_list.get(totalSize * 50 / 100);
+                msgBuilder.append(",").append(value);
+            }
+
+            // 1月后的股价变化
             List<Double> one_month_price_change_list = tmpIndicatorDTOList.stream()
                     .filter(indicatorDTO -> indicatorDTO.getOne_month_price_change() != null)
                     .sorted(Comparator.comparing(AnalyseIndicatorDTO::getOne_month_price_change))
@@ -639,7 +642,7 @@ public class PercentDataUtils {
                 msgBuilder.append(",").append(value);
             }
 
-            // 近3月股价变化
+            // 3月后的股价变化
             List<Double> three_month_price_change_list = tmpIndicatorDTOList.stream()
                     .filter(indicatorDTO -> indicatorDTO.getThree_month_price_change() != null)
                     .sorted(Comparator.comparing(AnalyseIndicatorDTO::getThree_month_price_change))
@@ -651,7 +654,7 @@ public class PercentDataUtils {
                 msgBuilder.append(",").append(value);
             }
 
-            // 近6月股价变化
+            // 6月后的股价变化
             List<Double> half_year_price_change_list = tmpIndicatorDTOList.stream()
                     .filter(indicatorDTO -> indicatorDTO.getHalf_year_price_change() != null)
                     .sorted(Comparator.comparing(AnalyseIndicatorDTO::getHalf_year_price_change))
@@ -663,7 +666,7 @@ public class PercentDataUtils {
                 msgBuilder.append(",").append(value);
             }
 
-            // 近1年股价变化
+            // 1年后的股价变化
             List<Double> one_year_price_change_list = tmpIndicatorDTOList.stream()
                     .filter(indicatorDTO -> indicatorDTO.getOne_year_price_change() != null)
                     .sorted(Comparator.comparing(AnalyseIndicatorDTO::getOne_year_price_change))

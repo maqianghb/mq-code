@@ -98,22 +98,37 @@ public class AnalyseIndicatorElement {
     private List<XueQiuStockKLineDTO> kLineDTOList;
 
     /**
-     * 1月后k线数据
+     * 1周前的k线数据
+     */
+    private XueQiuStockKLineDTO oneWeekBeforeKLineDTO;
+
+    /**
+     * 1月前的k线数据
+     */
+    private XueQiuStockKLineDTO oneMonthBeforeKLineDTO;
+
+    /**
+     * 3月前的k线数据
+     */
+    private XueQiuStockKLineDTO threeMonthBeforeKLineDTO;
+
+    /**
+     * 1月后的k线数据
      */
     private XueQiuStockKLineDTO oneMonthLaterKLineDTO;
 
     /**
-     * 3月后k线数据
+     * 3月后的k线数据
      */
     private XueQiuStockKLineDTO threeMonthLaterKLineDTO;
 
     /**
-     * 半年后k线数据
+     * 半年后的k线数据
      */
     private XueQiuStockKLineDTO halfYearLaterKLineDTO;
 
     /**
-     * 1年后k线数据
+     * 1年后的k线数据
      */
     private XueQiuStockKLineDTO oneYearLaterKLineDTO;
 

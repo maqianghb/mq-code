@@ -46,7 +46,7 @@ public interface LocalDataManager {
     /**
      * 查询并保存业绩预告数据
      *
-     * @param reportDate（格式：2023-12-31）
+     * @param reportDate（格式：2025-03-31, 2025-06-30, 2025-09-30, 2025-12-31）
      */
     void queryAndSaveFinanceNotice(String reportDate);
 

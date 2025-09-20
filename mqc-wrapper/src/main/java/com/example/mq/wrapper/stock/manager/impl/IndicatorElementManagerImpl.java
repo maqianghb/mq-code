@@ -224,7 +224,40 @@ public class IndicatorElementManagerImpl implements IndicatorElementManager {
             indicatorElement.setKLineDTOList(kLineDTOList);
         }
 
+        // 一周前的k线数据
+        LocalDateTime oneWeekBeforeDateTime = kLineDateTime.plusWeeks(-1);
+        List<XueQiuStockKLineDTO> oneWeekBeforeKLineDTOList = localDataManager.getLocalKLineList(code, oneWeekBeforeDateTime, KLineTypeEnum.DAY, 1);
+        if (CollectionUtils.isNotEmpty(oneWeekBeforeKLineDTOList)) {
+            Long kLineTimestamp = oneWeekBeforeKLineDTOList.get(0).getTimestamp();
+            long oneWeekBeforeTimestamp = oneWeekBeforeDateTime.toInstant(ZoneOffset.of("+8")).toEpochMilli();
+            if(Math.abs(oneWeekBeforeTimestamp -kLineTimestamp) <= 7 *24 *3600 *1000){
+                indicatorElement.setOneWeekBeforeKLineDTO(oneWeekBeforeKLineDTOList.get(0));
+            }
+        }
 
+        // 一月前的k线数据
+        LocalDateTime oneMonthBeforeDateTime = kLineDateTime.plusMonths(-1);
+        List<XueQiuStockKLineDTO> oneMonthBeforeKLineDTOList = localDataManager.getLocalKLineList(code, oneMonthBeforeDateTime, KLineTypeEnum.DAY, 1);
+        if (CollectionUtils.isNotEmpty(oneMonthBeforeKLineDTOList)) {
+            Long kLineTimestamp = oneMonthBeforeKLineDTOList.get(0).getTimestamp();
+            long oneMonthBeforeTimestamp = oneMonthBeforeDateTime.toInstant(ZoneOffset.of("+8")).toEpochMilli();
+            if(Math.abs(oneMonthBeforeTimestamp -kLineTimestamp) <= 7 *24 *3600 *1000){
+                indicatorElement.setOneMonthBeforeKLineDTO(oneMonthBeforeKLineDTOList.get(0));
+            }
+        }
+
+        // 三月前的k线数据
+        LocalDateTime threeMonthBeforeDateTime = kLineDateTime.plusMonths(-3);
+        List<XueQiuStockKLineDTO> threeMonthBeforeKLineDTOList = localDataManager.getLocalKLineList(code, threeMonthBeforeDateTime, KLineTypeEnum.DAY, 1);
+        if (CollectionUtils.isNotEmpty(threeMonthBeforeKLineDTOList)) {
+            Long kLineTimestamp = threeMonthBeforeKLineDTOList.get(0).getTimestamp();
+            long threeMonthBeforeTimestamp = threeMonthBeforeDateTime.toInstant(ZoneOffset.of("+8")).toEpochMilli();
+            if(Math.abs(threeMonthBeforeTimestamp -kLineTimestamp) <= 7 *24 *3600 *1000){
+                indicatorElement.setThreeMonthBeforeKLineDTO(threeMonthBeforeKLineDTOList.get(0));
+            }
+        }
+
+        // 一月后的k线数据
         LocalDateTime oneMonthDateTime = kLineDateTime.plusMonths(1);
         List<XueQiuStockKLineDTO> oneMonthKLineDTOList = localDataManager.getLocalKLineList(code, oneMonthDateTime, KLineTypeEnum.DAY, 1);
         if (CollectionUtils.isNotEmpty(oneMonthKLineDTOList)) {
@@ -235,6 +268,7 @@ public class IndicatorElementManagerImpl implements IndicatorElementManager {
             }
         }
 
+        // 三月后的k线数据
         LocalDateTime threeMonthDateTime = kLineDateTime.plusMonths(3);
         List<XueQiuStockKLineDTO> threeMonthKLineDTOList = localDataManager.getLocalKLineList(code, threeMonthDateTime, KLineTypeEnum.DAY, 1);
         if (CollectionUtils.isNotEmpty(threeMonthKLineDTOList)) {
@@ -245,6 +279,7 @@ public class IndicatorElementManagerImpl implements IndicatorElementManager {
             }
         }
 
+        // 半年后的k线数据
         LocalDateTime halfYearDateTime = kLineDateTime.plusMonths(6);
         List<XueQiuStockKLineDTO> halfYearKLineDTOList = localDataManager.getLocalKLineList(code, halfYearDateTime, KLineTypeEnum.DAY, 1);
         if (CollectionUtils.isNotEmpty(halfYearKLineDTOList)) {
@@ -255,6 +290,7 @@ public class IndicatorElementManagerImpl implements IndicatorElementManager {
             }
         }
 
+        // 一年后的k线数据
         LocalDateTime oneYearDateTime = kLineDateTime.plusYears(1);
         List<XueQiuStockKLineDTO> oneYearKLineDTOList = localDataManager.getLocalKLineList(code, oneYearDateTime, KLineTypeEnum.DAY, 1);
         if (CollectionUtils.isNotEmpty(oneYearKLineDTOList)) {
