@@ -54,8 +54,8 @@ public class CommonManager {
     public void testQueryAnalysisData(){
         // 参数列表
         Integer reportYear =2025;
-        FinanceReportTypeEnum reportTypeEnum =FinanceReportTypeEnum.QUARTER_1;
-        String kLineDate ="20250501";
+        FinanceReportTypeEnum reportTypeEnum =FinanceReportTypeEnum.QUARTER_3;
+        String kLineDate ="20251101";
 
         LocalDataManager localDataManager =new LocalDataManagerImpl();
         List<String> stockCodeList =localDataManager.getLocalStockCodeList();

@@ -1,6 +1,5 @@
 package com.example.mq.wrapper.stock.utils;
 
-import com.example.mq.common.utils.NumberUtil;
 import com.example.mq.wrapper.stock.constant.StockConstant;
 import com.example.mq.wrapper.stock.model.AnalyseIndicatorDTO;
 import com.google.common.collect.Lists;
@@ -265,7 +264,7 @@ public class PercentDataUtils {
      * @param indicatorDTOList
      * @return
      */
-    public static void getAndSavePercent50ByIndustry(String kLineDate, List<AnalyseIndicatorDTO> indicatorDTOList) {
+    public static void getAndSavePercentValueByIndustry(String kLineDate, List<AnalyseIndicatorDTO> indicatorDTOList, int percentValue) {
         if (StringUtils.isBlank(kLineDate) || CollectionUtils.isEmpty(indicatorDTOList)) {
             return;
         }
@@ -302,7 +301,7 @@ public class PercentDataUtils {
                     .collect(Collectors.toList());
             if (CollectionUtils.isNotEmpty(avg_roe_ttm_list)) {
                 int totalSize = avg_roe_ttm_list.size();
-                Double value = avg_roe_ttm_list.get(totalSize * 50 / 100);
+                Double value = avg_roe_ttm_list.get(totalSize * percentValue / 100);
                 msgBuilder.append(",").append(value);
             }
 
@@ -314,7 +313,7 @@ public class PercentDataUtils {
                     .collect(Collectors.toList());
             if (CollectionUtils.isNotEmpty(avg_roe_ttm_v1_list)) {
                 int totalSize = avg_roe_ttm_v1_list.size();
-                Double value = avg_roe_ttm_v1_list.get(totalSize * 50 / 100);
+                Double value = avg_roe_ttm_v1_list.get(totalSize * percentValue / 100);
                 msgBuilder.append(",").append(value);
             }
 
@@ -326,7 +325,7 @@ public class PercentDataUtils {
                     .collect(Collectors.toList());
             if (CollectionUtils.isNotEmpty(pe_list)) {
                 int totalSize = pe_list.size();
-                Double value = pe_list.get(totalSize * 50 / 100);
+                Double value = pe_list.get(totalSize * percentValue / 100);
                 msgBuilder.append(",").append(value);
             }
 
@@ -338,7 +337,7 @@ public class PercentDataUtils {
                     .collect(Collectors.toList());
             if (CollectionUtils.isNotEmpty(pe_p_1000_list)) {
                 int totalSize = pe_p_1000_list.size();
-                Double value = pe_p_1000_list.get(totalSize * 50 / 100);
+                Double value = pe_p_1000_list.get(totalSize * percentValue / 100);
                 msgBuilder.append(",").append(value);
             }
 
@@ -350,7 +349,7 @@ public class PercentDataUtils {
                     .collect(Collectors.toList());
             if (CollectionUtils.isNotEmpty(pb_list)) {
                 int totalSize = pb_list.size();
-                Double value = pb_list.get(totalSize * 50 / 100);
+                Double value = pb_list.get(totalSize * percentValue / 100);
                 msgBuilder.append(",").append(value);
             }
 
@@ -362,7 +361,7 @@ public class PercentDataUtils {
                     .collect(Collectors.toList());
             if (CollectionUtils.isNotEmpty(pb_p_1000_list)) {
                 int totalSize = pb_p_1000_list.size();
-                Double value = pb_p_1000_list.get(totalSize * 50 / 100);
+                Double value = pb_p_1000_list.get(totalSize * percentValue / 100);
                 msgBuilder.append(",").append(value);
             }
 
@@ -374,7 +373,7 @@ public class PercentDataUtils {
                     .collect(Collectors.toList());
             if (CollectionUtils.isNotEmpty(cur_q_operating_income_yoy_list)) {
                 int totalSize = cur_q_operating_income_yoy_list.size();
-                Double value = cur_q_operating_income_yoy_list.get(totalSize * 50 / 100);
+                Double value = cur_q_operating_income_yoy_list.get(totalSize * percentValue / 100);
                 msgBuilder.append(",").append(value);
             }
 
@@ -386,7 +385,7 @@ public class PercentDataUtils {
                     .collect(Collectors.toList());
             if (CollectionUtils.isNotEmpty(cur_q_net_profit_atsopc_yoy_list)) {
                 int totalSize = cur_q_net_profit_atsopc_yoy_list.size();
-                Double value = cur_q_net_profit_atsopc_yoy_list.get(totalSize * 50 / 100);
+                Double value = cur_q_net_profit_atsopc_yoy_list.get(totalSize * percentValue / 100);
                 msgBuilder.append(",").append(value);
             }
 
@@ -398,7 +397,7 @@ public class PercentDataUtils {
                     .collect(Collectors.toList());
             if (CollectionUtils.isNotEmpty(last_q_operating_income_yoy_list)) {
                 int totalSize = last_q_operating_income_yoy_list.size();
-                Double value = last_q_operating_income_yoy_list.get(totalSize * 50 / 100);
+                Double value = last_q_operating_income_yoy_list.get(totalSize * percentValue / 100);
                 msgBuilder.append(",").append(value);
             }
 
@@ -410,7 +409,7 @@ public class PercentDataUtils {
                     .collect(Collectors.toList());
             if (CollectionUtils.isNotEmpty(last_q_net_profit_atsopc_yoy_list)) {
                 int totalSize = last_q_net_profit_atsopc_yoy_list.size();
-                Double value = last_q_net_profit_atsopc_yoy_list.get(totalSize * 50 / 100);
+                Double value = last_q_net_profit_atsopc_yoy_list.get(totalSize * percentValue / 100);
                 msgBuilder.append(",").append(value);
             }
 
@@ -422,7 +421,7 @@ public class PercentDataUtils {
                     .collect(Collectors.toList());
             if (CollectionUtils.isNotEmpty(operating_income_yoy_list)) {
                 int totalSize = operating_income_yoy_list.size();
-                Double value = operating_income_yoy_list.get(totalSize * 50 / 100);
+                Double value = operating_income_yoy_list.get(totalSize * percentValue / 100);
                 msgBuilder.append(",").append(value);
             }
 
@@ -434,7 +433,7 @@ public class PercentDataUtils {
                     .collect(Collectors.toList());
             if (CollectionUtils.isNotEmpty(net_profit_atsopc_yoy_list)) {
                 int totalSize = net_profit_atsopc_yoy_list.size();
-                Double value = net_profit_atsopc_yoy_list.get(totalSize * 50 / 100);
+                Double value = net_profit_atsopc_yoy_list.get(totalSize * percentValue / 100);
                 msgBuilder.append(",").append(value);
             }
 
@@ -446,7 +445,7 @@ public class PercentDataUtils {
                     .collect(Collectors.toList());
             if (CollectionUtils.isNotEmpty(cur_q_gross_margin_rate_list)) {
                 int totalSize = cur_q_gross_margin_rate_list.size();
-                Double value = cur_q_gross_margin_rate_list.get(totalSize * 50 / 100);
+                Double value = cur_q_gross_margin_rate_list.get(totalSize * percentValue / 100);
                 msgBuilder.append(",").append(value);
             }
 
@@ -458,7 +457,7 @@ public class PercentDataUtils {
                     .collect(Collectors.toList());
             if (CollectionUtils.isNotEmpty(cur_q_net_selling_rate_list)) {
                 int totalSize = cur_q_net_selling_rate_list.size();
-                Double value = cur_q_net_selling_rate_list.get(totalSize * 50 / 100);
+                Double value = cur_q_net_selling_rate_list.get(totalSize * percentValue / 100);
                 msgBuilder.append(",").append(value);
             }
 
@@ -470,7 +469,7 @@ public class PercentDataUtils {
                     .collect(Collectors.toList());
             if (CollectionUtils.isNotEmpty(cur_q_gross_margin_rate_change_list)) {
                 int totalSize = cur_q_gross_margin_rate_change_list.size();
-                Double value = cur_q_gross_margin_rate_change_list.get(totalSize * 50 / 100);
+                Double value = cur_q_gross_margin_rate_change_list.get(totalSize * percentValue / 100);
                 msgBuilder.append(",").append(value);
             }
 
@@ -482,7 +481,7 @@ public class PercentDataUtils {
                     .collect(Collectors.toList());
             if (CollectionUtils.isNotEmpty(cur_q_net_selling_rate_change_list)) {
                 int totalSize = cur_q_net_selling_rate_change_list.size();
-                Double value = cur_q_net_selling_rate_change_list.get(totalSize * 50 / 100);
+                Double value = cur_q_net_selling_rate_change_list.get(totalSize * percentValue / 100);
                 msgBuilder.append(",").append(value);
             }
 
@@ -494,7 +493,7 @@ public class PercentDataUtils {
                     .collect(Collectors.toList());
             if (CollectionUtils.isNotEmpty(cur_q_gross_margin_rate_q_chg_list)) {
                 int totalSize = cur_q_gross_margin_rate_q_chg_list.size();
-                Double value = cur_q_gross_margin_rate_q_chg_list.get(totalSize * 50 / 100);
+                Double value = cur_q_gross_margin_rate_q_chg_list.get(totalSize * percentValue / 100);
                 msgBuilder.append(",").append(value);
             }
 
@@ -506,7 +505,7 @@ public class PercentDataUtils {
                     .collect(Collectors.toList());
             if (CollectionUtils.isNotEmpty(cur_q_net_selling_rate_q_chg_list)) {
                 int totalSize = cur_q_net_selling_rate_q_chg_list.size();
-                Double value = cur_q_net_selling_rate_q_chg_list.get(totalSize * 50 / 100);
+                Double value = cur_q_net_selling_rate_q_chg_list.get(totalSize * percentValue / 100);
                 msgBuilder.append(",").append(value);
             }
 
@@ -518,7 +517,7 @@ public class PercentDataUtils {
                     .collect(Collectors.toList());
             if (CollectionUtils.isNotEmpty(gross_margin_rate_list)) {
                 int totalSize = gross_margin_rate_list.size();
-                Double value = gross_margin_rate_list.get(totalSize * 50 / 100);
+                Double value = gross_margin_rate_list.get(totalSize * percentValue / 100);
                 msgBuilder.append(",").append(value);
             }
 
@@ -530,7 +529,7 @@ public class PercentDataUtils {
                     .collect(Collectors.toList());
             if (CollectionUtils.isNotEmpty(net_selling_rate_list)) {
                 int totalSize = net_selling_rate_list.size();
-                Double value = net_selling_rate_list.get(totalSize * 50 / 100);
+                Double value = net_selling_rate_list.get(totalSize * percentValue / 100);
                 msgBuilder.append(",").append(value);
             }
 
@@ -542,7 +541,7 @@ public class PercentDataUtils {
                     .collect(Collectors.toList());
             if (CollectionUtils.isNotEmpty(receivable_turnover_days_list)) {
                 int totalSize = receivable_turnover_days_list.size();
-                Double value = receivable_turnover_days_list.get(totalSize * 50 / 100);
+                Double value = receivable_turnover_days_list.get(totalSize * percentValue / 100);
                 msgBuilder.append(",").append(value);
             }
 
@@ -554,7 +553,7 @@ public class PercentDataUtils {
                     .collect(Collectors.toList());
             if (CollectionUtils.isNotEmpty(inventory_turnover_days_list)) {
                 int totalSize = inventory_turnover_days_list.size();
-                Double value = inventory_turnover_days_list.get(totalSize * 50 / 100);
+                Double value = inventory_turnover_days_list.get(totalSize * percentValue / 100);
                 msgBuilder.append(",").append(value);
             }
 
@@ -566,7 +565,7 @@ public class PercentDataUtils {
                     .collect(Collectors.toList());
             if (CollectionUtils.isNotEmpty(receivable_turnover_days_rate_list)) {
                 int totalSize = receivable_turnover_days_rate_list.size();
-                Double value = receivable_turnover_days_rate_list.get(totalSize * 50 / 100);
+                Double value = receivable_turnover_days_rate_list.get(totalSize * percentValue / 100);
                 msgBuilder.append(",").append(value);
             }
 
@@ -578,7 +577,7 @@ public class PercentDataUtils {
                     .collect(Collectors.toList());
             if (CollectionUtils.isNotEmpty(inventory_turnover_days_rate_list)) {
                 int totalSize = inventory_turnover_days_rate_list.size();
-                Double value = inventory_turnover_days_rate_list.get(totalSize * 50 / 100);
+                Double value = inventory_turnover_days_rate_list.get(totalSize * percentValue / 100);
                 msgBuilder.append(",").append(value);
             }
 
@@ -590,7 +589,7 @@ public class PercentDataUtils {
                     .collect(Collectors.toList());
             if (CollectionUtils.isNotEmpty(market_capital_list)) {
                 int totalSize = market_capital_list.size();
-                Double value = market_capital_list.get(totalSize * 50 / 100);
+                Double value = market_capital_list.get(totalSize * percentValue / 100);
                 msgBuilder.append(",").append(value);
             }
 
@@ -602,7 +601,7 @@ public class PercentDataUtils {
                     .collect(Collectors.toList());
             if (CollectionUtils.isNotEmpty(one_week_before_price_change_list)) {
                 int totalSize = one_week_before_price_change_list.size();
-                Double value = one_week_before_price_change_list.get(totalSize * 50 / 100);
+                Double value = one_week_before_price_change_list.get(totalSize * percentValue / 100);
                 msgBuilder.append(",").append(value);
             }
 
@@ -614,7 +613,7 @@ public class PercentDataUtils {
                     .collect(Collectors.toList());
             if (CollectionUtils.isNotEmpty(one_month_before_price_change_list)) {
                 int totalSize = one_month_before_price_change_list.size();
-                Double value = one_month_before_price_change_list.get(totalSize * 50 / 100);
+                Double value = one_month_before_price_change_list.get(totalSize * percentValue / 100);
                 msgBuilder.append(",").append(value);
             }
 
@@ -626,7 +625,7 @@ public class PercentDataUtils {
                     .collect(Collectors.toList());
             if (CollectionUtils.isNotEmpty(three_month_before_price_change_list)) {
                 int totalSize = three_month_before_price_change_list.size();
-                Double value = three_month_before_price_change_list.get(totalSize * 50 / 100);
+                Double value = three_month_before_price_change_list.get(totalSize * percentValue / 100);
                 msgBuilder.append(",").append(value);
             }
 
@@ -638,7 +637,7 @@ public class PercentDataUtils {
                     .collect(Collectors.toList());
             if (CollectionUtils.isNotEmpty(one_month_price_change_list)) {
                 int totalSize = one_month_price_change_list.size();
-                Double value = one_month_price_change_list.get(totalSize * 50 / 100);
+                Double value = one_month_price_change_list.get(totalSize * percentValue / 100);
                 msgBuilder.append(",").append(value);
             }
 
@@ -650,7 +649,7 @@ public class PercentDataUtils {
                     .collect(Collectors.toList());
             if (CollectionUtils.isNotEmpty(three_month_price_change_list)) {
                 int totalSize = three_month_price_change_list.size();
-                Double value = three_month_price_change_list.get(totalSize * 50 / 100);
+                Double value = three_month_price_change_list.get(totalSize * percentValue / 100);
                 msgBuilder.append(",").append(value);
             }
 
@@ -662,7 +661,7 @@ public class PercentDataUtils {
                     .collect(Collectors.toList());
             if (CollectionUtils.isNotEmpty(half_year_price_change_list)) {
                 int totalSize = half_year_price_change_list.size();
-                Double value = half_year_price_change_list.get(totalSize * 50 / 100);
+                Double value = half_year_price_change_list.get(totalSize * percentValue / 100);
                 msgBuilder.append(",").append(value);
             }
 
@@ -674,7 +673,7 @@ public class PercentDataUtils {
                     .collect(Collectors.toList());
             if (CollectionUtils.isNotEmpty(one_year_price_change_list)) {
                 int totalSize = one_year_price_change_list.size();
-                Double value = one_year_price_change_list.get(totalSize * 50 / 100);
+                Double value = one_year_price_change_list.get(totalSize * percentValue / 100);
                 msgBuilder.append(",").append(value);
             }
 

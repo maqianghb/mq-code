@@ -111,7 +111,7 @@ public class StockIndicatorManagerImpl implements StockIndicatorManager {
         PercentDataUtils.getAndSaveIndicatorDTOPercent(kLineDate, allIndicatorDTOList);
 
         // 各行业50百分位指标
-        PercentDataUtils.getAndSavePercent50ByIndustry(kLineDate, allIndicatorDTOList);
+        PercentDataUtils.getAndSavePercentValueByIndustry(kLineDate, allIndicatorDTOList, 50);
 
     }
 
