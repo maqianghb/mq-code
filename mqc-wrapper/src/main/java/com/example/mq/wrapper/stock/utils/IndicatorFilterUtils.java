@@ -196,13 +196,15 @@ public class IndicatorFilterUtils {
                         return indicatorDTO.getCur_q_gross_margin_rate() != null && indicatorDTO.getCur_q_gross_margin_rate() >= 0.15
                                 && indicatorDTO.getCur_q_net_selling_rate() != null && indicatorDTO.getCur_q_net_selling_rate() >= 0.07;
                     } else if (indicatorDTO.getMarket_capital() >= 50) {
-                        // 市值在50亿~100亿间
+                        // 市值在50亿~100亿间，毛利率和净利率要求提高, 且要求营收增长率
                         return indicatorDTO.getCur_q_gross_margin_rate() != null && indicatorDTO.getCur_q_gross_margin_rate() >= 0.2
-                                && indicatorDTO.getCur_q_net_selling_rate() != null && indicatorDTO.getCur_q_net_selling_rate() >= 0.1;
+                                && indicatorDTO.getCur_q_net_selling_rate() != null && indicatorDTO.getCur_q_net_selling_rate() >= 0.1
+                                && indicatorDTO.getCur_q_operating_income_yoy() !=null && indicatorDTO.getCur_q_operating_income_yoy() >=0.10;
                     } else {
-                        // 市值50亿以下的， 毛利率和净利率要求更高
+                        // 市值50亿以下的，毛利率和净利率要求更高, 且要求营收增长率
                         return indicatorDTO.getCur_q_gross_margin_rate() != null && indicatorDTO.getCur_q_gross_margin_rate() >= 0.25
-                                && indicatorDTO.getCur_q_net_selling_rate() != null && indicatorDTO.getCur_q_net_selling_rate() >= 0.15;
+                                && indicatorDTO.getCur_q_net_selling_rate() != null && indicatorDTO.getCur_q_net_selling_rate() >= 0.15
+                                && indicatorDTO.getCur_q_operating_income_yoy() !=null && indicatorDTO.getCur_q_operating_income_yoy() >=0.15;
                     }
                 })
                 .collect(Collectors.toList());

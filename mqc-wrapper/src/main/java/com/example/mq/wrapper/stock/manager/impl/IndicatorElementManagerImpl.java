@@ -9,6 +9,7 @@ import com.example.mq.wrapper.stock.manager.LocalDataManager;
 import com.example.mq.wrapper.stock.model.*;
 import com.example.mq.wrapper.stock.model.dongchai.DongChaiFreeShareDTO;
 import com.example.mq.wrapper.stock.model.dongchai.DongChaiHolderIncreaseDTO;
+import com.example.mq.wrapper.stock.model.dongchai.DongChaiPledgeDataDTO;
 import com.google.common.collect.Lists;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -18,9 +19,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 /**
  * @Author: maqiang
@@ -59,6 +58,8 @@ public class IndicatorElementManagerImpl implements IndicatorElementManager {
         this.assembleHolderIncreaseElement(indicatorElement, code, kLineDate);
 
         this.assembleFreeShareElement(indicatorElement, code, kLineDate);
+
+        this.assemblePledgeDataElement(indicatorElement, code, kLineDate);
 
         return indicatorElement;
     }
@@ -341,6 +342,34 @@ public class IndicatorElementManagerImpl implements IndicatorElementManager {
         DongChaiFreeShareDTO freeShareDTO = dongChaiDataManager.getMaxFreeShareDTO(code, startDateTime, endDateTime);
         if (freeShareDTO != null && (freeShareDTO.getFree_share_num() >100 || freeShareDTO.getTotal_ratio() >0.1)) {
             indicatorElement.setFreeShareDTO(freeShareDTO);
+        }
+    }
+
+    /**
+     * 最新的质押数据（近1年的质押数据）
+     *
+     * @param indicatorElement
+     * @param code
+     */
+    private void assemblePledgeDataElement(AnalyseIndicatorElement indicatorElement, String code, String kLineDate) {
+        if (indicatorElement == null || StringUtils.isBlank(code) || StringUtils.isBlank(kLineDate)) {
+            return;
+        }
+
+        LocalDateTime startDateTime = DateUtil.parseLocalDate(kLineDate, DateUtil.DATE_FORMAT).plusDays(-365).atStartOfDay();
+
+        List<DongChaiPledgeDataDTO> pledgeDataDTOList = dongChaiDataManager.queryLatestPledgeRate(code);
+        DongChaiPledgeDataDTO latestPledgeDataDTO = Optional.ofNullable(pledgeDataDTOList).orElse(Lists.newArrayList()).stream()
+                .filter(pledgeDataDTO -> {
+                    DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+                    LocalDateTime pledgeDate = LocalDate.parse(pledgeDataDTO.getTradeDate(), df).atStartOfDay();
+
+                    return pledgeDate.isAfter(startDateTime);
+                })
+                .max(Comparator.comparing(DongChaiPledgeDataDTO::getTradeDate))
+                .orElse(null);
+        if (latestPledgeDataDTO != null) {
+            indicatorElement.setLatestPledgeDataDTO(latestPledgeDataDTO);
         }
     }
 

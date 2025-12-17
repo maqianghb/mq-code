@@ -2,6 +2,7 @@ package com.example.mq.wrapper.stock.model;
 
 import com.example.mq.wrapper.stock.model.dongchai.DongChaiFreeShareDTO;
 import com.example.mq.wrapper.stock.model.dongchai.DongChaiHolderIncreaseDTO;
+import com.example.mq.wrapper.stock.model.dongchai.DongChaiPledgeDataDTO;
 import lombok.Data;
 
 import java.util.List;
@@ -141,5 +142,10 @@ public class AnalyseIndicatorElement {
      * 解禁信息
      */
     private DongChaiFreeShareDTO freeShareDTO;
+
+    /**
+     * 最新的质押信息
+     */
+    private DongChaiPledgeDataDTO latestPledgeDataDTO;
 
 }

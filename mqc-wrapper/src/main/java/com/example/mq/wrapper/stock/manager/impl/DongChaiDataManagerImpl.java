@@ -7,10 +7,7 @@ import com.example.mq.common.utils.DateUtil;
 import com.example.mq.common.utils.NumberUtil;
 import com.example.mq.wrapper.stock.constant.StockConstant;
 import com.example.mq.wrapper.stock.manager.DongChaiDataManager;
-import com.example.mq.wrapper.stock.model.dongchai.DongChaiFinanceNoticeDTO;
-import com.example.mq.wrapper.stock.model.dongchai.DongChaiFreeShareDTO;
-import com.example.mq.wrapper.stock.model.dongchai.DongChaiHolderIncreaseDTO;
-import com.example.mq.wrapper.stock.model.dongchai.DongChaiNorthHoldShareDTO;
+import com.example.mq.wrapper.stock.model.dongchai.*;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.assertj.core.util.Lists;
@@ -364,6 +361,62 @@ public class DongChaiDataManagerImpl implements DongChaiDataManager {
                 .collect(Collectors.toList());
 
         return northHoldShareDTOList;
+    }
+
+    @Override
+    public List<DongChaiPledgeDataDTO> queryLatestPledgeRate(String stockCode) {
+        String url = new StringBuilder().append(StockConstant.DONG_CHAI_URL)
+//                .append("?callback=").append("jQuery1123093599956891065_1689992754007")
+                .append("?sortColumns=").append("TRADE_DATE")
+                .append("&sortTypes=").append("-1")
+                .append("&pageSize=").append(10)
+                .append("&pageNumber=").append(1)
+                .append("&reportName=").append("RPT_CSDC_LIST")
+                .append("&columns=").append("ALL")
+                .append("&source=").append("WEB")
+                .append("&client=").append("WEB")
+                .append("&filter=").append("(SECURITY_CODE%3D%22")
+                .append(stockCode.substring(2)).append("%22)")
+                .toString();
+
+        String strResult = CloseableHttpClientUtil.doGet(url, StringUtils.EMPTY);
+        List<String> columnList = Optional.ofNullable(JSONObject.parseObject(strResult))
+                .map(jsonResult -> jsonResult.getJSONObject("result"))
+                .map(jsonResult -> JSON.parseArray(jsonResult.getString("data"), String.class))
+                .orElse(Lists.newArrayList());
+        if(CollectionUtils.isEmpty(columnList)){
+            return Lists.newArrayList();
+        }
+
+        List<DongChaiPledgeDataDTO> pledgeDataDTOList = columnList.stream()
+                .map(strColumn -> {
+                    JSONObject jsonColumn = JSON.parseObject(strColumn);
+                    DongChaiPledgeDataDTO pledgeDataDTO = new DongChaiPledgeDataDTO();
+                    if (StringUtils.isNotBlank(jsonColumn.getString("SECURITY_CODE"))) {
+                        String code = jsonColumn.getString("SECURITY_CODE");
+                        if (code.startsWith("6")) {
+                            code = "SH" + code;
+                        } else if (code.startsWith("0") || code.startsWith("3")) {
+                            code = "SZ" + code;
+                        }
+                        pledgeDataDTO.setCode(code);
+                    }
+                    if (StringUtils.isNotBlank(jsonColumn.getString("SECURITY_NAME_ABBR"))) {
+                        pledgeDataDTO.setName(jsonColumn.getString("SECURITY_NAME_ABBR"));
+                    }
+                    if (StringUtils.isNotBlank(jsonColumn.getString("TRADE_DATE"))) {
+                        pledgeDataDTO.setTradeDate(jsonColumn.getString("TRADE_DATE"));
+                    }
+                    if(jsonColumn.getDouble("PLEDGE_RATIO") !=null){
+                        double pledge_ratio = NumberUtil.format(jsonColumn.getDouble("PLEDGE_RATIO") / 100, 4);
+                        pledgeDataDTO.setPledgeRatio(pledge_ratio);
+                    }
+
+                    return pledgeDataDTO;
+                })
+                .collect(Collectors.toList());
+
+        return pledgeDataDTOList;
     }
 
     @Override

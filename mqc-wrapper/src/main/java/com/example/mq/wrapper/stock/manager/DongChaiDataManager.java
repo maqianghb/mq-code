@@ -1,9 +1,6 @@
 package com.example.mq.wrapper.stock.manager;
 
-import com.example.mq.wrapper.stock.model.dongchai.DongChaiFinanceNoticeDTO;
-import com.example.mq.wrapper.stock.model.dongchai.DongChaiFreeShareDTO;
-import com.example.mq.wrapper.stock.model.dongchai.DongChaiHolderIncreaseDTO;
-import com.example.mq.wrapper.stock.model.dongchai.DongChaiNorthHoldShareDTO;
+import com.example.mq.wrapper.stock.model.dongchai.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -41,6 +38,13 @@ public interface DongChaiDataManager {
     List<DongChaiNorthHoldShareDTO> queryNorthHoldShareDTOList(String stockCode);
 
     /**
+     * 查询最近的质押数据
+     * @param stockCode
+     * @return
+     */
+    List<DongChaiPledgeDataDTO> queryLatestPledgeRate(String stockCode);
+
+    /**
      * by时间范围查询最大的增减持信息
      *
      * @param code
@@ -59,5 +63,7 @@ public interface DongChaiDataManager {
      * @return
      */
     DongChaiFreeShareDTO getMaxFreeShareDTO(String code, LocalDateTime startDateTime, LocalDateTime endDateTime);
+
+
 
 }
