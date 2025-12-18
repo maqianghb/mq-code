@@ -170,6 +170,11 @@ public class AnalyseIndicatorDTO {
     private Double construction_assert_rate;
 
     /**
+     * 质押率
+     */
+    private Double pledge_ratio;
+
+    /**
      * 现金等价物/短期负债
      */
     private Double cash_sl_rate;

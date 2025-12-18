@@ -31,6 +31,7 @@ public class IndicatorFilterUtils {
                 .filter(indicatorDTO -> indicatorDTO.getKLineSize() != null && indicatorDTO.getKLineSize() > 300)
                 .filter(indicatorDTO -> indicatorDTO.getMarket_capital() != null && indicatorDTO.getMarket_capital() >= 30)
                 .filter(indicatorDTO -> indicatorDTO.getGw_ia_assert_rate() != null && indicatorDTO.getGw_ia_assert_rate() <= 0.3)
+                .filter(indicatorDTO -> indicatorDTO.getPledge_ratio() !=null && indicatorDTO.getPledge_ratio() <= 0.3)
                 .filter(indicatorDTO -> {
                     if(StringUtils.isBlank(indicatorDTO.getName())){
                         return false;
@@ -47,7 +48,7 @@ public class IndicatorFilterUtils {
                     if (StringUtils.isNotBlank(ind_name)) {
                         // 农业、环保、建筑相关行业直接过滤掉
                         if (ind_name.contains("农产品") || ind_name.contains("养殖") || ind_name.contains("种植")
-                                || ind_name.contains("环保") || ind_name.contains("建筑") || ind_name.contains("房地产")
+                                || ind_name.contains("环保") || ind_name.contains("建筑装饰") || ind_name.contains("房地产")
                                 || ind_name.contains("保险") || ind_name.contains("纺织") || ind_name.contains("服装") ) {
                             return false;
                         }
@@ -56,7 +57,9 @@ public class IndicatorFilterUtils {
                         if (ind_name.contains("医") || ind_name.contains("药")) {
                             if (indicatorDTO.getGross_margin_rate() != null && indicatorDTO.getNet_selling_rate() != null) {
                                 double rate_diff_value = indicatorDTO.getGross_margin_rate() - indicatorDTO.getNet_selling_rate();
-                                return rate_diff_value < 0.4;
+                                if(indicatorDTO.getNet_selling_rate() < 0.2 && rate_diff_value > 0.4){
+                                    return false;
+                                }
                             }
                         }
                     }
@@ -64,11 +67,11 @@ public class IndicatorFilterUtils {
                     return true;
                 })
                 .filter(indicatorDTO -> {
-                    // ROE_TTM >12%, 或去现后ROE >16%
-                    if (indicatorDTO.getAvg_roe_ttm() != null && indicatorDTO.getAvg_roe_ttm() >= 0.12 && indicatorDTO.getAvg_roe_ttm() <= 0.5) {
+                    // ROE_TTM >8%, 或去现后ROE >12%
+                    if (indicatorDTO.getAvg_roe_ttm() != null && indicatorDTO.getAvg_roe_ttm() >= 0.08 && indicatorDTO.getAvg_roe_ttm() <= 0.5) {
                         return true;
                     }
-                    if (indicatorDTO.getAvg_roe_ttm_v1() != null && indicatorDTO.getAvg_roe_ttm_v1() >= 0.16 && indicatorDTO.getAvg_roe_ttm_v1() < 2) {
+                    if (indicatorDTO.getAvg_roe_ttm_v1() != null && indicatorDTO.getAvg_roe_ttm_v1() >= 0.12 && indicatorDTO.getAvg_roe_ttm_v1() < 2) {
                         return true;
                     }
 
@@ -143,7 +146,7 @@ public class IndicatorFilterUtils {
                             isMatch =true;
                         }
 
-                        // 存货周转天数的同比过滤规则
+                        // 存货周转天数在250～350之间的，同比恶化的去掉
                         if(indicatorDTO.getInventory_turnover_days() >300 && indicatorDTO.getInventory_turnover_days_rate() !=null
                                 && indicatorDTO.getInventory_turnover_days_rate() > 0.15){
                             isMatch =false;

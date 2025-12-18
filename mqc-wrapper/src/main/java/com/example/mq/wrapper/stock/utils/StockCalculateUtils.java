@@ -7,6 +7,7 @@ import com.example.mq.wrapper.stock.enums.FinanceReportTypeEnum;
 import com.example.mq.wrapper.stock.model.*;
 import com.example.mq.wrapper.stock.model.dongchai.DongChaiIndustryHoldShareDTO;
 import com.example.mq.wrapper.stock.model.dongchai.DongChaiNorthHoldShareDTO;
+import com.example.mq.wrapper.stock.model.dongchai.DongChaiPledgeDataDTO;
 import com.google.common.collect.Lists;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -363,6 +364,15 @@ public class StockCalculateUtils {
                 Double construction_in_process_sum = curBalanceDTO.getConstruction_in_process_sum() != null ? curBalanceDTO.getConstruction_in_process_sum() : 0;
                 Double total_holders_equity = curBalanceDTO.getTotal_holders_equity() != null ? curBalanceDTO.getTotal_holders_equity() : 0.01;
                 indicatorDTO.setConstruction_assert_rate(construction_in_process_sum / total_holders_equity);
+            }
+        }
+
+        if(indicatorDTO.getPledge_ratio() ==null){
+            DongChaiPledgeDataDTO latestPledgeDataDTO = indicatorElement.getLatestPledgeDataDTO();
+            if(latestPledgeDataDTO !=null){
+                indicatorDTO.setPledge_ratio(latestPledgeDataDTO.getPledgeRatio());
+            }else {
+                indicatorDTO.setPledge_ratio(0d);
             }
         }
 
