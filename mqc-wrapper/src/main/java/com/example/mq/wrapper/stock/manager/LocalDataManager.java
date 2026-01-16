@@ -91,6 +91,13 @@ public interface LocalDataManager {
     List<String> getWhiteStockCodeList();
 
     /**
+     * 获取关注的公司名称列表
+     *
+     * @return
+     */
+    List<String> getFocusCompanyNameList();
+
+    /**
      * 公司信息查询
      *
      * @param code

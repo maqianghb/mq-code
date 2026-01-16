@@ -127,6 +127,7 @@ public class StockIndicatorManagerImpl implements StockIndicatorManager {
         // 筛选合适的数据
         List<AnalyseIndicatorDTO> filterIndicatorDTOList = IndicatorFilterUtils.filterByIndicator(allIndicatorDTOList);
         filterIndicatorDTOList = this.addWriteStockCodeList(filterIndicatorDTOList, allIndicatorDTOList);
+        filterIndicatorDTOList = this.addFocusCompanyList(filterIndicatorDTOList, allIndicatorDTOList);
 
         List<AnalyseIndicatorDTO> sortedIndicatorDTOList = Optional.ofNullable(filterIndicatorDTOList).orElse(Lists.newArrayList()).stream()
                 .filter(analyseIndicatorDTO -> analyseIndicatorDTO.getCur_q_operating_income_yoy() != null)
@@ -160,6 +161,13 @@ public class StockIndicatorManagerImpl implements StockIndicatorManager {
         FileOperateUtils.saveLocalFile(fileName, INDICATOR_HEADER, strIndicatorDTOList, false);
     }
 
+    /**
+     * 添加白名单列表
+     *
+     * @param filterIndicatorDTOList
+     * @param allIndicatorDTOList
+     * @return
+     */
     private List<AnalyseIndicatorDTO> addWriteStockCodeList(List<AnalyseIndicatorDTO> filterIndicatorDTOList, List<AnalyseIndicatorDTO> allIndicatorDTOList){
         // 白名单数据处理
         List<String> whiteStockCodeList = localDataManager.getWhiteStockCodeList();
@@ -177,6 +185,38 @@ public class StockIndicatorManagerImpl implements StockIndicatorManager {
         for (String whiteStockCode : whiteStockCodeList) {
             if (!filterCodeList.contains(whiteStockCode)) {
                 AnalyseIndicatorDTO tmpIndicatorDTO = allIndicatorDTOMap.get(whiteStockCode);
+                if (tmpIndicatorDTO != null) {
+                    filterIndicatorDTOList.add(tmpIndicatorDTO);
+                }
+            }
+        }
+
+        return filterIndicatorDTOList;
+    }
+
+    /**
+     * 添加关注的公司列表
+     * @param filterIndicatorDTOList
+     * @param allIndicatorDTOList
+     * @return
+     */
+    private List<AnalyseIndicatorDTO> addFocusCompanyList(List<AnalyseIndicatorDTO> filterIndicatorDTOList, List<AnalyseIndicatorDTO> allIndicatorDTOList){
+        // 白名单数据处理
+        List<String> focusCompanyNameList = localDataManager.getFocusCompanyNameList();
+        if(CollectionUtils.isEmpty(focusCompanyNameList)){
+            return filterIndicatorDTOList;
+        }
+
+        List<String> filterNameList = filterIndicatorDTOList.stream()
+                .map(AnalyseIndicatorDTO::getName)
+                .collect(Collectors.toList());
+
+        Map<String, AnalyseIndicatorDTO> allIndicatorDTOMap = allIndicatorDTOList.stream()
+                .collect(Collectors.toMap(AnalyseIndicatorDTO::getName, val -> val, (val1, val2) -> val1));
+
+        for (String focusCompanyName : focusCompanyNameList) {
+            if (!filterNameList.contains(focusCompanyName)) {
+                AnalyseIndicatorDTO tmpIndicatorDTO = allIndicatorDTOMap.get(focusCompanyName);
                 if (tmpIndicatorDTO != null) {
                     filterIndicatorDTOList.add(tmpIndicatorDTO);
                 }

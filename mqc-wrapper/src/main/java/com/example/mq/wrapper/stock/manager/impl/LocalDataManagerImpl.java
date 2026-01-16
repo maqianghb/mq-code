@@ -667,6 +667,26 @@ public class LocalDataManagerImpl implements LocalDataManager {
     }
 
     @Override
+    public List<String> getFocusCompanyNameList(){
+        List<String> focusCompanyNameList = Lists.newArrayList();
+        try {
+            List<String> strList = FileUtils.readLines(new File(StockConstant.FOCUS_COMPANY_NAME), Charset.forName("UTF-8"));
+            if(CollectionUtils.isEmpty(strList)){
+                return Lists.newArrayList();
+            }
+
+            for(String str : strList){
+                focusCompanyNameList.add(str);
+            }
+
+            return focusCompanyNameList;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return Lists.newArrayList();
+    }
+
+    @Override
     public CompanyDTO getLocalCompanyDTO(String code){
         try {
             if(CollectionUtils.isEmpty(companyDTOList)){
