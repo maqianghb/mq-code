@@ -202,21 +202,21 @@ public class StockIndicatorManagerImpl implements StockIndicatorManager {
      */
     private List<AnalyseIndicatorDTO> addFocusCompanyList(List<AnalyseIndicatorDTO> filterIndicatorDTOList, List<AnalyseIndicatorDTO> allIndicatorDTOList){
         // 白名单数据处理
-        List<String> focusCompanyNameList = localDataManager.getFocusCompanyNameList();
-        if(CollectionUtils.isEmpty(focusCompanyNameList)){
+        List<String> focusCompanyCodeList = localDataManager.getFocusCompanyCodeList();
+        if(CollectionUtils.isEmpty(focusCompanyCodeList)){
             return filterIndicatorDTOList;
         }
 
-        List<String> filterNameList = filterIndicatorDTOList.stream()
-                .map(AnalyseIndicatorDTO::getName)
+        List<String> filterCodeList = filterIndicatorDTOList.stream()
+                .map(AnalyseIndicatorDTO::getCode)
                 .collect(Collectors.toList());
 
         Map<String, AnalyseIndicatorDTO> allIndicatorDTOMap = allIndicatorDTOList.stream()
-                .collect(Collectors.toMap(AnalyseIndicatorDTO::getName, val -> val, (val1, val2) -> val1));
+                .collect(Collectors.toMap(AnalyseIndicatorDTO::getCode, val -> val, (val1, val2) -> val1));
 
-        for (String focusCompanyName : focusCompanyNameList) {
-            if (!filterNameList.contains(focusCompanyName)) {
-                AnalyseIndicatorDTO tmpIndicatorDTO = allIndicatorDTOMap.get(focusCompanyName);
+        for (String focusCompanyCode : focusCompanyCodeList) {
+            if (!filterCodeList.contains(focusCompanyCode)) {
+                AnalyseIndicatorDTO tmpIndicatorDTO = allIndicatorDTOMap.get(focusCompanyCode);
                 if (tmpIndicatorDTO != null) {
                     filterIndicatorDTOList.add(tmpIndicatorDTO);
                 }

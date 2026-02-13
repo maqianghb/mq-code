@@ -667,22 +667,50 @@ public class LocalDataManagerImpl implements LocalDataManager {
     }
 
     @Override
-    public List<String> getFocusCompanyNameList(){
-        List<String> focusCompanyNameList = Lists.newArrayList();
+    public List<String> getFocusCompanyCodeList(){
         try {
-            List<String> strList = FileUtils.readLines(new File(StockConstant.FOCUS_COMPANY_NAME), Charset.forName("UTF-8"));
+            List<String> strList = FileUtils.readLines(new File(StockConstant.STOCK_LIST), Charset.forName("UTF-8"));
             if(CollectionUtils.isEmpty(strList)){
                 return Lists.newArrayList();
             }
 
-            for(String str : strList){
-                focusCompanyNameList.add(str);
+            // 全部公司名称和编码关系
+            Map<String, String> stockNameAndCodeMap =Maps.newHashMap();
+            for (String str : strList){
+                String[] split = StringUtils.split(str, ",");
+                if(split ==null || split.length <2){
+                    continue;
+                }
+
+                String simpleCode =split[0].trim();
+                String simpleName =split[1].trim();
+                if(simpleCode.startsWith("60")){
+                    stockNameAndCodeMap.put(simpleName, "SH" + simpleCode);
+                }else if(simpleCode.startsWith("00") || simpleCode.startsWith("30")){
+                    stockNameAndCodeMap.put(simpleName, "SZ" + simpleCode);
+                }
             }
 
-            return focusCompanyNameList;
+            // 关注公司的名称
+            List<String> strNameList = FileUtils.readLines(new File(StockConstant.FOCUS_COMPANY_NAME), Charset.forName("UTF-8"));
+            if(CollectionUtils.isEmpty(strNameList)){
+                return Lists.newArrayList();
+            }
+
+            // 关注公司的编码
+            List<String> focusCompanyCodeList = Lists.newArrayList();
+            for(String strName : strNameList){
+                String focusCompanyCode = stockNameAndCodeMap.get(strName);
+                if(StringUtils.isNotBlank(focusCompanyCode)){
+                    focusCompanyCodeList.add(focusCompanyCode);
+                }
+            }
+
+            return focusCompanyCodeList;
         } catch (Exception e) {
             e.printStackTrace();
         }
+
         return Lists.newArrayList();
     }
 

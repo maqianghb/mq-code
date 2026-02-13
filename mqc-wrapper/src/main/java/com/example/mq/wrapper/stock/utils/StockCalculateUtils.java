@@ -130,13 +130,6 @@ public class StockCalculateUtils {
             }
         }
 
-        if (indicatorDTO.getPe_p_1000() == null) {
-            Double pe_p_1000 = StockCalculateUtils.getPeP1000Value(indicatorDTO, indicatorElement);
-            if (pe_p_1000 != null) {
-                indicatorDTO.setPe_p_1000(pe_p_1000);
-            }
-        }
-
         if (indicatorDTO.getPb_p_1000() == null) {
             Double pb_p_1000 = StockCalculateUtils.getPbP1000Value(indicatorDTO, indicatorElement);
             if (pb_p_1000 != null) {

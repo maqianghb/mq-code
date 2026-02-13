@@ -2,12 +2,16 @@ package com.example.mq.wrapper;
 
 import com.example.mq.common.utils.NumberUtil;
 import com.example.mq.wrapper.stock.constant.StockConstant;
+import com.example.mq.wrapper.stock.manager.LocalDataManager;
 import com.example.mq.wrapper.stock.manager.XueQiuStockManager;
+import com.example.mq.wrapper.stock.manager.impl.LocalDataManagerImpl;
 import com.example.mq.wrapper.stock.manager.impl.XueQiuStockManagerImpl;
+import com.example.mq.wrapper.stock.model.CompanyDTO;
 import com.example.mq.wrapper.stock.model.XueQiuStockKLineDTO;
 import com.example.mq.wrapper.stock.utils.FileOperateUtils;
 import com.google.common.collect.Lists;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 
 import java.time.LocalDate;
@@ -35,14 +39,40 @@ public class StatisticsCodeManager {
 
         String header ="日期,code,名称,均线差值,差值百分比";
 
+        // ETF数据
         List<String> strDataList =Lists.newArrayList();
-        for(ImmutablePair<String, String> pair : StockConstant.STATISTICS_CODE_LIST){
-            String statisticsCode =pair.getLeft();
-            String statisticsName =pair.getRight();
-            ImmutablePair<Double, Double> curDiffPair = this.queryMa1000Percent(statisticsCode, queryDate, StockConstant.KLINE_DAY_COUNT);
+        for(ImmutablePair<String, String> etfPair : StockConstant.FOCUS_ETF_CODE_LIST){
+            String etfCode =etfPair.getLeft();
+            String etfName =etfPair.getRight();
+            ImmutablePair<Double, Double> curDiffPair = this.queryMa1000Percent(etfCode, queryDate, StockConstant.KLINE_DAY_COUNT);
+            if(curDiffPair ==null){
+                continue;
+            }
+
             String msg =new StringBuilder().append(queryDate)
-                    .append(",").append(statisticsCode)
-                    .append(",").append(statisticsName)
+                    .append(",").append(etfCode)
+                    .append(",").append(etfName)
+                    .append(",").append(NumberUtil.format(curDiffPair.getLeft() * 100, 1)).append("%")
+                    .append(",").append(NumberUtil.format(curDiffPair.getRight() * 100, 1)).append("%")
+                    .toString();
+            strDataList.add(msg);
+        }
+
+        // 关注公司数据
+        LocalDataManager localDataManager =new LocalDataManagerImpl();
+        List<String> focusCompanyCodeList =localDataManager.getFocusCompanyCodeList();
+        for(String focusCompanyCode : focusCompanyCodeList){
+            CompanyDTO companyDTO = localDataManager.getLocalCompanyDTO(focusCompanyCode);
+            String companyName = companyDTO != null ? companyDTO.getName() : StringUtils.EMPTY;
+
+            ImmutablePair<Double, Double> curDiffPair = this.queryMa1000Percent(focusCompanyCode, queryDate, StockConstant.KLINE_DAY_COUNT);
+            if(curDiffPair ==null){
+                continue;
+            }
+
+            String msg =new StringBuilder().append(queryDate)
+                    .append(",").append(focusCompanyCode)
+                    .append(",").append(companyName)
                     .append(",").append(NumberUtil.format(curDiffPair.getLeft() * 100, 1)).append("%")
                     .append(",").append(NumberUtil.format(curDiffPair.getRight() * 100, 1)).append("%")
                     .toString();
