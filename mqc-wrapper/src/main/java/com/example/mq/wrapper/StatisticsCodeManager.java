@@ -28,20 +28,26 @@ public class StatisticsCodeManager {
         StatisticsCodeManager statisticsCodeManager = new StatisticsCodeManager();
 
         // ma_1000统计数据
-        statisticsCodeManager.queryAndSaveStatisticsMa1000PercentData();
-
+        List<ImmutablePair<String, String>> etfPairList = StockConstant.FOCUS_ETF_CODE_LIST;
+        String queryDate ="20230201";
+        statisticsCodeManager.queryAndSaveStatisticsMa1000PercentData(etfPairList, queryDate, false);
     }
 
-    private void queryAndSaveStatisticsMa1000PercentData(){
-        DateTimeFormatter df =DateTimeFormatter.ofPattern("yyyyMMdd");
-        LocalDateTime localDateTime = LocalDateTime.now();//当前时间
-        String queryDate = df.format(localDateTime);//格式化为字符串
+    /**
+     * 查询ma1000值
+     * @param etfPairList
+     * @param queryDate
+     */
+    private void queryAndSaveStatisticsMa1000PercentData(List<ImmutablePair<String, String>> etfPairList, String queryDate, Boolean withFocusStockCode){
+        if(CollectionUtils.isEmpty(etfPairList) || StringUtils.isBlank(queryDate)){
+            return;
+        }
 
         String header ="日期,code,名称,均线差值,差值百分比";
 
         // ETF数据
         List<String> strDataList =Lists.newArrayList();
-        for(ImmutablePair<String, String> etfPair : StockConstant.FOCUS_ETF_CODE_LIST){
+        for(ImmutablePair<String, String> etfPair : etfPairList){
             String etfCode =etfPair.getLeft();
             String etfName =etfPair.getRight();
             ImmutablePair<Double, Double> curDiffPair = this.queryMa1000Percent(etfCode, queryDate, StockConstant.KLINE_DAY_COUNT);
@@ -59,24 +65,26 @@ public class StatisticsCodeManager {
         }
 
         // 关注公司数据
-        LocalDataManager localDataManager =new LocalDataManagerImpl();
-        List<String> focusCompanyCodeList =localDataManager.getFocusCompanyCodeList();
-        for(String focusCompanyCode : focusCompanyCodeList){
-            CompanyDTO companyDTO = localDataManager.getLocalCompanyDTO(focusCompanyCode);
-            String companyName = companyDTO != null ? companyDTO.getName() : StringUtils.EMPTY;
+        if(withFocusStockCode){
+            LocalDataManager localDataManager =new LocalDataManagerImpl();
+            List<String> focusCompanyCodeList =localDataManager.getFocusCompanyCodeList();
+            for(String focusCompanyCode : focusCompanyCodeList){
+                CompanyDTO companyDTO = localDataManager.getLocalCompanyDTO(focusCompanyCode);
+                String companyName = companyDTO != null ? companyDTO.getName() : StringUtils.EMPTY;
 
-            ImmutablePair<Double, Double> curDiffPair = this.queryMa1000Percent(focusCompanyCode, queryDate, StockConstant.KLINE_DAY_COUNT);
-            if(curDiffPair ==null){
-                continue;
+                ImmutablePair<Double, Double> curDiffPair = this.queryMa1000Percent(focusCompanyCode, queryDate, StockConstant.KLINE_DAY_COUNT);
+                if(curDiffPair ==null){
+                    continue;
+                }
+
+                String msg =new StringBuilder().append(queryDate)
+                        .append(",").append(focusCompanyCode)
+                        .append(",").append(companyName)
+                        .append(",").append(NumberUtil.format(curDiffPair.getLeft() * 100, 1)).append("%")
+                        .append(",").append(NumberUtil.format(curDiffPair.getRight() * 100, 1)).append("%")
+                        .toString();
+                strDataList.add(msg);
             }
-
-            String msg =new StringBuilder().append(queryDate)
-                    .append(",").append(focusCompanyCode)
-                    .append(",").append(companyName)
-                    .append(",").append(NumberUtil.format(curDiffPair.getLeft() * 100, 1)).append("%")
-                    .append(",").append(NumberUtil.format(curDiffPair.getRight() * 100, 1)).append("%")
-                    .toString();
-            strDataList.add(msg);
         }
 
         // 记录结果

@@ -32,7 +32,7 @@ public class StockIndicatorManagerImpl implements StockIndicatorManager {
     private LocalDataManager localDataManager = new LocalDataManagerImpl();
 
     private static final String INDICATOR_HEADER = "编码,名称,行业,省市,K线差值百分位,总市值,匹配次数,均线次数" +
-            ",资产负债率,PE_TTM,pe百分位,市净率,pb百分位,ROE_TTM,去现后的ROE" +
+            ",资产负债率,PE_TTM,PE分位值,市净率,PB分位值,ROE_TTM,去现后的ROE" +
             ",当季营收同比,当季净利同比,上一季营收同比,上一季净利同比,当季毛利率,当季净利率,当季毛利率同比,当季净利率同比,当季毛利率环比,当季净利率环比" +
             ",营收同比,净利润同比,毛利率,净利率" +
             ",固定资产同比,在建工程同比,商誉+无形/净资产,固定资产/净资产,在建工程/净资产,质押率" +

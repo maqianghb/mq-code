@@ -53,14 +53,14 @@ public class CommonManager {
     @Test
     public void testQueryAnalysisData(){
         // 参数列表
-        Integer reportYear =2024;
+        Integer reportYear =2025;
         FinanceReportTypeEnum reportTypeEnum =FinanceReportTypeEnum.QUARTER_3;
-        String kLineDate ="20250201";
+        String kLineDate ="20260213";
 
         LocalDataManager localDataManager =new LocalDataManagerImpl();
 //        List<String> stockCodeList =localDataManager.getLocalStockCodeList();
 //        List<String> stockCodeList = StockConstant.TEST_STOCK_CODE_LIST;
-        List<String> stockCodeList = Arrays.asList("SH603530");
+        List<String> stockCodeList = Arrays.asList("SH000300");
 
         StockIndicatorManager stockIndicatorManager =new StockIndicatorManagerImpl();
 
