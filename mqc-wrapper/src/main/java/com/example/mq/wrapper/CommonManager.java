@@ -80,7 +80,7 @@ public class CommonManager {
         LocalDataManager localDataManager =new LocalDataManagerImpl();
 
         // 业绩预告数据
-        String reportDate ="2024-03-31";
+        String reportDate ="2025-12-31";
         localDataManager.queryAndSaveFinanceNotice(reportDate);
 
         // by行业预告数据

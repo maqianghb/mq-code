@@ -80,10 +80,12 @@ public class DongChaiDataManagerImpl implements DongChaiDataManager {
                         noticeDTO.setName(jsonColumn.getString("SECURITY_NAME_ABBR"));
                     }
                     if (StringUtils.isNotBlank(jsonColumn.getString("NOTICE_DATE"))) {
-                        noticeDTO.setNotice_date(jsonColumn.getString("NOTICE_DATE"));
+                        String noticeDate = jsonColumn.getString("NOTICE_DATE");
+                        noticeDTO.setNotice_date(StringUtils.substring(noticeDate, 0, 10));
                     }
                     if (StringUtils.isNotBlank(jsonColumn.getString("REPORT_DATE"))) {
-                        noticeDTO.setReport_date(jsonColumn.getString("REPORT_DATE"));
+                        String dcReportDate = jsonColumn.getString("REPORT_DATE");
+                        noticeDTO.setReport_date(StringUtils.substring(dcReportDate, 0, 10));
                     }
                     if (StringUtils.isNotBlank(jsonColumn.getString("PREDICT_FINANCE"))) {
                         noticeDTO.setPredict_indicator(jsonColumn.getString("PREDICT_FINANCE"));

@@ -6,12 +6,12 @@ import lombok.Data;
 public class DongChaiFinanceNoticeDTO {
 
     /**
-     * 预告时间
+     * 预告日期，格式: yyyy-MM-dd
      */
     private String notice_date;
 
     /**
-     * 报告期
+     * 报告期，格式: yyyy-MM-dd
      */
     private String report_date;
 
