@@ -1,6 +1,5 @@
 package com.example.mq.wrapper;
 
-import com.example.mq.wrapper.stock.constant.StockConstant;
 import com.example.mq.wrapper.stock.enums.FinanceReportTypeEnum;
 import com.example.mq.wrapper.stock.manager.LocalDataManager;
 import com.example.mq.wrapper.stock.manager.StockIndicatorManager;
@@ -8,7 +7,6 @@ import com.example.mq.wrapper.stock.manager.impl.LocalDataManagerImpl;
 import com.example.mq.wrapper.stock.manager.impl.StockIndicatorManagerImpl;
 import org.junit.Test;
 
-import java.util.Arrays;
 import java.util.List;
 
 public class CommonManager {
@@ -46,7 +44,6 @@ public class CommonManager {
 
     }
 
-
     /**
      * 查询并记录指标数据
      */
@@ -58,9 +55,9 @@ public class CommonManager {
         String kLineDate ="20260213";
 
         LocalDataManager localDataManager =new LocalDataManagerImpl();
-//        List<String> stockCodeList =localDataManager.getLocalStockCodeList();
+        List<String> stockCodeList =localDataManager.getLocalAllStockCodeList();
 //        List<String> stockCodeList = StockConstant.TEST_STOCK_CODE_LIST;
-        List<String> stockCodeList = Arrays.asList("SH000300");
+//        List<String> stockCodeList = Arrays.asList("SH000300");
 
         StockIndicatorManager stockIndicatorManager =new StockIndicatorManagerImpl();
 

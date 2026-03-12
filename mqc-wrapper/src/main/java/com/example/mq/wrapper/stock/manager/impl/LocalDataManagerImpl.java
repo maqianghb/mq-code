@@ -28,7 +28,6 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.nio.charset.Charset;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
@@ -48,7 +47,7 @@ public class LocalDataManagerImpl implements LocalDataManager {
 
     @Override
     public void queryAndSaveCompanyDTO(){
-        List<String> stockCodeList = this.getLocalStockCodeList();
+        List<String> stockCodeList = this.getLocalAllStockCodeList();
         if(CollectionUtils.isEmpty(stockCodeList)){
             return;
         }
@@ -74,7 +73,7 @@ public class LocalDataManagerImpl implements LocalDataManager {
                 return ;
             }
 
-            FileUtils.writeLines(new File(StockConstant.COMPANY_LIST), strCompanyDTOList, false);
+            FileUtils.writeLines(new File(StockConstant.ALL_COMPANY_LIST), strCompanyDTOList, false);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -82,7 +81,7 @@ public class LocalDataManagerImpl implements LocalDataManager {
 
     @Override
     public void queryAndUpdateKLineList() {
-        List<String> stockCodeList = this.getLocalStockCodeList();
+        List<String> stockCodeList = this.getLocalAllStockCodeList();
         if(CollectionUtils.isEmpty(stockCodeList)){
             return;
         }
@@ -137,7 +136,7 @@ public class LocalDataManagerImpl implements LocalDataManager {
 
     @Override
     public void queryAndUpdateBalanceData() {
-        List<String> stockCodeList = this.getLocalStockCodeList();
+        List<String> stockCodeList = this.getLocalAllStockCodeList();
         if(CollectionUtils.isEmpty(stockCodeList)){
             return;
         }
@@ -195,7 +194,7 @@ public class LocalDataManagerImpl implements LocalDataManager {
 
     @Override
     public void queryAndUpdateIncomeData() {
-        List<String> stockCodeList = this.getLocalStockCodeList();
+        List<String> stockCodeList = this.getLocalAllStockCodeList();
         if(CollectionUtils.isEmpty(stockCodeList)){
             return;
         }
@@ -254,7 +253,7 @@ public class LocalDataManagerImpl implements LocalDataManager {
 
     @Override
     public void queryAndUpdateCashFlowData() {
-        List<String> stockCodeList = this.getLocalStockCodeList();
+        List<String> stockCodeList = this.getLocalAllStockCodeList();
         if(CollectionUtils.isEmpty(stockCodeList)){
             return;
         }
@@ -309,7 +308,7 @@ public class LocalDataManagerImpl implements LocalDataManager {
 
     @Override
     public void queryAndUpdateIndicatorData() {
-        List<String> stockCodeList = this.getLocalStockCodeList();
+        List<String> stockCodeList = this.getLocalAllStockCodeList();
         if(CollectionUtils.isEmpty(stockCodeList)){
             return;
         }
@@ -365,7 +364,7 @@ public class LocalDataManagerImpl implements LocalDataManager {
 
     @Override
     public void queryAndSaveFinanceNotice(String reportDate) {
-        List<String> stockCodeList = this.getLocalStockCodeList();
+        List<String> stockCodeList = this.getLocalAllStockCodeList();
         if(CollectionUtils.isEmpty(stockCodeList)){
             return ;
         }
@@ -380,10 +379,24 @@ public class LocalDataManagerImpl implements LocalDataManager {
                 .filter(noticeDTO -> stockCodeList.contains(noticeDTO.getCode()))
                 .filter(financeNoticeDTO -> StockConstant.FINANCE_PREDICT_INDICATOR.contains(financeNoticeDTO.getPredict_indicator()))
                 .filter(financeNoticeDTO -> StockConstant.FINANCE_PREDICT_INCREASE.contains(financeNoticeDTO.getPredict_type()))
+                .filter(noticeDTO -> {
+                    String indName = codeAndIndNameMap.get(noticeDTO.getCode());
+                    if(StringUtils.isBlank(indName)){
+                        return false;
+                    }
+                    if(indName.contains("ST")){
+                        return false;
+                    }
+
+                    return true;
+                })
                 .map(noticeDTO -> {
                     String indName = codeAndIndNameMap.get(noticeDTO.getCode());
                     if(StringUtils.isNotBlank(indName)){
                         noticeDTO.setIndName(indName);
+                    }
+                    if(StringUtils.equals(noticeDTO.getPredict_indicator(), "扣除非经常性损益后的净利润")){
+                        noticeDTO.setPredict_indicator("扣非净利");
                     }
 
                     try {
@@ -416,7 +429,7 @@ public class LocalDataManagerImpl implements LocalDataManager {
 
     @Override
     public void queryAndSaveIndFinanceNotice(String reportDate) {
-        List<String> stockCodeList = this.getLocalStockCodeList();
+        List<String> stockCodeList = this.getLocalAllStockCodeList();
         if(CollectionUtils.isEmpty(stockCodeList)){
             return ;
         }
@@ -437,6 +450,13 @@ public class LocalDataManagerImpl implements LocalDataManager {
                 .filter(financeNoticeDTO -> stockCodeList.contains(financeNoticeDTO.getCode()))
                 .filter(financeNoticeDTO -> StockConstant.FINANCE_PREDICT_INDICATOR.contains(financeNoticeDTO.getPredict_indicator()))
                 .filter(financeNoticeDTO -> StockConstant.FINANCE_PREDICT_INCREASE.contains(financeNoticeDTO.getPredict_type()))
+                .map(financeNoticeDTO -> {
+                    if(StringUtils.equals(financeNoticeDTO.getPredict_indicator(), "扣除非经常性损益后的净利润")){
+                        financeNoticeDTO.setPredict_indicator("扣非净利");
+                    }
+
+                    return financeNoticeDTO;
+                })
                 .collect(Collectors.toList());
         if(CollectionUtils.isEmpty(financeNoticeDTOList)){
             return ;
@@ -538,7 +558,7 @@ public class LocalDataManagerImpl implements LocalDataManager {
 
     @Override
     public void queryAndUpdateNorthHoldShareList(){
-        List<String> stockCodeList = this.getLocalStockCodeList();
+        List<String> stockCodeList = this.getLocalAllStockCodeList();
         if(CollectionUtils.isEmpty(stockCodeList)){
             return ;
         }
@@ -592,9 +612,9 @@ public class LocalDataManagerImpl implements LocalDataManager {
     }
 
     @Override
-    public List<String> getLocalStockCodeList(){
+    public List<String> getLocalAllStockCodeList(){
         try {
-            List<String> strList = FileUtils.readLines(new File(StockConstant.STOCK_LIST), Charset.forName("UTF-8"));
+            List<String> strList = FileUtils.readLines(new File(StockConstant.ALL_STOCK_LIST), Charset.forName("UTF-8"));
             if(CollectionUtils.isEmpty(strList)){
                 return Lists.newArrayList();
             }
@@ -606,12 +626,8 @@ public class LocalDataManagerImpl implements LocalDataManager {
                     continue;
                 }
 
-                String simpleCode =split[0].trim();
-                if(simpleCode.startsWith("60")){
-                    stockCodeList.add("SH" + simpleCode);
-                }else if(simpleCode.startsWith("00") || simpleCode.startsWith("30")){
-                    stockCodeList.add("SZ" + simpleCode);
-                }
+                String stockCode =split[0].trim();
+                stockCodeList.add(stockCode);
             }
 
             return stockCodeList;
@@ -655,7 +671,7 @@ public class LocalDataManagerImpl implements LocalDataManager {
             for(String str : strList){
                 String[] split = StringUtils.split(str, ",");
                 if(split !=null && split.length ==3){
-                    stockCodeList.add(split[0]);
+                    stockCodeList.add(split[0].trim());
                 }
             }
 
@@ -669,44 +685,21 @@ public class LocalDataManagerImpl implements LocalDataManager {
     @Override
     public List<String> getFocusCompanyCodeList(){
         try {
-            List<String> strList = FileUtils.readLines(new File(StockConstant.STOCK_LIST), Charset.forName("UTF-8"));
-            if(CollectionUtils.isEmpty(strList)){
-                return Lists.newArrayList();
-            }
-
-            // 全部公司名称和编码关系
-            Map<String, String> stockNameAndCodeMap =Maps.newHashMap();
-            for (String str : strList){
-                String[] split = StringUtils.split(str, ",");
-                if(split ==null || split.length <2){
-                    continue;
-                }
-
-                String simpleCode =split[0].trim();
-                String simpleName =split[1].trim();
-                if(simpleCode.startsWith("60")){
-                    stockNameAndCodeMap.put(simpleName, "SH" + simpleCode);
-                }else if(simpleCode.startsWith("00") || simpleCode.startsWith("30")){
-                    stockNameAndCodeMap.put(simpleName, "SZ" + simpleCode);
-                }
-            }
-
-            // 关注公司的名称
-            List<String> strNameList = FileUtils.readLines(new File(StockConstant.FOCUS_COMPANY_NAME), Charset.forName("UTF-8"));
-            if(CollectionUtils.isEmpty(strNameList)){
+            List<String> focusCompanyList = FileUtils.readLines(new File(StockConstant.FOCUS_COMPANY_LIST), Charset.forName("UTF-8"));
+            if(CollectionUtils.isEmpty(focusCompanyList)){
                 return Lists.newArrayList();
             }
 
             // 关注公司的编码
-            List<String> focusCompanyCodeList = Lists.newArrayList();
-            for(String strName : strNameList){
-                String focusCompanyCode = stockNameAndCodeMap.get(strName);
-                if(StringUtils.isNotBlank(focusCompanyCode)){
-                    focusCompanyCodeList.add(focusCompanyCode);
+            List<String> focusCodeList = Lists.newArrayList();
+            for(String focusCompany : focusCompanyList){
+                String[] split = StringUtils.split(focusCompany, ",");
+                if(split !=null && split.length ==2){
+                    focusCodeList.add(split[0].trim());
                 }
             }
 
-            return focusCompanyCodeList;
+            return focusCodeList;
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -718,7 +711,7 @@ public class LocalDataManagerImpl implements LocalDataManager {
     public CompanyDTO getLocalCompanyDTO(String code){
         try {
             if(CollectionUtils.isEmpty(companyDTOList)){
-                String fileName =String.format(StockConstant.COMPANY_LIST);
+                String fileName =String.format(StockConstant.ALL_COMPANY_LIST);
                 List<String> strList = FileUtils.readLines(new File(fileName), Charset.forName("UTF-8"));
                 companyDTOList = Optional.ofNullable(strList).orElse(Lists.newArrayList()).stream()
                         .map(str -> JSON.parseObject(str, CompanyDTO.class))
@@ -981,7 +974,7 @@ public class LocalDataManagerImpl implements LocalDataManager {
      * @return
      */
     public List<DongChaiIndustryHoldShareDTO> queryIndustryHoldShareDTO(String queryDate){
-        List<String> stockCodeList = this.getLocalStockCodeList();
+        List<String> stockCodeList = this.getLocalAllStockCodeList();
         List<String> indNameList =Optional.ofNullable(stockCodeList).orElse(Lists.newArrayList()).stream()
                 .map(stockCode -> this.getLocalCompanyDTO(stockCode))
                 .filter(companyDTO -> companyDTO != null && StringUtils.isNotBlank(companyDTO.getInd_name()))

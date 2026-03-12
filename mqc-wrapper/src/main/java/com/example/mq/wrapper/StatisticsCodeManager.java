@@ -28,9 +28,9 @@ public class StatisticsCodeManager {
         StatisticsCodeManager statisticsCodeManager = new StatisticsCodeManager();
 
         // ma_1000统计数据
-        List<ImmutablePair<String, String>> etfPairList = StockConstant.FOCUS_ETF_CODE_LIST;
-        String queryDate ="20230201";
-        statisticsCodeManager.queryAndSaveStatisticsMa1000PercentData(etfPairList, queryDate, false);
+        String queryDate ="20260312";
+        boolean withFocusStockCode =true;
+        statisticsCodeManager.queryAndSaveStatisticsMa1000PercentData(StockConstant.FOCUS_ETF_CODE_LIST, queryDate, withFocusStockCode);
     }
 
     /**

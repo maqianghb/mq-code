@@ -74,7 +74,7 @@ public interface LocalDataManager {
      *
      * @return
      */
-    List<String> getLocalStockCodeList();
+    List<String> getLocalAllStockCodeList();
 
     /**
      * 获取黑名单的编码列表
