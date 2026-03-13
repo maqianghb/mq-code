@@ -614,14 +614,14 @@ public class LocalDataManagerImpl implements LocalDataManager {
     @Override
     public List<String> getLocalAllStockCodeList(){
         try {
-            List<String> strList = FileUtils.readLines(new File(StockConstant.ALL_STOCK_LIST), Charset.forName("UTF-8"));
-            if(CollectionUtils.isEmpty(strList)){
+            List<String> allCodeNameList = FileUtils.readLines(new File(StockConstant.ALL_STOCK_CODE_LIST), Charset.forName("UTF-8"));
+            if(CollectionUtils.isEmpty(allCodeNameList)){
                 return Lists.newArrayList();
             }
 
             List<String> stockCodeList =Lists.newArrayList();
-            for (String str : strList){
-                String[] split = StringUtils.split(str, ",");
+            for (String codeAndName : allCodeNameList){
+                String[] split = StringUtils.split(codeAndName, ",");
                 if(split ==null || split.length <2){
                     continue;
                 }
@@ -685,15 +685,15 @@ public class LocalDataManagerImpl implements LocalDataManager {
     @Override
     public List<String> getFocusCompanyCodeList(){
         try {
-            List<String> focusCompanyList = FileUtils.readLines(new File(StockConstant.FOCUS_COMPANY_LIST), Charset.forName("UTF-8"));
-            if(CollectionUtils.isEmpty(focusCompanyList)){
+            List<String> focusCodeNameList = FileUtils.readLines(new File(StockConstant.FOCUS_CODE_LIST), Charset.forName("UTF-8"));
+            if(CollectionUtils.isEmpty(focusCodeNameList)){
                 return Lists.newArrayList();
             }
 
             // 关注公司的编码
             List<String> focusCodeList = Lists.newArrayList();
-            for(String focusCompany : focusCompanyList){
-                String[] split = StringUtils.split(focusCompany, ",");
+            for(String focusCodeName : focusCodeNameList){
+                String[] split = StringUtils.split(focusCodeName, ",");
                 if(split !=null && split.length ==2){
                     focusCodeList.add(split[0].trim());
                 }

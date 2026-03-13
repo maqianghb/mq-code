@@ -17,17 +17,9 @@ public class StockConstant {
 
     public static final String COOKIE ="u=551703859817291; HMACCOUNT=C04B42F6BEF1AFBB; _c_WBKFRo=zCeQHLhw7OZW9cK1Z0YKLBQmjpWEzLButXn52ozD; _nb_ioWEgULi=; s=bm12pqr4u4; cookiesu=261769608447300; device_id=631f3b7f2c8df1f45644448b974585f1; xq_a_token=826f0dd021d646522fa7b6413f5be324c52d33e4; xqat=826f0dd021d646522fa7b6413f5be324c52d33e4; xq_r_token=f80a8375ff930a08624ff6633740c67386fc1330; xq_id_token=eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJ1aWQiOi0xLCJpc3MiOiJ1YyIsImV4cCI6MTc3NTg3MDM5OCwiY3RtIjoxNzczMzE2Mjk1MDYyLCJjaWQiOiJkOWQwbjRBWnVwIn0.IWl03AxYB6UOIescTx4KjiTdw1hlP84A0mBdObyvn_XpKy2g10NKuBoWGoUjdZHUXIvZYsfluWSY3rZnqEpHQ7eKHZYCPEowOw4jlQpAEOatL_FsZlFU_Uds_RzZ3C2gMT29tZ04S0-d2khtt9uju7cyx_2vYHdnx-ZiQh9g8k-Hv_3dNEp2f5cfdtOPbXK6slM7bp4oBHm9GHyP6Pinog1phB-WrtLBG2_Ttf09JJ1nYVi6c27nCAHjbw_iB2xPBsvCqjD7P0S89TY1U8nvJiIsrWvrRww1-6i71-xffzNWwrjGmnKOlgR0X32znwg-ENwpV8a2BJvvFbVlVef4aQ; is_overseas=0;";
 
-    public static final List<ImmutablePair<String, String>> FOCUS_ETF_CODE_LIST = Arrays.asList(
-            new ImmutablePair<>("SH000300", "沪深300"),
-            new ImmutablePair<>("SZ399330", "深证100"),
-            new ImmutablePair<>("SH000905", "中证500"),
-            new ImmutablePair<>("SH000852", "中证1000"),
-            new ImmutablePair<>("SZ399673", "创业板50"),
-            new ImmutablePair<>("SH000688", "科创50"),
-            new ImmutablePair<>("SH512880", "证券ETF"),
-            new ImmutablePair<>("SH512480", "半导体ETF"),
-            new ImmutablePair<>("SH518880", "黄金ETF")
-    );
+    public static final List<String> FOCUS_ETF_CODE_LIST = Arrays.asList(
+            "SH000300,沪深300", "SZ399330,深证100", "SH000905,中证500", "SH000852,中证1000", "SZ399673,创业板50",
+            "SH000688,科创50", "SH512880,证券ETF", "SH512480,半导体ETF", "SH518880,黄金ETF");
 
     public static final List<String> TEST_STOCK_CODE_LIST = Arrays.asList("SZ002001", "SZ002415", "SZ002508", "SH600486", "SZ002507");
 
@@ -38,12 +30,14 @@ public class StockConstant {
     public static final Integer FINANCE_REPORT_COUNT =30;
     public static final Integer KLINE_DAY_COUNT =2000;
 
-    public static final String ALL_STOCK_LIST ="/Users/maqiang/Documents/002-stock_data/001_stock_list/all_stock_list.txt";
+    public static final String ALL_STOCK_CODE_LIST ="/Users/maqiang/Documents/002-stock_data/001_stock_list/all_stock_code_list.txt";
     public static final String ALL_COMPANY_LIST ="/Users/maqiang/Documents/002-stock_data/001_stock_list/all_company_list.txt";
 
     public static final String STOCK_LIST_WHITE ="/Users/maqiang/Documents/002-stock_data/001_stock_list/stock_list_white.txt";
     public static final String STOCK_LIST_BLACK ="/Users/maqiang/Documents/002-stock_data/001_stock_list/stock_list_black.txt";
-    public static final String FOCUS_COMPANY_LIST ="/Users/maqiang/Documents/002-stock_data/001_stock_list/foucus_company_list.txt";
+    public static final String FOCUS_CODE_LIST ="/Users/maqiang/Documents/002-stock_data/001_stock_list/focus_code_list.txt";
+
+    public static final String STATISTICS_CODE_LIST ="/Users/maqiang/Documents/002-stock_data/001_stock_list/statistics_code_list.txt";
 
     public static final String KLINE_LIST_DAY ="/Users/maqiang/Documents/002-stock_data/002_xq_k_line/k_line_list_day_%s.txt";
 

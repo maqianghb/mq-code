@@ -55,7 +55,7 @@ public class CommonManager {
         String kLineDate ="20260213";
 
         LocalDataManager localDataManager =new LocalDataManagerImpl();
-        List<String> stockCodeList =localDataManager.getLocalAllStockCodeList();
+        List<String> stockCodeList =localDataManager.getFocusCompanyCodeList();
 //        List<String> stockCodeList = StockConstant.TEST_STOCK_CODE_LIST;
 //        List<String> stockCodeList = Arrays.asList("SH000300");
 
