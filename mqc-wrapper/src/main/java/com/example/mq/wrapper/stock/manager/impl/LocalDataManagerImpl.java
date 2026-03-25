@@ -378,7 +378,6 @@ public class LocalDataManagerImpl implements LocalDataManager {
         List<String> strNoticeList = Optional.ofNullable(noticeDTOList).orElse(Lists.newArrayList()).stream()
                 .filter(noticeDTO -> stockCodeList.contains(noticeDTO.getCode()))
                 .filter(financeNoticeDTO -> StockConstant.FINANCE_PREDICT_INDICATOR.contains(financeNoticeDTO.getPredict_indicator()))
-                .filter(financeNoticeDTO -> StockConstant.FINANCE_PREDICT_INCREASE.contains(financeNoticeDTO.getPredict_type()))
                 .filter(noticeDTO -> {
                     String indName = codeAndIndNameMap.get(noticeDTO.getCode());
                     if(StringUtils.isBlank(indName)){
@@ -449,7 +448,6 @@ public class LocalDataManagerImpl implements LocalDataManager {
         List<DongChaiFinanceNoticeDTO> financeNoticeDTOList = Optional.ofNullable(allFinanceNoticeDTOList).orElse(Lists.newArrayList()).stream()
                 .filter(financeNoticeDTO -> stockCodeList.contains(financeNoticeDTO.getCode()))
                 .filter(financeNoticeDTO -> StockConstant.FINANCE_PREDICT_INDICATOR.contains(financeNoticeDTO.getPredict_indicator()))
-                .filter(financeNoticeDTO -> StockConstant.FINANCE_PREDICT_INCREASE.contains(financeNoticeDTO.getPredict_type()))
                 .map(financeNoticeDTO -> {
                     if(StringUtils.equals(financeNoticeDTO.getPredict_indicator(), "扣除非经常性损益后的净利润")){
                         financeNoticeDTO.setPredict_indicator("扣非净利");

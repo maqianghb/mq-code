@@ -25,8 +25,6 @@ public class StockConstant {
 
     public static final List<String> FINANCE_PREDICT_INDICATOR =Arrays.asList("扣除非经常性损益后的净利润");
 
-    public static final List<String> FINANCE_PREDICT_INCREASE =Arrays.asList("减亏", "略增", "扭亏", "续赢", "预增");
-
     public static final Integer FINANCE_REPORT_COUNT =30;
     public static final Integer KLINE_DAY_COUNT =2000;
 
