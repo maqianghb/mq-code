@@ -1,4 +1,4 @@
-# mq-code:maqiang's example project 
+# mq-code: maqiang's example project 
 ## 项目分层结构
 ### mqc-adapter: 适配层，和前端交互和数据转换；
 ### mqc-app:     核心层，实现业务逻辑；
