@@ -12,9 +12,9 @@ public class BusinessException extends RuntimeException{
 
     private static final String PLACE_HOLDER = "{}";
 
-    private String respCode;
+    private String code;
 
-    private String respMsg;
+    private String message;
 
     public BusinessException(Throwable throwable){
         super(throwable);
@@ -22,20 +22,20 @@ public class BusinessException extends RuntimeException{
 
     public BusinessException(String message) {
         super(message);
-        this.respCode = BizErrorEnum.COMMON_BIZ_ERROR.getCode();
-        this.respMsg = message;
+        this.code = BizErrorEnum.COMMON_BIZ_ERROR.getCode();
+        this.message = message;
     }
 
     public BusinessException(BizErrorEnum bizErrorEnum) {
         super(bizErrorEnum.getMessage());
-        this.respCode = bizErrorEnum.getCode();
-        this.respMsg = bizErrorEnum.getMessage();
+        this.code = bizErrorEnum.getCode();
+        this.message = bizErrorEnum.getMessage();
     }
 
     public BusinessException(BizErrorEnum bizErrorEnum, String message) {
         super(bizErrorEnum.getMessage());
-        this.respCode = bizErrorEnum.getCode();
-        this.respMsg = bizErrorEnum.getMessage() + "," + message;
+        this.code = bizErrorEnum.getCode();
+        this.message = bizErrorEnum.getMessage() + "," + message;
     }
 
     public BusinessException(BizErrorEnum bizErrorEnum, String errMsgFormat, Object... params) {
@@ -43,12 +43,12 @@ public class BusinessException extends RuntimeException{
     }
 
 
-    public String getRespCode() {
-        return respCode;
+    public String getCode() {
+        return code;
     }
 
-    public String getRespMsg() {
-        return respMsg;
+    public String getMessage() {
+        return message;
     }
 
     private static String buildErrorMsg(String errMsgFormat, Object... params){

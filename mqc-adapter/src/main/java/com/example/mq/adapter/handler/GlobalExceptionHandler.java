@@ -4,6 +4,8 @@ import com.alibaba.fastjson.JSON;
 import com.example.mq.common.base.MqcResponse;
 
 
+import com.example.mq.common.enums.base.ResultStatusEnum;
+import com.example.mq.common.exception.BusinessException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,17 +26,17 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public MqcResponse handlerException(HttpServletRequest request, Exception ex) {
-        int respCode = -1;
+        String respCode =ResultStatusEnum.FAIL.getCode();
         String respMsg = StringUtils.isEmpty(ex.getMessage()) ? "系统发生未知错误!":ex.getMessage();
         try {
             LOG.error("request failed, url:{}|params:{}, exception:", JSON.toJSONString(request.getRequestURL()),
                     JSON.toJSONString(request.getParameterMap()), ex);
 
-            if(ex instanceof MyException){
+            if(ex instanceof BusinessException){
                 //自定义异常
-                MyException myException = (MyException)ex;
-                respCode = myException.getCode();
-                respMsg = myException.getDesc();
+                BusinessException businessException = (BusinessException)ex;
+                respCode = businessException.getCode();
+                respMsg = businessException.getMessage();
             }
            return MqcResponse.fail(respCode, respMsg);
         } catch (Exception e) {

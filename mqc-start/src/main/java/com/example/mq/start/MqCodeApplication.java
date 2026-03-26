@@ -1,4 +1,4 @@
-package com.example.mq.controller;
+package com.example.mq.start;
 
 import java.util.List;
 
@@ -17,8 +17,6 @@ import javax.annotation.PostConstruct;
 
 import com.example.mq.common.utils.SpringContextUtil;
 import org.apache.commons.collections4.CollectionUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 
 @SpringBootApplication(exclude = {MongoAutoConfiguration.class})

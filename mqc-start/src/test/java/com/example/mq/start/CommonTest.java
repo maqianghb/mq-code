@@ -1,4 +1,4 @@
-package com.example.mq;
+package com.example.mq.start;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -18,11 +18,11 @@ import org.apache.commons.io.FileUtils;
  *
  */
 
-public class EasyTest {
+public class CommonTest {
 
 	public static void main(String[] args) throws Exception{
-		EasyTest easyTest =new EasyTest();
-		easyTest.testParseWord();
+		CommonTest commonTest =new CommonTest();
+		commonTest.testParseWord();
 
 		System.out.println("------test end!");
 

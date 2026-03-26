@@ -13,7 +13,7 @@ import lombok.Data;
 public class MqcResponse<T> {
 
     private Boolean success;
-    private Integer code;
+    private String code;
     private String msg;
     private T data;
 
@@ -43,7 +43,7 @@ public class MqcResponse<T> {
         return response;
     }
 
-	public static MqcResponse fail(int errCode, String errMsg) {
+	public static MqcResponse fail(String errCode, String errMsg) {
         MqcResponse response = new MqcResponse<>();
         response.setSuccess(false);
         response.setCode(errCode);

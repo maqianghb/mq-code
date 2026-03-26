@@ -8,6 +8,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 import com.alibaba.fastjson.JSONObject;
+import com.example.mq.client.customer.model.CustomerDTO;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,7 +34,7 @@ public class AsyncCustomerServiceImpl {
 	/**
 	 * customer
 	 */
-	private static ConcurrentLinkedQueue<Customer> saveQueue =new ConcurrentLinkedQueue<>();
+	private static ConcurrentLinkedQueue<CustomerDTO> saveQueue =new ConcurrentLinkedQueue<>();
 
 	private ThreadFactory saveThreadFactory =new ThreadFactoryBuilder().setNameFormat("save-customer-pool-%d").build();
 	private ExecutorService saveExecutor = new ThreadPoolExecutor(
@@ -46,19 +47,19 @@ public class AsyncCustomerServiceImpl {
 			new ThreadPoolExecutor.AbortPolicy()
 	);
 
-	public long saveCustomer(Customer customer) throws Exception {
-		if(null ==customer){
+	public long saveCustomer(CustomerDTO customerDTO) throws Exception {
+		if(null ==customerDTO){
 			throw new IllegalArgumentException(" saveCustomer 操作，参数为空！");
 		}
 		long result =1;
 		//save queue
 		if(saveQueue.size() >= MAX_LINKED_QUEUE_SIZE){
 			LOG.error(" saveQueue 队列已满, queueSize:{}|customer:{}", saveQueue.size(),
-					JSONObject.toJSONString(customer));
+					JSONObject.toJSONString(customerDTO));
 			result =0;
 		}else {
-			if(!saveQueue.offer(customer)){
-				LOG.error("saveQueue 添加数据失败，customer:{}", JSONObject.toJSONString(customer));
+			if(!saveQueue.offer(customerDTO)){
+				LOG.error("saveQueue 添加数据失败，customer:{}", JSONObject.toJSONString(customerDTO));
 				result =0;
 			}
 		}
@@ -66,7 +67,7 @@ public class AsyncCustomerServiceImpl {
 		//execute
 		this.startExecutor();
 
-		LOG.info(" saveCustomer result, isSuccess:{}|customer:{}", result >0, JSONObject.toJSONString(customer));
+		LOG.info(" saveCustomer result, isSuccess:{}|customer:{}", result >0, JSONObject.toJSONString(customerDTO));
 		return result;
 	}
 
@@ -75,7 +76,7 @@ public class AsyncCustomerServiceImpl {
 			@Override
 			public void run() {
 				while(saveQueue.size() >0){
-					Customer customer =saveQueue.poll();
+					CustomerDTO customer =saveQueue.poll();
 					if(null ==customer){
 						break;
 					}
@@ -96,7 +97,7 @@ public class AsyncCustomerServiceImpl {
 		return ;
 	}
 
-	private long doSaveCustomer(Customer customer) throws Exception{
+	private long doSaveCustomer(CustomerDTO customerDTO) throws Exception{
 		return 0;
 	}
 }

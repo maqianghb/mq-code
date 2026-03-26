@@ -10,15 +10,15 @@ import java.util.Objects;
  *
  */
 public enum ResultStatusEnum {
-	SUCCESS(200, "成功"),
-	FAIL(-1,"失败"),
-	NO_AUTH(-1,"无授权，请重新登录");
+	SUCCESS("0000", "成功"),
+	FAIL("0100","失败"),
+	NO_AUTH("0200","无授权，请重新登录");
 
-	private Integer code;
+	private String code;
 
 	private String desc;
 
-	public Integer getCode() {
+	public String getCode() {
 		return code;
 	}
 
@@ -26,7 +26,7 @@ public enum ResultStatusEnum {
 		return desc;
 	}
 
-	ResultStatusEnum(int code, String desc) {
+	ResultStatusEnum(String code, String desc) {
 		this.code = code;
 		this.desc = desc;
 	}

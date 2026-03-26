@@ -37,7 +37,7 @@ public class CustomerApiServiceTest {
 
 	private void testQueryCustomer(){
 		CustomerRequest request =new CustomerRequest();
-		request.setCode("123456789");
+		request.setCustomerNo("123456789");
 
 		MqcResponse mqcResponse =null;
 		try {

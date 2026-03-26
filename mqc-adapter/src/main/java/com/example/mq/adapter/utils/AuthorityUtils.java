@@ -5,7 +5,6 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
 import com.alibaba.fastjson.JSONObject;
-import com.example.mq.app.customer.model.User;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,7 +23,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 public class AuthorityUtils {
 	private static Logger LOG = LoggerFactory.getLogger(AuthorityUtils.class);
 
-	public static User getCurrentUser() {
+	public static JSONObject getCurrentUser() {
 		ServletRequestAttributes requestAttributes =
 				(ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
 		HttpServletRequest request = requestAttributes.getRequest();
@@ -32,7 +31,7 @@ public class AuthorityUtils {
 		if(StringUtils.isEmpty(strUser)){
 			return null;
 		}
-		return JSONObject.parseObject(strUser, User.class);
+		return JSONObject.parseObject(strUser);
 	}
 
 	public static Map<String, String> getCities() {
