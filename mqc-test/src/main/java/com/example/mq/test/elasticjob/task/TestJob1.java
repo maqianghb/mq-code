@@ -2,7 +2,7 @@ package com.example.mq.test.elasticjob.task;
 
 import com.dangdang.ddframe.job.api.ShardingContext;
 import com.dangdang.ddframe.job.api.simple.SimpleJob;
-import com.example.mq.infr.mongo.MongoService;
+import com.example.mq.infra.mongo.MongoService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

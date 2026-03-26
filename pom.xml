@@ -15,7 +15,7 @@
 		<module>mqc-client</module>
 		<module>mqc-common</module>
 		<module>mqc-domain</module>
-		<module>mqc-infr</module>
+		<module>mqc-infra</module>
 		<module>mqc-start</module>
 		<module>mqc-test</module>
 	</modules>

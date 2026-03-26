@@ -17,7 +17,7 @@
         <!-- mqc-infr-->
         <dependency>
             <groupId>com.example.mq</groupId>
-            <artifactId>mqc-infr</artifactId>
+            <artifactId>mqc-infra</artifactId>
             <version>${project.version}</version>
         </dependency>
 
