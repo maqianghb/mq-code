@@ -4,7 +4,7 @@ import com.example.mq.common.enums.base.BizErrorEnum;
 import com.example.mq.common.utils.AssertUtils;
 import com.example.mq.domain.customer.CustomerDomainService;
 import com.example.mq.domain.customer.model.CustomerEntity;
-import com.example.mq.infr.customer.repository.CustomerRepository;
+import com.example.mq.infra.customer.repository.CustomerRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 

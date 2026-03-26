@@ -54,7 +54,7 @@
 
 		<resources>
 			<resource>
-				<directory>../mqc-infr/src/main/resources</directory>
+				<directory>src/main/resources</directory>
 				<includes>
 					<include>**/*.properties</include>
 					<include>**/*.xml</include>
