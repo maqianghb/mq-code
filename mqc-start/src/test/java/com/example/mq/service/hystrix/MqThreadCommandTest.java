@@ -8,8 +8,10 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
 import com.alibaba.fastjson.JSONObject;
+import com.example.mq.adapter.hystrix.HystrixConfig;
+import com.example.mq.adapter.hystrix.MqThreadCommand;
 import com.example.mq.common.utils.CommonUtils;
-import com.example.mq.controller.ControllerApplication;
+import com.example.mq.controller.MqCodeApplication;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -27,7 +29,7 @@ import org.springframework.test.context.junit4.SpringRunner;
  *
  */
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = ControllerApplication.class)
+@SpringBootTest(classes = MqCodeApplication.class)
 public class MqThreadCommandTest {
 	private static Logger LOG = LoggerFactory.getLogger(MqThreadCommandTest.class);
 

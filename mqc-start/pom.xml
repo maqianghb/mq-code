@@ -24,7 +24,7 @@
 		<!-- mq-code-service -->
         <dependency>
             <groupId>com.example.mq</groupId>
-            <artifactId>mqc-service</artifactId>
+            <artifactId>mqc-adapter</artifactId>
             <version>${project.version}</version>
 		</dependency>
 

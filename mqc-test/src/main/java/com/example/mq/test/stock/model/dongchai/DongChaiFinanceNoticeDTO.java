@@ -1,0 +1,77 @@
+package com.example.mq.test.stock.model.dongchai;
+
+import lombok.Data;
+
+@Data
+public class DongChaiFinanceNoticeDTO {
+
+    /**
+     * 预告日期，格式: yyyy-MM-dd
+     */
+    private String notice_date;
+
+    /**
+     * 报告期，格式: yyyy-MM-dd
+     */
+    private String report_date;
+
+    private String code;
+
+    private String name;
+
+    /**
+     * 行业
+     */
+    private String indName;
+
+    /**
+     * 预告指标
+     */
+    private String predict_indicator;
+
+    /**
+     * 预告类型
+     */
+    private String predict_type;
+
+    /**
+     * 预告值(亿)
+     */
+    private Double predict_amount_low;
+
+    /**
+     * 预告值(亿)
+     */
+    private Double predict_amount_up;
+
+    /**
+     * 同比变动
+     */
+    private Double add_amp_low;
+
+    /**
+     * 同比变动
+     */
+    private Double add_amp_up;
+
+    /**
+     * 环比变动
+     */
+    private Double predict_ratio_low;
+
+    /**
+     * 环比变动
+     */
+    private Double predict_ratio_up;
+
+    /**
+     * 上年同期值(亿)
+     */
+    private Double pre_year_same_period;
+
+    /**
+     * 变动原因
+     */
+    private String reason;
+
+}

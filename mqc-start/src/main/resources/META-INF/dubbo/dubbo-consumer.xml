@@ -25,7 +25,7 @@
 					 <!--check="${seller.dubbo.registry.check}"-->
 					 <!--retries="${config.dubbo.registry.retries}"-->
 					 <!--version="${seller.dubbo.reference.version}"-->
-					 <!--filter="com.example.mq.data.dubbo.DubboProviderLogFilter"/>-->
+					 <!--filter="com.example.mq.adapter.dubbo.DubboProviderLogFilter"/>-->
 
 	<!-- for test -->
 	<!--<dubbo:reference id="sellerQueryApi" -->
