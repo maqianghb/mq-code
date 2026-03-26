@@ -167,6 +167,19 @@
 			<version>1.6.3</version>
 		</dependency>
 
+		<!-- QLExpress表达式计算 -->
+		<dependency>
+			<groupId>com.alibaba</groupId>
+			<artifactId>QLExpress</artifactId>
+			<version>3.3.4</version>
+			<exclusions>
+				<exclusion>
+					<groupId>commons-logging</groupId>
+					<artifactId>commons-logging</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+
     </dependencies>
 
 
