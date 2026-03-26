@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.mq.infr.customer.mapper.CustomerMapper">
+
+	<resultMap id="BaseResultMap" type="com.example.mq.infr.customer.model.CustomerDO">
+		<id column="id" property="id" jdbcType="BIGINT" />
+		<mqcResponse column="customer_no" property="customerNo" jdbcType="VARCHAR" />
+		<mqcResponse column="customer_name" property="customerName" jdbcType="VARCHAR" />
+		<mqcResponse column="customer_desc" property="customerDesc" jdbcType="VARCHAR" />
+		<mqcResponse column="customer_type" property="customerType" jdbcType="VARCHAR" />
+		<mqcResponse column="customer_age" property="customerAge" jdbcType="INTEGER" />
+		<mqcResponse column="top_ten_sellers" property="topTenSellers"  jdbcType="VARCHAR"/>
+		<mqcResponse column="total_cost_amount" property="totalCostAmount" jdbcType="INTEGER" />
+		<mqcResponse column="min_active_time" property="minActiveTime" jdbcType="TIMESTAMP" />
+		<mqcResponse column="max_active_time" property="maxActiveTime" jdbcType="TIMESTAMP" />
+		<mqcResponse column="extend_info" property="extendInfo" jdbcType="VARCHAR" />
+
+		<mqcResponse column="create_by" property="createBy" jdbcType="VARCHAR" />
+		<mqcResponse column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+		<mqcResponse column="update_by" property="updateBy" jdbcType="VARCHAR" />
+		<mqcResponse column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+		<mqcResponse column="is_deleted" property="isDeleted" jdbcType="TINYINT" />
+	</resultMap>
+
+	<sql id="Base_Column_List">
+		id, customer_no, customer_name, customer_desc, customer_type, customer_age
+		, top_ten_sellers, total_cost_amount, min_active_time, max_active_time, extend_info
+		, create_by, create_time, update_by, update_time, is_deleted
+	</sql>
+
+	<select id="batchQueryIdForCheck" resultType="java.lang.Long">
+		SELECT id
+		FROM platform_customer
+		WHERE 1 = 1
+		<if test="customerTypeList !=null and customerTypeList.size() >0">
+			AND customer_type in
+			<foreach collection="customerTypeList" item="item" separator="," open="(" close=")">
+				#{item}
+			</foreach>
+		</if>
+		AND create_time >= #{startCreateTime}
+		AND create_time &lt; #{endCreateTime}
+		AND id &gt; #{lastMaxId}
+		ORDER BY id
+		LIMIT #{limitNum}
+	</select>
+
+</mapper>
