@@ -24,10 +24,10 @@
 			<version>${project.version}</version>
 		</dependency>
 
-		<!-- mqc-adapter -->
+		<!-- mqc-infra -->
 		<dependency>
 			<groupId>com.example.mq</groupId>
-			<artifactId>mqc-infr</artifactId>
+			<artifactId>mqc-infra</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 
