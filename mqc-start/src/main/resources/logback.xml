@@ -11,9 +11,9 @@
     <property name="LOG_MAX_HISTORY" value="15"/>
 
 	<property name="INFO_LOG_HOME" value="${LOG_HOME}/mq-code-info.log"/>
-    <property name="INFO_LOG_ROLL_HOME" value="${LOG_HOME}/mq-code-info.log-%d{yyyy-MM-dd}-%i"/>
+    <property name="INFO_LOG_ROLL_HOME" value="${LOG_HOME}/mq-code-info-%d{yyyy-MM-dd}-%i.log"/>
     <property name="ERROR_LOG_HOME" value="${LOG_HOME}/mq-code-error.log"/>
-    <property name="ERROR_LOG_ROLL_HOME" value="${LOG_HOME}/mq-code-error.log-%d{yyyy-MM-dd}-%i"/>
+    <property name="ERROR_LOG_ROLL_HOME" value="${LOG_HOME}/mq-code-error-%d{yyyy-MM-dd}-%i.log"/>
 
 
     <!-- 定义输出日志的格式
@@ -24,8 +24,8 @@
        %msg 输出应用程序提供的信息
        %n输出平台相关的分行符“\n”或者“\r\n”
      -->
-    <property name="ENCODER_PATTERN" value="[%d{HH:mm:ss.SSS}][%-5level][%thread] %class{36}-%line : %msg%n"/>
-	<property name="DUBBO_ENCODER_PATTERN" value="[%d{HH:mm:ss.SSS}][%-5level] : %msg%n"/>
+    <property name="ENCODER_PATTERN" value="[%date{yyyy-MM-dd HH:mm:ss.SSS}][%-5level][%thread] %class{36}-%line : %msg%n"/>
+	<property name="DUBBO_ENCODER_PATTERN" value="[%date{yyyy-MM-dd HH:mm:ss.SSS}][%-5level] : %msg%n"/>
 
 
     <appender name="console" class="ch.qos.logback.core.ConsoleAppender">
@@ -154,4 +154,5 @@
 		<appender-ref ref="info-async" />
 		<appender-ref ref="error-async" />
     </root>
+
 </configuration>
