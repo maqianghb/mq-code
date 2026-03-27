@@ -2,6 +2,7 @@ package com.example.mq.start;
 
 import java.util.List;
 
+import com.example.mq.app.utils.SpringContextUtil;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.mongo.MongoAutoConfiguration;
@@ -15,7 +16,6 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import javax.annotation.PostConstruct;
 
-import com.example.mq.common.utils.SpringContextUtil;
 import org.apache.commons.collections4.CollectionUtils;
 
 

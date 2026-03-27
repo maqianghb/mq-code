@@ -8,9 +8,9 @@ import com.example.mq.common.utils.NumberUtil;
 import com.example.mq.test.stock.constant.StockConstant;
 import com.example.mq.test.stock.manager.DongChaiDataManager;
 import com.example.mq.test.stock.model.dongchai.*;
+import com.google.common.collect.Lists;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.assertj.core.util.Lists;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
 
 public class DongChaiDataManagerImpl implements DongChaiDataManager {
 
-    private static List<DongChaiHolderIncreaseDTO> holderIncreaseDTOList =Lists.newArrayList();
+    private static List<DongChaiHolderIncreaseDTO> holderIncreaseDTOList = Lists.newArrayList();
     private static List<DongChaiFreeShareDTO> freeShareDTOList =Lists.newArrayList();
 
     @Override

@@ -1,4 +1,4 @@
-package com.example.mq.common.utils;
+package com.example.mq.app.utils;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -6,8 +6,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.security.MessageDigest;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.web.multipart.MultipartFile;
 
@@ -18,10 +17,8 @@ import org.springframework.web.multipart.MultipartFile;
  * @create: 2019/2/27
  *
  */
-
+@Slf4j
 public class MD5Util {
-	private final static Logger LOG = LoggerFactory.getLogger(MD5Util.class);
-
 	private static String hexStr =  "0123456789ABCDEF";
 
 	/**
@@ -41,7 +38,7 @@ public class MD5Util {
 			// 4 把数组每一字节（一个字节占八位）换成16进制连成md5字符串
 			md5str = bytesToHex(buff);
 		} catch (Exception e) {
-			LOG.error("getMD5 error, message:{}", message, e);
+			log.error("getMD5 error, message:{}", message, e);
 		}
 		return md5str.trim();
 	}
@@ -57,13 +54,13 @@ public class MD5Util {
 			fis = file.getInputStream();
 			return getMD5(fis);
 		} catch (Exception e) {
-			LOG.error("getMD5 error, file:{}", file, e);
+			log.error("getMD5 error, file:{}", file, e);
 			return null;
 		} finally {
 			try {
 				fis.close();
 			} catch (IOException e) {
-				LOG.error("InputStream 关闭失败！", e);
+				log.error("InputStream 关闭失败！", e);
 			}
 		}
 	}
@@ -79,13 +76,13 @@ public class MD5Util {
 			fis = new FileInputStream(file);
 			return getMD5(fis);
 		} catch (Exception e) {
-			LOG.error("getMD5 error, file:{}", file, e);
+			log.error("getMD5 error, file:{}", file, e);
 			return null;
 		} finally {
 			try {
 				fis.close();
 			} catch (IOException e) {
-				LOG.error("FileInputStream 关闭失败！", e);
+				log.error("FileInputStream 关闭失败！", e);
 			}
 		}
 	}

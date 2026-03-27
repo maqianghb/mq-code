@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Map;
 
 
-import com.example.mq.common.utils.SpringContextUtil;
 import org.apache.commons.collections4.CollectionUtils;
 import org.junit.Assert;
 import org.junit.Before;
@@ -15,6 +14,8 @@ import org.junit.runner.RunWith;
 
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
+
+import javax.annotation.Resource;
 
 /**
  * @program: mq-code
@@ -27,11 +28,12 @@ import org.springframework.test.context.junit4.SpringRunner;
 @SpringBootTest
 public class CodisServiceTest {
 
+	@Resource
 	private CodisService codisService;
 
 	@Before
 	public void setUp() throws Exception {
-		codisService = SpringContextUtil.getBean(CodisService.class);
+//		codisService = SpringContextUtil.getBean(CodisService.class);
 	}
 
 	@Test

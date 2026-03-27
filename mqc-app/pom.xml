@@ -28,22 +28,34 @@
 			<version>${project.version}</version>
 		</dependency>
 
+		<!-- httpclient-->
 		<dependency>
 			<groupId>org.apache.httpcomponents</groupId>
 			<artifactId>httpclient</artifactId>
-			<version>${httpclient.version}</version>
 		</dependency>
 
+		<!-- QLExpress-->
 		<dependency>
 			<groupId>com.alibaba</groupId>
 			<artifactId>QLExpress</artifactId>
-			<version>3.3.4</version>
 			<exclusions>
 				<exclusion>
 					<groupId>commons-logging</groupId>
 					<artifactId>commons-logging</artifactId>
 				</exclusion>
 			</exclusions>
+		</dependency>
+
+		<!--jexl -->
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-jexl3</artifactId>
+		</dependency>
+
+		<!-- mvel -->
+		<dependency>
+			<groupId>org.mvel</groupId>
+			<artifactId>mvel2</artifactId>
 		</dependency>
 
 	</dependencies>

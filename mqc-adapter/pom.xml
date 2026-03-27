@@ -21,11 +21,24 @@
             <version>${project.version}</version>
         </dependency>
 
+		<!-- mqc-client -->
+		<dependency>
+			<groupId>com.example.mq</groupId>
+			<artifactId>mqc-client</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+
+		<!-- spring-boot-starter-web -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web</artifactId>
+			<version>2.6.15</version>
+		</dependency>
+
 		<!-- hystrix -->
 		<dependency>
 			<groupId>com.netflix.hystrix</groupId>
 			<artifactId>hystrix-core</artifactId>
-			<version>${hystrix-core.version}</version>
 		</dependency>
 
     </dependencies>

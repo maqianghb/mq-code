@@ -5,10 +5,9 @@ import java.io.InputStream;
 import java.util.Enumeration;
 import java.util.Properties;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * @program: mq-code
@@ -17,10 +16,8 @@ import org.slf4j.LoggerFactory;
  * @create: 2019/1/3
  *
  */
-
+@Slf4j
 public class PropertiesUtil {
-	private static final Logger LOG = LoggerFactory.getLogger(PropertiesUtil.class);
-
 	public static Properties loadProperties(String fileName) {
 		if(StringUtils.isEmpty(fileName)){
 			throw new IllegalArgumentException("参数为空！");
@@ -35,7 +32,7 @@ public class PropertiesUtil {
 				return prop;
 			}
 		} catch (IOException e) {
-			LOG.error("load properties err, fileName:{}", fileName, e);
+			log.error("load properties err, fileName:{}", fileName, e);
 		}
 		return null;
 	}
@@ -53,7 +50,7 @@ public class PropertiesUtil {
 				return prop;
 			}
 		} catch (IOException e) {
-			LOG.error("load properties err, fileName:{}", fileName, e);
+			log.error("load properties err, fileName:{}", fileName, e);
 		}
 		return null;
 	}

@@ -5,10 +5,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import com.example.mq.app.utils.SpringContextUtil;
 import com.example.mq.domain.customer.CustomerDomainService;
 import com.example.mq.domain.customer.model.CustomerEntity;
 import com.example.mq.common.utils.CommonUtils;
-import com.example.mq.common.utils.SpringContextUtil;
 import com.example.mq.adapter.hystrix.thread.TraceContextUtils;
 import com.google.common.collect.Lists;
 import org.slf4j.Logger;

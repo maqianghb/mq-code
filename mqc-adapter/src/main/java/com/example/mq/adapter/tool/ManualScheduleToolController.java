@@ -4,11 +4,11 @@ package com.example.mq.adapter.tool;
 import com.alibaba.fastjson.JSON;
 import com.example.mq.app.customer.CustomerService;
 import com.example.mq.app.job.CountNumJob;
+import com.example.mq.app.utils.SpringContextUtil;
 import com.example.mq.client.customer.model.CustomerDTO;
 import com.example.mq.client.tool.ManualScheduleToolClient;
 import com.example.mq.common.enums.base.BizErrorEnum;
 import com.example.mq.common.utils.AssertUtils;
-import com.example.mq.common.utils.SpringContextUtil;
 import com.example.mq.common.base.MqcResponse;
 import lombok.extern.slf4j.Slf4j;
 

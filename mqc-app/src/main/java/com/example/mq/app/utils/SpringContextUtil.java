@@ -1,4 +1,4 @@
-package com.example.mq.common.utils;
+package com.example.mq.app.utils;
 
 import java.util.Arrays;
 import java.util.List;

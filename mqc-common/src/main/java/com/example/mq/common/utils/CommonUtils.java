@@ -4,8 +4,7 @@ import java.io.File;
 import java.net.URL;
 import java.net.URLDecoder;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * @program: mq-code
@@ -14,9 +13,8 @@ import org.slf4j.LoggerFactory;
  * @create: 2019/4/19
  *
  */
-
+@Slf4j
 public class CommonUtils {
-	private static Logger LOG = LoggerFactory.getLogger(CommonUtils.class);
 
 	public static long createRandomId(int length){
 		if(length <=0){
@@ -36,7 +34,7 @@ public class CommonUtils {
 		try {
 			filePath = URLDecoder.decode(url.getPath(), "utf-8");
 		} catch (Exception e) {
-			LOG.error("url decode err, urlPath:{}", url.getPath(), e);
+			log.error("url decode err, urlPath:{}", url.getPath(), e);
 			return null;
 		}
 		if (filePath.endsWith(".jar")) {
@@ -54,7 +52,7 @@ public class CommonUtils {
 		try {
 			realPath = URLDecoder.decode(realPath, "utf-8");
 		} catch (Exception e) {
-			LOG.error("url decode err, realPath:{}", realPath, e);
+			log.error("url decode err, realPath:{}", realPath, e);
 			return null;
 		}
 		return realPath;
