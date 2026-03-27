@@ -35,12 +35,10 @@
 		<dependency>
 			<groupId>com.dangdang</groupId>
 			<artifactId>elastic-job-lite-core</artifactId>
-			<version>${elastic-job.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.dangdang</groupId>
 			<artifactId>elastic-job-lite-spring</artifactId>
-			<version>${elastic-job.version}</version>
 		</dependency>
 
 	</dependencies>
