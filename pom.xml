@@ -185,7 +185,7 @@
 				<version>3.5.0</version>
 			</dependency>
 
-			<!-- habse-client -->
+			<!-- hbase-client -->
 			<dependency>
 				<groupId>org.apache.hbase</groupId>
 				<artifactId>hbase-client</artifactId>
