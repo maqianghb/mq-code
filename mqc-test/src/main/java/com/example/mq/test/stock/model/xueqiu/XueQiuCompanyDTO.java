@@ -1,9 +1,9 @@
-package com.example.mq.test.stock.model;
+package com.example.mq.test.stock.model.xueqiu;
 
 import lombok.Data;
 
 @Data
-public class CompanyDTO {
+public class XueQiuCompanyDTO {
 
     private String code;
 

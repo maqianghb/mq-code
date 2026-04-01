@@ -10,6 +10,7 @@ import com.example.mq.test.stock.model.*;
 import com.example.mq.test.stock.model.dongchai.DongChaiFreeShareDTO;
 import com.example.mq.test.stock.model.dongchai.DongChaiHolderIncreaseDTO;
 import com.example.mq.test.stock.model.dongchai.DongChaiPledgeDataDTO;
+import com.example.mq.test.stock.model.xueqiu.*;
 import com.google.common.collect.Lists;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -48,7 +49,7 @@ public class IndicatorElementManagerImpl implements IndicatorElementManager {
         indicatorElement.setReportType(typeEnum.getCode());
         indicatorElement.setKLineDate(kLineDate);
 
-        CompanyDTO companyDTO = localDataManager.getLocalCompanyDTO(code);
+        XueQiuCompanyDTO companyDTO = localDataManager.getLocalCompanyDTO(code);
         indicatorElement.setCompanyDTO(companyDTO);
 
         this.assembleFinanceElement(indicatorElement, code, year, typeEnum);

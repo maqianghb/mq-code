@@ -2,9 +2,9 @@ package com.example.mq.test.stock;
 
 import com.example.mq.common.utils.NumberUtil;
 import com.example.mq.test.stock.constant.StockConstant;
-import com.example.mq.test.stock.manager.XueQiuStockManager;
-import com.example.mq.test.stock.manager.impl.XueQiuStockManagerImpl;
-import com.example.mq.test.stock.model.XueQiuStockKLineDTO;
+import com.example.mq.test.stock.manager.XueQiuServiceWrapper;
+import com.example.mq.test.stock.manager.impl.XueQiuServiceWrapperImpl;
+import com.example.mq.test.stock.model.xueqiu.XueQiuStockKLineDTO;
 import com.example.mq.test.stock.utils.FileOperateUtils;
 import com.google.common.collect.Lists;
 import org.apache.commons.collections4.CollectionUtils;
@@ -29,7 +29,7 @@ public class StatisticsCodeManager {
         StatisticsCodeManager statisticsCodeManager = new StatisticsCodeManager();
 
         // ma_1000统计数据
-        String queryDate ="20260312";
+        String queryDate ="20260331";
         boolean withFocusStockCode =true;
         statisticsCodeManager.queryAndSaveStatisticsMa1000PercentData(StockConstant.FOCUS_ETF_CODE_LIST, queryDate, withFocusStockCode);
     }
@@ -77,8 +77,8 @@ public class StatisticsCodeManager {
             String msg =new StringBuilder().append(queryDate)
                     .append(",").append(code)
                     .append(",").append(name)
-                    .append(",").append(NumberUtil.format(curDiffPair.getLeft() * 100, 1)).append("%")
-                    .append(",").append(NumberUtil.format(curDiffPair.getRight() * 100, 1)).append("%")
+                    .append(",").append(NumberUtil.format( curDiffPair.getLeft(), 2))
+                    .append(",").append(NumberUtil.format(curDiffPair.getRight() , 2))
                     .toString();
             strDataList.add(msg);
         }
@@ -99,8 +99,8 @@ public class StatisticsCodeManager {
         LocalDateTime queryDateTime = LocalDate.parse(queryDate, df).atStartOfDay();
         long queryDateMills = queryDateTime.toInstant(ZoneOffset.of("+8")).toEpochMilli();
 
-        XueQiuStockManager xueQiuStockManager =new XueQiuStockManagerImpl();
-        List<XueQiuStockKLineDTO> kLineDTOList = xueQiuStockManager.queryKLineList(stockCode, "day", queryDateMills, totalCount);
+        XueQiuServiceWrapper xueQiuServiceWrapper =new XueQiuServiceWrapperImpl();
+        List<XueQiuStockKLineDTO> kLineDTOList = xueQiuServiceWrapper.queryKLineList(stockCode, "day", queryDateMills, totalCount);
         if(CollectionUtils.isEmpty(kLineDTOList)){
             return null;
         }

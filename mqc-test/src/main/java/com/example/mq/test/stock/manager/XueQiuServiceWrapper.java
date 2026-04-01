@@ -1,10 +1,10 @@
 package com.example.mq.test.stock.manager;
 
-import com.example.mq.test.stock.model.*;
+import com.example.mq.test.stock.model.xueqiu.*;
 
 import java.util.List;
 
-public interface XueQiuStockManager {
+public interface XueQiuServiceWrapper {
 
     /**
      * 查询K线数据
@@ -54,6 +54,6 @@ public interface XueQiuStockManager {
      * @param code 编码
      * @return
      */
-    CompanyDTO queryCompanyDTO(String code);
+    XueQiuCompanyDTO queryCompanyDTO(String code);
 
 }

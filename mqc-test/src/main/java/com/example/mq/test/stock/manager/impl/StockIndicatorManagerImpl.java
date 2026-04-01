@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.example.mq.common.utils.DateTimeUtils;
 import com.example.mq.common.utils.NumberUtil;
 import com.example.mq.test.stock.manager.IndicatorElementManager;
+import com.example.mq.test.stock.model.xueqiu.XueQiuCompanyDTO;
 import com.example.mq.test.stock.utils.FileOperateUtils;
 import com.example.mq.test.stock.utils.IndicatorFilterUtils;
 import com.example.mq.test.stock.utils.PercentDataUtils;
@@ -126,9 +127,14 @@ public class StockIndicatorManagerImpl implements StockIndicatorManager {
     private void filterAndSaveIndicatorDTO(String kLineDate, List<AnalyseIndicatorDTO> allIndicatorDTOList) {
         // 筛选合适的数据
         List<AnalyseIndicatorDTO> filterIndicatorDTOList = IndicatorFilterUtils.filterByIndicator(allIndicatorDTOList);
+
+        // 白名单数据
         filterIndicatorDTOList = this.addWriteStockCodeList(filterIndicatorDTOList, allIndicatorDTOList);
+
+        // 关注数据
         filterIndicatorDTOList = this.addFocusCompanyList(filterIndicatorDTOList, allIndicatorDTOList);
 
+        // 排序
         List<AnalyseIndicatorDTO> sortedIndicatorDTOList = Optional.ofNullable(filterIndicatorDTOList).orElse(Lists.newArrayList()).stream()
                 .filter(analyseIndicatorDTO -> analyseIndicatorDTO.getCur_q_operating_income_yoy() != null)
                 .sorted(Comparator.comparing(AnalyseIndicatorDTO::getCur_q_operating_income_yoy).reversed())
@@ -243,7 +249,7 @@ public class StockIndicatorManagerImpl implements StockIndicatorManager {
                 .map(holdShareDTO -> {
                     try {
                         // 公司信息
-                        CompanyDTO companyDTO = localDataManager.getLocalCompanyDTO(holdShareDTO.getCode());
+                        XueQiuCompanyDTO companyDTO = localDataManager.getLocalCompanyDTO(holdShareDTO.getCode());
                         if(companyDTO !=null){
                             holdShareDTO.setIndName(companyDTO.getInd_name());
                         }

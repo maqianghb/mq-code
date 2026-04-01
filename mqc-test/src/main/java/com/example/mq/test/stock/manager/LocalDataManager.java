@@ -5,6 +5,7 @@ import com.example.mq.test.stock.enums.KLineTypeEnum;
 import com.example.mq.test.stock.model.*;
 import com.example.mq.test.stock.model.dongchai.DongChaiIndustryHoldShareDTO;
 import com.example.mq.test.stock.model.dongchai.DongChaiNorthHoldShareDTO;
+import com.example.mq.test.stock.model.xueqiu.*;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 
 import java.time.LocalDateTime;
@@ -103,7 +104,7 @@ public interface LocalDataManager {
      * @param code
      * @return
      */
-    CompanyDTO getLocalCompanyDTO(String code);
+    XueQiuCompanyDTO getLocalCompanyDTO(String code);
 
     /**
      * K线指标查询

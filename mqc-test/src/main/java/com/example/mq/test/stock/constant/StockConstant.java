@@ -14,11 +14,12 @@ public class StockConstant {
     public static final String INDICATOR_URL ="https://stock.xueqiu.com/v5/stock/finance/cn/indicator.json";
     public static final String COMPANY_URL ="https://stock.xueqiu.com/v5/stock/f10/cn/company.json";
 
-    public static final String COOKIE = "u=551703859817291; HMACCOUNT=C04B42F6BEF1AFBB; _c_WBKFRo=zCeQHLhw7OZW9cK1Z0YKLBQmjpWEzLButXn52ozD; _nb_ioWEgULi=; s=bm12pqr4u4; cookiesu=261769608447300; device_id=631f3b7f2c8df1f45644448b974585f1; xq_a_token=826f0dd021d646522fa7b6413f5be324c52d33e4; xqat=826f0dd021d646522fa7b6413f5be324c52d33e4; xq_r_token=f80a8375ff930a08624ff6633740c67386fc1330; xq_id_token=eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJ1aWQiOi0xLCJpc3MiOiJ1YyIsImV4cCI6MTc3NTg3MDM5OCwiY3RtIjoxNzczMzE2Mjk1MDYyLCJjaWQiOiJkOWQwbjRBWnVwIn0.IWl03AxYB6UOIescTx4KjiTdw1hlP84A0mBdObyvn_XpKy2g10NKuBoWGoUjdZHUXIvZYsfluWSY3rZnqEpHQ7eKHZYCPEowOw4jlQpAEOatL_FsZlFU_Uds_RzZ3C2gMT29tZ04S0-d2khtt9uju7cyx_2vYHdnx-ZiQh9g8k-Hv_3dNEp2f5cfdtOPbXK6slM7bp4oBHm9GHyP6Pinog1phB-WrtLBG2_Ttf09JJ1nYVi6c27nCAHjbw_iB2xPBsvCqjD7P0S89TY1U8nvJiIsrWvrRww1-6i71-xffzNWwrjGmnKOlgR0X32znwg-ENwpV8a2BJvvFbVlVef4aQ; Hm_lvt_1db88642e346389874251b5a1eded6e3=1773316326; is_overseas=0;";
+    public static final String COOKIE = "u=551703859817291; HMACCOUNT=C04B42F6BEF1AFBB; _c_WBKFRo=zCeQHLhw7OZW9cK1Z0YKLBQmjpWEzLButXn52ozD; _nb_ioWEgULi=; s=bm12pqr4u4; cookiesu=261769608447300; device_id=631f3b7f2c8df1f45644448b974585f1; Hm_lvt_1db88642e346389874251b5a1eded6e3=1773316326; xq_a_token=661c0a951f439e599bc8cadb45d369aa7ac8951b; xqat=661c0a951f439e599bc8cadb45d369aa7ac8951b; xq_r_token=4ae5afaa5bb86d6b8333611fe030f49578d4a018; xq_id_token=eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJ1aWQiOi0xLCJpc3MiOiJ1YyIsImV4cCI6MTc3NzE2NjM5OSwiY3RtIjoxNzc1MDA5NjcwNjE3LCJjaWQiOiJkOWQwbjRBWnVwIn0.SF9lNjZ6iV4MvavnoTWqLtEvgdO_brZhyCGMs4nB_QrmJfePYxgL11Q-QH0h5SlnVsoF0VBU5i-mjW9PSHLVYtnARs0G3lqKqnN3k26LdqEC3Rj0d3UEjA-7wfqf9_ejv1Qsh13GzCxL9O0Y59Cgubcn4XSF0RdKK_UdG8hpG4eg8jIazwTNAKtxkX-MACJRyZ4oc1Jc6U4J6CFYdOIHypomHerDTiF62X4FGbcnPw0VN9UlziB3KwTo2ejPhO3aZjRlfQqOc6bLYzPS30qTTKIVpnviN9S098wFDcb39F2V8HJdpbMXU3p9GeuGX108fCB1a_OAfJEYJ38RecsdtQ; is_overseas=0;";
 
     public static final List<String> FOCUS_ETF_CODE_LIST = Arrays.asList(
-            "SH000300,沪深300", "SZ399330,深证100", "SH000905,中证500", "SH000852,中证1000", "SZ399673,创业板50",
-            "SH000688,科创50", "SH512880,证券ETF", "SH512480,半导体ETF", "SH518880,黄金ETF");
+            "SZ399330,深证100", "SH000300,沪深300", "SH000905,中证500", "SH000852,中证1000", "SZ399673,创业板50",
+            "SH000688,科创50", "SH513100,纳指ETF", "SH512480,半导体ETF", "SZ159992,创新药ETF", "SH518880,黄金ETF",
+            "SZ160723,嘉实原油");
 
     public static final List<String> TEST_STOCK_CODE_LIST = Arrays.asList("SZ002001", "SZ002415", "SZ002508", "SH600486", "SZ002507");
 

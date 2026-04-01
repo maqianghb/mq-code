@@ -3,6 +3,7 @@ package com.example.mq.test.stock.model;
 import com.example.mq.test.stock.model.dongchai.DongChaiFreeShareDTO;
 import com.example.mq.test.stock.model.dongchai.DongChaiHolderIncreaseDTO;
 import com.example.mq.test.stock.model.dongchai.DongChaiPledgeDataDTO;
+import com.example.mq.test.stock.model.xueqiu.*;
 import lombok.Data;
 
 import java.util.List;
@@ -21,7 +22,7 @@ public class AnalyseIndicatorElement {
 
     private String kLineDate;
 
-    private CompanyDTO companyDTO;
+    private XueQiuCompanyDTO companyDTO;
 
     /**
      * 当前的财务数据

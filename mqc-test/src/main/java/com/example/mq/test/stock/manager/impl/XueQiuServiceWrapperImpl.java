@@ -5,8 +5,8 @@ import com.alibaba.fastjson.JSONObject;
 import com.example.mq.adapter.utils.CloseableHttpClientUtil;
 import com.example.mq.test.stock.constant.StockConstant;
 import com.example.mq.test.stock.enums.FinanceReportTypeEnum;
-import com.example.mq.test.stock.manager.XueQiuStockManager;
-import com.example.mq.test.stock.model.*;
+import com.example.mq.test.stock.manager.XueQiuServiceWrapper;
+import com.example.mq.test.stock.model.xueqiu.*;
 import com.google.common.collect.Lists;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -17,7 +17,7 @@ import java.time.ZoneId;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class XueQiuStockManagerImpl implements XueQiuStockManager {
+public class XueQiuServiceWrapperImpl implements XueQiuServiceWrapper {
 
     @Override
     public List<XueQiuStockKLineDTO> queryKLineList(String code, String type, Long endTimeStamp, Integer count) {
@@ -204,7 +204,7 @@ public class XueQiuStockManagerImpl implements XueQiuStockManager {
     }
 
     @Override
-    public CompanyDTO queryCompanyDTO(String code) {
+    public XueQiuCompanyDTO queryCompanyDTO(String code) {
         String url =new StringBuilder().append(StockConstant.COMPANY_URL)
                 .append("?symbol=").append(code)
                 .toString();
@@ -233,7 +233,7 @@ public class XueQiuStockManagerImpl implements XueQiuStockManager {
                 .map(jsonCompany -> jsonCompany.getString("provincial_name"))
                 .orElse(StringUtils.EMPTY);
 
-        CompanyDTO companyDTO =new CompanyDTO();
+        XueQiuCompanyDTO companyDTO =new XueQiuCompanyDTO();
         companyDTO.setCode(code);
         companyDTO.setName(stockName);
         companyDTO.setInd_name(ind_name);

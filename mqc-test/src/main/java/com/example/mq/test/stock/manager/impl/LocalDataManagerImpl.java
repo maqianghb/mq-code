@@ -9,12 +9,14 @@ import com.example.mq.test.stock.enums.FinanceReportTypeEnum;
 import com.example.mq.test.stock.enums.KLineTypeEnum;
 import com.example.mq.test.stock.manager.DongChaiDataManager;
 import com.example.mq.test.stock.manager.LocalDataManager;
-import com.example.mq.test.stock.manager.XueQiuStockManager;
+import com.example.mq.test.stock.manager.XueQiuServiceWrapper;
 import com.example.mq.test.stock.model.*;
 import com.example.mq.test.stock.model.dongchai.DongChaiFinanceNoticeDTO;
 import com.example.mq.test.stock.model.dongchai.DongChaiHolderIncreaseDTO;
 import com.example.mq.test.stock.model.dongchai.DongChaiIndustryHoldShareDTO;
 import com.example.mq.test.stock.model.dongchai.DongChaiNorthHoldShareDTO;
+import com.example.mq.test.stock.model.indicator.DcIndFinanceNoticeDTO;
+import com.example.mq.test.stock.model.xueqiu.*;
 import com.example.mq.test.stock.utils.FileOperateUtils;
 import com.google.common.collect.Maps;
 import org.apache.commons.collections4.CollectionUtils;
@@ -38,11 +40,11 @@ public class LocalDataManagerImpl implements LocalDataManager {
 
     private static final String FINANCE_NOTICE_HEADER ="预告时间,报告期,编码,名称,行业,预告指标,预告类型,预告值_低(亿),预告值_高(亿)" +
             ",同比变动_低,同比变动_高,环比变动_低,环比变动_高,上年同期值(亿),变动原因";
-    private static final String IND_FINANCE_NOTICE_HEADER ="预告时间,报告期,行业,预告指标,预告类型,行业股票数,预告股票数,占行业比例";
+    private static final String IND_FINANCE_NOTICE_HEADER ="查询日期,报告期,预告指标,行业,总数量,好转数量,好转比例,恶化数量,恶化比例";
     private static final String HOLDER_INCREASE_HEADER ="编码,名称,预告时间,增减类型,增减数量(万股),减持开始时间,减持结束时间" +
             ",变动比例(%),变动后持股比例(%)";
 
-    private static List<CompanyDTO> companyDTOList =Lists.newArrayList();
+    private static List<XueQiuCompanyDTO> companyDTOList =Lists.newArrayList();
 
 
     @Override
@@ -52,21 +54,21 @@ public class LocalDataManagerImpl implements LocalDataManager {
             return;
         }
 
-        XueQiuStockManager xueQiuStockManager =new XueQiuStockManagerImpl();
+        XueQiuServiceWrapper xueQiuServiceWrapper =new XueQiuServiceWrapperImpl();
 
         // 公司信息
         try {
             List<String> strCompanyDTOList = stockCodeList.stream()
                     .map(stockCode -> {
-                        CompanyDTO companyDTO = this.getLocalCompanyDTO(stockCode);
+                        XueQiuCompanyDTO companyDTO = this.getLocalCompanyDTO(stockCode);
                         if(companyDTO !=null){
                             return companyDTO;
                         }
 
-                        return xueQiuStockManager.queryCompanyDTO(stockCode);
+                        return xueQiuServiceWrapper.queryCompanyDTO(stockCode);
                     })
                     .filter(companyDTO -> companyDTO != null)
-                    .sorted(Comparator.comparing(CompanyDTO::getCode))
+                    .sorted(Comparator.comparing(XueQiuCompanyDTO::getCode))
                     .map(balanceDTO -> JSON.toJSONString(balanceDTO))
                     .collect(Collectors.toList());
             if(CollectionUtils.isEmpty(strCompanyDTOList)){
@@ -86,14 +88,14 @@ public class LocalDataManagerImpl implements LocalDataManager {
             return;
         }
 
-        XueQiuStockManager xueQiuStockManager =new XueQiuStockManagerImpl();
+        XueQiuServiceWrapper xueQiuServiceWrapper =new XueQiuServiceWrapperImpl();
 
         // 查询
         stockCodeList.parallelStream().forEach(stockCode ->{
             String kLineFileName =String.format(StockConstant.KLINE_LIST_DAY, stockCode);
             try {
                 // 查询新的数据
-                List<XueQiuStockKLineDTO> tmpKLineDTOList = xueQiuStockManager.queryKLineList(stockCode, "day"
+                List<XueQiuStockKLineDTO> tmpKLineDTOList = xueQiuServiceWrapper.queryKLineList(stockCode, "day"
                         , System.currentTimeMillis(), StockConstant.KLINE_DAY_COUNT);
                 if(CollectionUtils.isEmpty(tmpKLineDTOList)){
                     return;
@@ -141,13 +143,13 @@ public class LocalDataManagerImpl implements LocalDataManager {
             return;
         }
 
-        XueQiuStockManager xueQiuStockManager =new XueQiuStockManagerImpl();
+        XueQiuServiceWrapper xueQiuServiceWrapper =new XueQiuServiceWrapperImpl();
 
         // 资产负债数据
         stockCodeList.parallelStream().forEach(stockCode -> {
             try {
                 // 最新的数据
-                List<XueQiuStockBalanceDTO> balanceDTOList = xueQiuStockManager.queryBalanceList(stockCode, StockConstant.FINANCE_REPORT_COUNT);
+                List<XueQiuStockBalanceDTO> balanceDTOList = xueQiuServiceWrapper.queryBalanceList(stockCode, StockConstant.FINANCE_REPORT_COUNT);
                 if(CollectionUtils.isEmpty(balanceDTOList)){
                     return;
                 }
@@ -199,12 +201,12 @@ public class LocalDataManagerImpl implements LocalDataManager {
             return;
         }
 
-        XueQiuStockManager xueQiuStockManager =new XueQiuStockManagerImpl();
+        XueQiuServiceWrapper xueQiuServiceWrapper =new XueQiuServiceWrapperImpl();
 
         stockCodeList.parallelStream().forEach(stockCode -> {
             try {
                 // 最新数据
-                List<XueQiuStockIncomeDTO> incomeDTOList = xueQiuStockManager.queryIncomeList(stockCode, StockConstant.FINANCE_REPORT_COUNT);
+                List<XueQiuStockIncomeDTO> incomeDTOList = xueQiuServiceWrapper.queryIncomeList(stockCode, StockConstant.FINANCE_REPORT_COUNT);
                 if(CollectionUtils.isEmpty(incomeDTOList)){
                     return;
                 }
@@ -258,11 +260,11 @@ public class LocalDataManagerImpl implements LocalDataManager {
             return;
         }
 
-        XueQiuStockManager xueQiuStockManager =new XueQiuStockManagerImpl();
+        XueQiuServiceWrapper xueQiuServiceWrapper =new XueQiuServiceWrapperImpl();
         stockCodeList.parallelStream().forEach(stockCode -> {
             try {
                 // 最新的数据
-                List<XueQiuStockCashFlowDTO> cashFlowDTOList = xueQiuStockManager.queryCashFlowList(stockCode, StockConstant.FINANCE_REPORT_COUNT);
+                List<XueQiuStockCashFlowDTO> cashFlowDTOList = xueQiuServiceWrapper.queryCashFlowList(stockCode, StockConstant.FINANCE_REPORT_COUNT);
                 if(CollectionUtils.isEmpty(cashFlowDTOList)){
                     return;
                 }
@@ -313,12 +315,12 @@ public class LocalDataManagerImpl implements LocalDataManager {
             return;
         }
 
-        XueQiuStockManager xueQiuStockManager =new XueQiuStockManagerImpl();
+        XueQiuServiceWrapper xueQiuServiceWrapper =new XueQiuServiceWrapperImpl();
 
         stockCodeList.parallelStream().forEach(stockCode -> {
             try {
                 // 最新数据
-                List<XueQiuStockIndicatorDTO> indicatorDTOList = xueQiuStockManager.queryIndicatorList(stockCode, StockConstant.FINANCE_REPORT_COUNT);
+                List<XueQiuStockIndicatorDTO> indicatorDTOList = xueQiuServiceWrapper.queryIndicatorList(stockCode, StockConstant.FINANCE_REPORT_COUNT);
                 if(CollectionUtils.isEmpty(indicatorDTOList)) {
                     return;
                 }
@@ -371,7 +373,7 @@ public class LocalDataManagerImpl implements LocalDataManager {
 
         Map<String, String> codeAndIndNameMap = stockCodeList.stream().map(stockCode -> this.getLocalCompanyDTO(stockCode))
                 .filter(companyDTO -> companyDTO != null && StringUtils.isNotBlank(companyDTO.getInd_name()))
-                .collect(Collectors.toMap(CompanyDTO::getCode, CompanyDTO::getInd_name, (val1, val2) -> val1));
+                .collect(Collectors.toMap(XueQiuCompanyDTO::getCode, XueQiuCompanyDTO::getInd_name, (val1, val2) -> val1));
 
         DongChaiDataManager dongChaiDataManager =new DongChaiDataManagerImpl();
         List<DongChaiFinanceNoticeDTO> noticeDTOList = dongChaiDataManager.queryFinanceNoticeDTO(reportDate);
@@ -433,88 +435,110 @@ public class LocalDataManagerImpl implements LocalDataManager {
             return ;
         }
 
-        Map<String, String> codeAndIndNameMap = stockCodeList.stream().map(stockCode -> this.getLocalCompanyDTO(stockCode))
-                .filter(companyDTO -> companyDTO != null && StringUtils.isNotBlank(companyDTO.getInd_name()))
-                .collect(Collectors.toMap(CompanyDTO::getCode, CompanyDTO::getInd_name, (val1, val2) -> val1));
-
-        Map<String, Integer> indNameAndCodeNumMap =Maps.newHashMap();
-        for(Map.Entry<String, String> entry : codeAndIndNameMap.entrySet()){
-            Integer num = indNameAndCodeNumMap.getOrDefault(entry.getValue(), 0);
-            indNameAndCodeNumMap.put(entry.getValue(), num +1);
-        }
-
+        // 预告数据
         DongChaiDataManager dongChaiDataManager =new DongChaiDataManagerImpl();
         List<DongChaiFinanceNoticeDTO> allFinanceNoticeDTOList = dongChaiDataManager.queryFinanceNoticeDTO(reportDate);
         List<DongChaiFinanceNoticeDTO> financeNoticeDTOList = Optional.ofNullable(allFinanceNoticeDTOList).orElse(Lists.newArrayList()).stream()
                 .filter(financeNoticeDTO -> stockCodeList.contains(financeNoticeDTO.getCode()))
                 .filter(financeNoticeDTO -> StockConstant.FINANCE_PREDICT_INDICATOR.contains(financeNoticeDTO.getPredict_indicator()))
-                .map(financeNoticeDTO -> {
-                    if(StringUtils.equals(financeNoticeDTO.getPredict_indicator(), "扣除非经常性损益后的净利润")){
-                        financeNoticeDTO.setPredict_indicator("扣非净利");
-                    }
-
-                    return financeNoticeDTO;
-                })
                 .collect(Collectors.toList());
         if(CollectionUtils.isEmpty(financeNoticeDTOList)){
             return ;
         }
 
-        Map<String, Integer> keyAndNoticeNumMap =Maps.newHashMap();
-        for(DongChaiFinanceNoticeDTO financeNoticeDTO : financeNoticeDTOList){
-            String indName = codeAndIndNameMap.get(financeNoticeDTO.getCode());
-            if(StringUtils.isBlank(indName)){
-                continue;
-            }
+        // 行业信息
+        Map<String, String> codeAndIndNameMap = stockCodeList.stream().map(stockCode -> this.getLocalCompanyDTO(stockCode))
+                .filter(companyDTO -> companyDTO != null && StringUtils.isNotBlank(companyDTO.getInd_name()))
+                .collect(Collectors.toMap(XueQiuCompanyDTO::getCode, XueQiuCompanyDTO::getInd_name, (val1, val2) -> val1));
 
-            String predictIncreaseType = StockConstant.getPredictIncreaseType(financeNoticeDTO.getPredict_type());
-            if(StringUtils.isBlank(predictIncreaseType)){
-                continue;
-            }
-
-            String key = new StringBuilder().append(indName)
-                    .append("_").append(financeNoticeDTO.getPredict_indicator())
-                    .append("_").append(predictIncreaseType)
-                    .toString();
-            Integer num = keyAndNoticeNumMap.getOrDefault(key, 0);
-            keyAndNoticeNumMap.put(key, num +1);
-        }
-        if(MapUtils.isEmpty(keyAndNoticeNumMap)){
-            return;
+        // 行业数量
+        Map<String, Integer> indNameAndNumMap =Maps.newHashMap();
+        for(Map.Entry<String, String> entry : codeAndIndNameMap.entrySet()){
+            Integer num = indNameAndNumMap.getOrDefault(entry.getValue(), 0);
+            indNameAndNumMap.put(entry.getValue(), num +1);
         }
 
-        List<String> strNoticeNumList = Optional.ofNullable(keyAndNoticeNumMap).orElse(Maps.newHashMap()).entrySet().stream()
-                .map(keyAndNoticeNumEntry -> {
-                    String[] splitList = StringUtils.split(keyAndNoticeNumEntry.getKey(), "_");
-                    if(splitList ==null || splitList.length !=3){
-                        return StringUtils.EMPTY;
-                    }
-                    String indName = splitList[0];
-                    Integer codeNum = indNameAndCodeNumMap.get(indName);
-                    if(codeNum ==null || codeNum ==0){
-                        return StringUtils.EMPTY;
-                    }
+        // 按行业统计数量
+        List<DcIndFinanceNoticeDTO> dcIndFinanceNoticeDTOList = indNameAndNumMap.entrySet().stream()
+                .map(entry ->{
+                    String indName = entry.getKey();
+                    Integer indNum = entry.getValue();
 
-                    String strIndNoticeNum =new StringBuilder().append(financeNoticeDTOList.get(0).getNotice_date())
-                            .append(",").append(financeNoticeDTOList.get(0).getReport_date())
-                            .append(",").append(indName)
-                            .append(",").append(splitList[1])
-                            .append(",").append(splitList[2])
-                            .append(",").append(indNameAndCodeNumMap.get(indName))
-                            .append(",").append(keyAndNoticeNumEntry.getValue())
-                            .append(",").append(NumberUtil.format((keyAndNoticeNumEntry.getValue() * 1.0)/codeNum, 3))
-                            .toString();
+                    long betterNum = financeNoticeDTOList.stream()
+                            .filter(financeNoticeDTO -> {
+                                String financeIndName = codeAndIndNameMap.get(financeNoticeDTO.getCode());
+                                if (StringUtils.equals(indName, financeIndName)) {
+                                    return true;
+                                }
 
-                    return strIndNoticeNum;
+                                return false;
+                            })
+                            .filter(financeNoticeDTO -> {
+                                String predictIncreaseType = StockConstant.getPredictIncreaseType(financeNoticeDTO.getPredict_type());
+                                if (StringUtils.equals(predictIncreaseType, "好转")) {
+                                    return true;
+                                }
+
+                                return false;
+                            })
+                            .count();
+                    long worseNum = financeNoticeDTOList.stream()
+                            .filter(financeNoticeDTO -> {
+                                String financeIndName = codeAndIndNameMap.get(financeNoticeDTO.getCode());
+                                if (StringUtils.equals(indName, financeIndName)) {
+                                    return true;
+                                }
+
+                                return false;
+                            })
+                            .filter(financeNoticeDTO -> {
+                                String predictIncreaseType = StockConstant.getPredictIncreaseType(financeNoticeDTO.getPredict_type());
+                                if (StringUtils.equals(predictIncreaseType, "恶化")) {
+                                    return true;
+                                }
+
+                                return false;
+                            })
+                            .count();
+
+                    DcIndFinanceNoticeDTO dcIndFinanceNoticeDTO =new DcIndFinanceNoticeDTO();
+                    dcIndFinanceNoticeDTO.setNoticeDate(financeNoticeDTOList.get(0).getNotice_date());
+                    dcIndFinanceNoticeDTO.setReportDate(financeNoticeDTOList.get(0).getReport_date());
+                    dcIndFinanceNoticeDTO.setPredictIndicator("扣非净利");
+                    dcIndFinanceNoticeDTO.setIndName(indName);
+                    dcIndFinanceNoticeDTO.setAllNum(indNum);
+                    dcIndFinanceNoticeDTO.setBetterNum(betterNum);
+                    dcIndFinanceNoticeDTO.setBetterRate(NumberUtil.format((betterNum * 1.0)/indNum, 2));
+                    dcIndFinanceNoticeDTO.setWorseNum(worseNum);
+                    dcIndFinanceNoticeDTO.setWorseRate(NumberUtil.format((worseNum * 1.0)/indNum, 2));
+
+                    return dcIndFinanceNoticeDTO;
                 })
+                .sorted(Comparator.comparing(DcIndFinanceNoticeDTO::getBetterRate).reversed()
+                        .thenComparing(DcIndFinanceNoticeDTO::getWorseRate))
                 .collect(Collectors.toList());
-        if(CollectionUtils.isEmpty(strNoticeNumList)){
-            return;
+
+
+        // 数据模型转换
+        List<String> strDataList =Lists.newArrayList();
+        for(DcIndFinanceNoticeDTO dcIndFinanceNoticeDTO : dcIndFinanceNoticeDTOList){
+            try {
+                Field[] fields = DcIndFinanceNoticeDTO.class.getDeclaredFields();
+                JSONObject jsonObject = JSON.parseObject(JSON.toJSONString(dcIndFinanceNoticeDTO));
+                StringBuilder increaseBuilder =new StringBuilder();
+                for(Field field : fields){
+                    Object value = jsonObject.get(field.getName ());
+                    increaseBuilder.append(",").append(value);
+                }
+                strDataList.add(increaseBuilder.toString().substring(1));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
 
         // 记录结果
         String fileName =String.format(StockConstant.IND_FINANCE_NOTICE_LIST, reportDate);
-        FileOperateUtils.saveLocalFile(fileName, IND_FINANCE_NOTICE_HEADER, strNoticeNumList, true);
+        FileOperateUtils.saveLocalFile(fileName, IND_FINANCE_NOTICE_HEADER, strDataList, false);
     }
 
     @Override
@@ -706,17 +730,17 @@ public class LocalDataManagerImpl implements LocalDataManager {
     }
 
     @Override
-    public CompanyDTO getLocalCompanyDTO(String code){
+    public XueQiuCompanyDTO getLocalCompanyDTO(String code){
         try {
             if(CollectionUtils.isEmpty(companyDTOList)){
                 String fileName =String.format(StockConstant.ALL_COMPANY_LIST);
                 List<String> strList = FileUtils.readLines(new File(fileName), Charset.forName("UTF-8"));
                 companyDTOList = Optional.ofNullable(strList).orElse(Lists.newArrayList()).stream()
-                        .map(str -> JSON.parseObject(str, CompanyDTO.class))
+                        .map(str -> JSON.parseObject(str, XueQiuCompanyDTO.class))
                         .collect(Collectors.toList());
             }
 
-            CompanyDTO companyDTO = Optional.ofNullable(companyDTOList).orElse(Lists.newArrayList()).stream()
+            XueQiuCompanyDTO companyDTO = Optional.ofNullable(companyDTOList).orElse(Lists.newArrayList()).stream()
                     .filter(val -> Objects.equals(val.getCode(), code))
                     .findFirst()
                     .orElse(null);
@@ -976,7 +1000,7 @@ public class LocalDataManagerImpl implements LocalDataManager {
         List<String> indNameList =Optional.ofNullable(stockCodeList).orElse(Lists.newArrayList()).stream()
                 .map(stockCode -> this.getLocalCompanyDTO(stockCode))
                 .filter(companyDTO -> companyDTO != null && StringUtils.isNotBlank(companyDTO.getInd_name()))
-                .map(CompanyDTO::getInd_name).distinct()
+                .map(XueQiuCompanyDTO::getInd_name).distinct()
                 .collect(Collectors.toList());
         if(CollectionUtils.isEmpty(indNameList)){
             return Lists.newArrayList();
@@ -1170,7 +1194,7 @@ public class LocalDataManagerImpl implements LocalDataManager {
         Double totalHoldMarketCap =0d;
         Map<String, Double> indNameAndHoldMarketCapMap = new HashMap<>();
         for(String stockCode : stockCodeList){
-            CompanyDTO companyDTO = this.getLocalCompanyDTO(stockCode);
+            XueQiuCompanyDTO companyDTO = this.getLocalCompanyDTO(stockCode);
             if(companyDTO ==null || StringUtils.isBlank(companyDTO.getInd_name())){
                 continue;
             }

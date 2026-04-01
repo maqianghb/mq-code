@@ -19,14 +19,14 @@ public class CommonManager {
         LocalDataManager localDataManager =new LocalDataManagerImpl();
 
         // 更新本地文件的K线数据
-        Boolean updateKlineData =true;
+        Boolean updateKlineData =false;
         if(updateKlineData){
             localDataManager.queryAndUpdateKLineList();
 //            localDataManager.queryAndUpdateNorthHoldShareList();
         }
 
         // 更新本地文件的财务数据
-        Boolean updateFinanceData =false;
+        Boolean updateFinanceData =true;
         if(updateFinanceData){
             localDataManager.queryAndUpdateBalanceData();
             localDataManager.queryAndUpdateIncomeData();
@@ -55,7 +55,7 @@ public class CommonManager {
         String kLineDate ="20260213";
 
         LocalDataManager localDataManager =new LocalDataManagerImpl();
-        List<String> stockCodeList =localDataManager.getFocusCompanyCodeList();
+        List<String> stockCodeList =localDataManager.getLocalAllStockCodeList();
 //        List<String> stockCodeList = StockConstant.TEST_STOCK_CODE_LIST;
 //        List<String> stockCodeList = Arrays.asList("SH000300");
 
