@@ -10,7 +10,6 @@ import com.example.mq.test.stock.enums.KLineTypeEnum;
 import com.example.mq.test.stock.manager.DongChaiDataManager;
 import com.example.mq.test.stock.manager.LocalDataManager;
 import com.example.mq.test.stock.manager.XueQiuServiceWrapper;
-import com.example.mq.test.stock.model.*;
 import com.example.mq.test.stock.model.dongchai.DongChaiFinanceNoticeDTO;
 import com.example.mq.test.stock.model.dongchai.DongChaiHolderIncreaseDTO;
 import com.example.mq.test.stock.model.dongchai.DongChaiIndustryHoldShareDTO;
@@ -244,7 +243,7 @@ public class LocalDataManagerImpl implements LocalDataManager {
 
                 FileUtils.writeLines(incomeFile, strIncomeDTOList, false);
 
-                // 单季利润数据
+                // 计算并写入单季利润数据
                 this.getAndSaveQuarterIncome(stockCode);
             } catch (Exception e) {
                 e.printStackTrace();
@@ -827,21 +826,21 @@ public class LocalDataManagerImpl implements LocalDataManager {
     }
 
     @Override
-    public List<QuarterIncomeDTO> getLocalQuarterIncomeDTO(String code, List<ImmutablePair<Integer, FinanceReportTypeEnum>> yearAndReportTypeList){
+    public List<XueQiuQuarterIncomeDTO> getLocalQuarterIncomeDTO(String code, List<ImmutablePair<Integer, FinanceReportTypeEnum>> yearAndReportTypeList){
         try {
             String fileName =String.format(StockConstant.INCOME_LIST_Q, code);
             List<String> strList =FileUtils.readLines(new File(fileName), Charset.forName("UTF-8"));
 
-            List<QuarterIncomeDTO> tmpQuarterIncomeDTOList = Optional.ofNullable(strList).orElse(Lists.newArrayList()).stream()
-                    .map(str -> JSON.parseObject(str, QuarterIncomeDTO.class))
+            List<XueQiuQuarterIncomeDTO> tmpQuarterIncomeDTOList = Optional.ofNullable(strList).orElse(Lists.newArrayList()).stream()
+                    .map(str -> JSON.parseObject(str, XueQiuQuarterIncomeDTO.class))
                     .filter(IncomeDTO -> Objects.equals(IncomeDTO.getCode(), code))
                     .collect(Collectors.toList());
             if(CollectionUtils.isEmpty(tmpQuarterIncomeDTOList)){
                 return Lists.newArrayList();
             }
 
-            List<QuarterIncomeDTO> resultIncomeDTOList =Lists.newArrayList();
-            for(QuarterIncomeDTO incomeDTO : tmpQuarterIncomeDTOList){
+            List<XueQiuQuarterIncomeDTO> resultIncomeDTOList =Lists.newArrayList();
+            for(XueQiuQuarterIncomeDTO incomeDTO : tmpQuarterIncomeDTOList){
                 for(ImmutablePair<Integer, FinanceReportTypeEnum> pair : yearAndReportTypeList){
                     Integer year =pair.getLeft();
                     FinanceReportTypeEnum reportTypeEnum =pair.getRight();
@@ -1299,7 +1298,7 @@ public class LocalDataManagerImpl implements LocalDataManager {
                 return;
             }
 
-            List<QuarterIncomeDTO> quarterIncomeDTOList =Lists.newArrayList();
+            List<XueQiuQuarterIncomeDTO> quarterIncomeDTOList =Lists.newArrayList();
             for(Map.Entry<String, List<XueQiuStockIncomeDTO>> entry : codeIncomeMap.entrySet()){
                 String code = entry.getKey();
                 Map<Integer, List<XueQiuStockIncomeDTO>> yearIncomeList = Optional.ofNullable(entry.getValue()).orElse(Lists.newArrayList()).stream()
@@ -1318,23 +1317,23 @@ public class LocalDataManagerImpl implements LocalDataManager {
                     XueQiuStockIncomeDTO incomeDTO3 = reportTypeMap.get(FinanceReportTypeEnum.QUARTER_3.getCode());
                     XueQiuStockIncomeDTO incomeDTO4 = reportTypeMap.get(FinanceReportTypeEnum.ALL_YEAR.getCode());
                     if(incomeDTO1 !=null){
-                        QuarterIncomeDTO quarterIncomeDTO =new QuarterIncomeDTO();
+                        XueQiuQuarterIncomeDTO quarterIncomeDTO =new XueQiuQuarterIncomeDTO();
                         BeanUtils.copyProperties(incomeDTO1, quarterIncomeDTO);
                         quarterIncomeDTO.setReport_type(FinanceReportTypeEnum.SINGLE_Q_1.getCode());
                         quarterIncomeDTOList.add(quarterIncomeDTO);
                     }
                     if(incomeDTO1 !=null && incomeDTO2 !=null){
-                        QuarterIncomeDTO quarterIncomeDTO = this.getQuarterIncomeDTO(incomeDTO1, incomeDTO2);
+                        XueQiuQuarterIncomeDTO quarterIncomeDTO = this.getQuarterIncomeDTO(incomeDTO1, incomeDTO2);
                         quarterIncomeDTO.setReport_type(FinanceReportTypeEnum.SINGLE_Q_2.getCode());
                         quarterIncomeDTOList.add(quarterIncomeDTO);
                     }
                     if(incomeDTO2 !=null && incomeDTO3 !=null){
-                        QuarterIncomeDTO quarterIncomeDTO = this.getQuarterIncomeDTO(incomeDTO2, incomeDTO3);
+                        XueQiuQuarterIncomeDTO quarterIncomeDTO = this.getQuarterIncomeDTO(incomeDTO2, incomeDTO3);
                         quarterIncomeDTO.setReport_type(FinanceReportTypeEnum.SINGLE_Q_3.getCode());
                         quarterIncomeDTOList.add(quarterIncomeDTO);
                     }
                     if(incomeDTO3 !=null && incomeDTO4 !=null){
-                        QuarterIncomeDTO quarterIncomeDTO = this.getQuarterIncomeDTO(incomeDTO3, incomeDTO4);
+                        XueQiuQuarterIncomeDTO quarterIncomeDTO = this.getQuarterIncomeDTO(incomeDTO3, incomeDTO4);
                         quarterIncomeDTO.setReport_type(FinanceReportTypeEnum.SINGLE_Q_4.getCode());
                         quarterIncomeDTOList.add(quarterIncomeDTO);
                     }
@@ -1342,9 +1341,9 @@ public class LocalDataManagerImpl implements LocalDataManager {
             }
 
             List<String> strIncomeList = quarterIncomeDTOList.stream()
-                    .sorted(Comparator.comparing(QuarterIncomeDTO::getCode)
-                            .thenComparing(QuarterIncomeDTO::getReport_year).reversed()
-                            .thenComparing(QuarterIncomeDTO::getReport_type).reversed())
+                    .sorted(Comparator.comparing(XueQiuQuarterIncomeDTO::getCode)
+                            .thenComparing(XueQiuQuarterIncomeDTO::getReport_year).reversed()
+                            .thenComparing(XueQiuQuarterIncomeDTO::getReport_type).reversed())
                     .map(dto -> JSON.toJSONString(dto))
                     .collect(Collectors.toList());
 
@@ -1363,12 +1362,12 @@ public class LocalDataManagerImpl implements LocalDataManager {
      * @param incomeDTO2
      * @return
      */
-    private QuarterIncomeDTO getQuarterIncomeDTO(XueQiuStockIncomeDTO incomeDTO1, XueQiuStockIncomeDTO incomeDTO2){
+    private XueQiuQuarterIncomeDTO getQuarterIncomeDTO(XueQiuStockIncomeDTO incomeDTO1, XueQiuStockIncomeDTO incomeDTO2){
         if(incomeDTO1 ==null || incomeDTO2 ==null){
             return null;
         }
 
-        QuarterIncomeDTO quarterIncomeDTO =new QuarterIncomeDTO();
+        XueQiuQuarterIncomeDTO quarterIncomeDTO =new XueQiuQuarterIncomeDTO();
         quarterIncomeDTO.setCode(incomeDTO1.getCode());
         quarterIncomeDTO.setName(incomeDTO1.getName());
         quarterIncomeDTO.setReport_year(incomeDTO1.getReport_year());

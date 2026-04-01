@@ -2,7 +2,6 @@ package com.example.mq.test.stock.manager;
 
 import com.example.mq.test.stock.enums.FinanceReportTypeEnum;
 import com.example.mq.test.stock.enums.KLineTypeEnum;
-import com.example.mq.test.stock.model.*;
 import com.example.mq.test.stock.model.dongchai.DongChaiIndustryHoldShareDTO;
 import com.example.mq.test.stock.model.dongchai.DongChaiNorthHoldShareDTO;
 import com.example.mq.test.stock.model.xueqiu.*;
@@ -144,7 +143,7 @@ public interface LocalDataManager {
      * @param yearAndReportTypeList
      * @return
      */
-    List<QuarterIncomeDTO> getLocalQuarterIncomeDTO(String code, List<ImmutablePair<Integer, FinanceReportTypeEnum>> yearAndReportTypeList);
+    List<XueQiuQuarterIncomeDTO> getLocalQuarterIncomeDTO(String code, List<ImmutablePair<Integer, FinanceReportTypeEnum>> yearAndReportTypeList);
 
     /**
      * 现金流指标查询

@@ -8,6 +8,7 @@ import com.example.mq.test.stock.model.*;
 import com.example.mq.test.stock.model.dongchai.DongChaiIndustryHoldShareDTO;
 import com.example.mq.test.stock.model.dongchai.DongChaiNorthHoldShareDTO;
 import com.example.mq.test.stock.model.dongchai.DongChaiPledgeDataDTO;
+import com.example.mq.test.stock.model.xueqiu.XueQiuQuarterIncomeDTO;
 import com.example.mq.test.stock.model.xueqiu.XueQiuStockBalanceDTO;
 import com.example.mq.test.stock.model.xueqiu.XueQiuStockIndicatorDTO;
 import com.example.mq.test.stock.model.xueqiu.XueQiuStockKLineDTO;
@@ -192,7 +193,7 @@ public class StockCalculateUtils {
         }
 
         if (indicatorDTO.getCur_q_gross_margin_rate() == null) {
-            QuarterIncomeDTO curQuarterIncomeDTO = indicatorElement.getCurQuarterIncomeDTO();
+            XueQiuQuarterIncomeDTO curQuarterIncomeDTO = indicatorElement.getCurQuarterIncomeDTO();
             if (curQuarterIncomeDTO != null && curQuarterIncomeDTO.getRevenue() != null && curQuarterIncomeDTO.getOperating_cost() != null) {
                 double cur_q_gross_margin_rate = 1 - curQuarterIncomeDTO.getOperating_cost() / curQuarterIncomeDTO.getRevenue();
                 indicatorDTO.setCur_q_gross_margin_rate(cur_q_gross_margin_rate);
@@ -200,7 +201,7 @@ public class StockCalculateUtils {
         }
 
         if (indicatorDTO.getCur_q_net_selling_rate() == null) {
-            QuarterIncomeDTO curQuarterIncomeDTO = indicatorElement.getCurQuarterIncomeDTO();
+            XueQiuQuarterIncomeDTO curQuarterIncomeDTO = indicatorElement.getCurQuarterIncomeDTO();
             if (curQuarterIncomeDTO != null) {
                 Double revenue = curQuarterIncomeDTO.getRevenue();
                 Double profit = curQuarterIncomeDTO.getContinous_operating_np() != null
@@ -215,7 +216,7 @@ public class StockCalculateUtils {
         if (indicatorDTO.getCur_q_gross_margin_rate_change() == null) {
             Double cur_q_gross_margin_rate = indicatorDTO.getCur_q_gross_margin_rate();
             if (cur_q_gross_margin_rate != null) {
-                QuarterIncomeDTO lastYearQuarterIncomeDTO = indicatorElement.getLastYearQuarterIncomeDTO();
+                XueQiuQuarterIncomeDTO lastYearQuarterIncomeDTO = indicatorElement.getLastYearQuarterIncomeDTO();
                 if (lastYearQuarterIncomeDTO != null && lastYearQuarterIncomeDTO.getRevenue() != null && lastYearQuarterIncomeDTO.getOperating_cost() != null) {
                     double last_year_cur_q_gross_margin_rate = 1 - lastYearQuarterIncomeDTO.getOperating_cost() / lastYearQuarterIncomeDTO.getRevenue();
                     indicatorDTO.setCur_q_gross_margin_rate_change(cur_q_gross_margin_rate - last_year_cur_q_gross_margin_rate);
@@ -226,7 +227,7 @@ public class StockCalculateUtils {
         if (indicatorDTO.getCur_q_net_selling_rate_change() == null) {
             Double cur_q_net_selling_rate = indicatorDTO.getCur_q_net_selling_rate();
             if (cur_q_net_selling_rate != null) {
-                QuarterIncomeDTO lastYearQuarterIncomeDTO = indicatorElement.getLastYearQuarterIncomeDTO();
+                XueQiuQuarterIncomeDTO lastYearQuarterIncomeDTO = indicatorElement.getLastYearQuarterIncomeDTO();
                 if (lastYearQuarterIncomeDTO != null) {
                     Double lastYearQuarterRevenue = lastYearQuarterIncomeDTO.getRevenue();
                     Double lastYearQuarterProfit = lastYearQuarterIncomeDTO.getContinous_operating_np() != null
@@ -242,7 +243,7 @@ public class StockCalculateUtils {
         if (indicatorDTO.getCur_q_gross_margin_rate_q_chg() == null) {
             Double cur_q_gross_margin_rate = indicatorDTO.getCur_q_gross_margin_rate();
             if (cur_q_gross_margin_rate != null) {
-                QuarterIncomeDTO lastPeriodQuarterIncomeDTO = indicatorElement.getLastPeriodQuarterIncomeDTO();
+                XueQiuQuarterIncomeDTO lastPeriodQuarterIncomeDTO = indicatorElement.getLastPeriodQuarterIncomeDTO();
                 if (lastPeriodQuarterIncomeDTO != null && lastPeriodQuarterIncomeDTO.getRevenue() != null && lastPeriodQuarterIncomeDTO.getOperating_cost() != null) {
                     double last_period_cur_q_gross_margin_rate = 1 - lastPeriodQuarterIncomeDTO.getOperating_cost() / lastPeriodQuarterIncomeDTO.getRevenue();
                     indicatorDTO.setCur_q_gross_margin_rate_q_chg(cur_q_gross_margin_rate - last_period_cur_q_gross_margin_rate);
@@ -253,7 +254,7 @@ public class StockCalculateUtils {
         if (indicatorDTO.getCur_q_net_selling_rate_q_chg() == null) {
             Double cur_q_net_selling_rate = indicatorDTO.getCur_q_net_selling_rate();
             if (cur_q_net_selling_rate != null) {
-                QuarterIncomeDTO lastPeriodQuarterIncomeDTO = indicatorElement.getLastPeriodQuarterIncomeDTO();
+                XueQiuQuarterIncomeDTO lastPeriodQuarterIncomeDTO = indicatorElement.getLastPeriodQuarterIncomeDTO();
                 if (lastPeriodQuarterIncomeDTO != null ) {
                     Double lastPeriodQuarterRevenue = lastPeriodQuarterIncomeDTO.getRevenue();
                     Double lastPeriodQuarterProfit = lastPeriodQuarterIncomeDTO.getContinous_operating_np() != null
@@ -267,8 +268,8 @@ public class StockCalculateUtils {
         }
 
         if (indicatorDTO.getCur_q_operating_income_yoy() == null) {
-            QuarterIncomeDTO curQuarterIncomeDTO = indicatorElement.getCurQuarterIncomeDTO();
-            QuarterIncomeDTO lastYearQuarterIncomeDTO = indicatorElement.getLastYearQuarterIncomeDTO();
+            XueQiuQuarterIncomeDTO curQuarterIncomeDTO = indicatorElement.getCurQuarterIncomeDTO();
+            XueQiuQuarterIncomeDTO lastYearQuarterIncomeDTO = indicatorElement.getLastYearQuarterIncomeDTO();
             if (curQuarterIncomeDTO != null && curQuarterIncomeDTO.getRevenue() != null
                     && lastYearQuarterIncomeDTO != null && lastYearQuarterIncomeDTO.getRevenue() != null) {
                 indicatorDTO.setCur_q_operating_income_yoy(curQuarterIncomeDTO.getRevenue() / lastYearQuarterIncomeDTO.getRevenue() - 1);
@@ -276,8 +277,8 @@ public class StockCalculateUtils {
         }
 
         if (indicatorDTO.getCur_q_net_profit_atsopc_yoy() == null) {
-            QuarterIncomeDTO curQuarterIncomeDTO = indicatorElement.getCurQuarterIncomeDTO();
-            QuarterIncomeDTO lastYearQuarterIncomeDTO = indicatorElement.getLastYearQuarterIncomeDTO();
+            XueQiuQuarterIncomeDTO curQuarterIncomeDTO = indicatorElement.getCurQuarterIncomeDTO();
+            XueQiuQuarterIncomeDTO lastYearQuarterIncomeDTO = indicatorElement.getLastYearQuarterIncomeDTO();
             if (curQuarterIncomeDTO != null && lastYearQuarterIncomeDTO != null) {
                 Double curQuarterProfit = curQuarterIncomeDTO.getContinous_operating_np() != null
                         ? curQuarterIncomeDTO.getContinous_operating_np() : curQuarterIncomeDTO.getNet_profit();
@@ -289,8 +290,8 @@ public class StockCalculateUtils {
         }
 
         if (indicatorDTO.getLast_q_operating_income_yoy() == null) {
-            QuarterIncomeDTO lastQuarterIncomeDTO =indicatorElement.getLastPeriodQuarterIncomeDTO();
-            QuarterIncomeDTO lastYearAndLastQuarterIncomeDTO = indicatorElement.getLastYearAndLastQuarterIncomeDTO();
+            XueQiuQuarterIncomeDTO lastQuarterIncomeDTO =indicatorElement.getLastPeriodQuarterIncomeDTO();
+            XueQiuQuarterIncomeDTO lastYearAndLastQuarterIncomeDTO = indicatorElement.getLastYearAndLastQuarterIncomeDTO();
 
             if(lastQuarterIncomeDTO !=null && lastQuarterIncomeDTO.getRevenue() !=null
                     && lastYearAndLastQuarterIncomeDTO !=null && lastYearAndLastQuarterIncomeDTO.getRevenue() !=null){
@@ -300,8 +301,8 @@ public class StockCalculateUtils {
         }
 
         if (indicatorDTO.getLast_q_net_profit_atsopc_yoy() == null) {
-            QuarterIncomeDTO lastQuarterIncomeDTO =indicatorElement.getLastPeriodQuarterIncomeDTO();
-            QuarterIncomeDTO lastYearAndLastQuarterIncomeDTO = indicatorElement.getLastYearAndLastQuarterIncomeDTO();
+            XueQiuQuarterIncomeDTO lastQuarterIncomeDTO =indicatorElement.getLastPeriodQuarterIncomeDTO();
+            XueQiuQuarterIncomeDTO lastYearAndLastQuarterIncomeDTO = indicatorElement.getLastYearAndLastQuarterIncomeDTO();
 
             if (lastQuarterIncomeDTO != null && lastYearAndLastQuarterIncomeDTO != null) {
                 Double lastQuarterProfit = lastQuarterIncomeDTO.getContinous_operating_np() != null
@@ -460,15 +461,15 @@ public class StockCalculateUtils {
 
         // 过去5个季度的毛利率和净利率
         if (StringUtils.isBlank(indicatorDTO.getGross_net_rate_5_quarter())) {
-            List<QuarterIncomeDTO> quarterIncomeDTOList = indicatorElement.getQuarterIncomeDTOList();
+            List<XueQiuQuarterIncomeDTO> quarterIncomeDTOList = indicatorElement.getQuarterIncomeDTOList();
             if (CollectionUtils.isNotEmpty(quarterIncomeDTOList)) {
-                List<QuarterIncomeDTO> sortedQuarterDTOList = quarterIncomeDTOList.stream()
-                        .sorted(Comparator.comparing(QuarterIncomeDTO::getReport_year)
-                                .thenComparing(QuarterIncomeDTO::getReport_type).reversed())
+                List<XueQiuQuarterIncomeDTO> sortedQuarterDTOList = quarterIncomeDTOList.stream()
+                        .sorted(Comparator.comparing(XueQiuQuarterIncomeDTO::getReport_year)
+                                .thenComparing(XueQiuQuarterIncomeDTO::getReport_type).reversed())
                         .collect(Collectors.toList());
 
                 StringBuilder builder = new StringBuilder();
-                for (QuarterIncomeDTO quarterIncomeDTO : sortedQuarterDTOList) {
+                for (XueQiuQuarterIncomeDTO quarterIncomeDTO : sortedQuarterDTOList) {
                     if(quarterIncomeDTO.getTotal_revenue() !=null){
                         if (quarterIncomeDTO.getOperating_cost() != null) {
                             double gross_rate = 1 - quarterIncomeDTO.getOperating_cost() / (quarterIncomeDTO.getTotal_revenue() + 0.01);
@@ -493,15 +494,15 @@ public class StockCalculateUtils {
 
         // 过去5个季度的营收和净利润
         if (StringUtils.isBlank(indicatorDTO.getOi_net_5_quarter())) {
-            List<QuarterIncomeDTO> quarterIncomeDTOList = indicatorElement.getQuarterIncomeDTOList();
+            List<XueQiuQuarterIncomeDTO> quarterIncomeDTOList = indicatorElement.getQuarterIncomeDTOList();
             if (CollectionUtils.isNotEmpty(quarterIncomeDTOList)) {
-                List<QuarterIncomeDTO> sortedQuarterDTOList = quarterIncomeDTOList.stream()
-                        .sorted(Comparator.comparing(QuarterIncomeDTO::getReport_year)
-                                .thenComparing(QuarterIncomeDTO::getReport_type).reversed())
+                List<XueQiuQuarterIncomeDTO> sortedQuarterDTOList = quarterIncomeDTOList.stream()
+                        .sorted(Comparator.comparing(XueQiuQuarterIncomeDTO::getReport_year)
+                                .thenComparing(XueQiuQuarterIncomeDTO::getReport_type).reversed())
                         .collect(Collectors.toList());
 
                 StringBuilder builder = new StringBuilder();
-                for (QuarterIncomeDTO quarterIncomeDTO : sortedQuarterDTOList) {
+                for (XueQiuQuarterIncomeDTO quarterIncomeDTO : sortedQuarterDTOList) {
                     if (quarterIncomeDTO.getTotal_revenue() != null) {
                         double total_revenue = quarterIncomeDTO.getTotal_revenue() / (1.0 * 10000 * 10000);
                         String str_total_revenue = NumberUtil.format(total_revenue, 1) + "";
@@ -735,8 +736,8 @@ public class StockCalculateUtils {
                     new ImmutablePair<>(year, FinanceReportTypeEnum.SINGLE_Q_1));
         }
 
-        List<QuarterIncomeDTO> quarterIncomeDTOList = Lists.newArrayList();
-        for (QuarterIncomeDTO quarterIncomeDTO : indicatorElement.getQuarterIncomeDTOList()) {
+        List<XueQiuQuarterIncomeDTO> quarterIncomeDTOList = Lists.newArrayList();
+        for (XueQiuQuarterIncomeDTO quarterIncomeDTO : indicatorElement.getQuarterIncomeDTOList()) {
             for (ImmutablePair<Integer, FinanceReportTypeEnum> pair : immutablePairList) {
                 Integer tmpYear = pair.getLeft();
                 FinanceReportTypeEnum reportTypeEnum = pair.getRight();
@@ -799,8 +800,8 @@ public class StockCalculateUtils {
                     new ImmutablePair<>(year, FinanceReportTypeEnum.SINGLE_Q_1));
         }
 
-        List<QuarterIncomeDTO> quarterIncomeDTOList = Lists.newArrayList();
-        for (QuarterIncomeDTO quarterIncomeDTO : indicatorElement.getQuarterIncomeDTOList()) {
+        List<XueQiuQuarterIncomeDTO> quarterIncomeDTOList = Lists.newArrayList();
+        for (XueQiuQuarterIncomeDTO quarterIncomeDTO : indicatorElement.getQuarterIncomeDTOList()) {
             for (ImmutablePair<Integer, FinanceReportTypeEnum> pair : immutablePairList) {
                 Integer tmpYear = pair.getLeft();
                 FinanceReportTypeEnum reportTypeEnum = pair.getRight();

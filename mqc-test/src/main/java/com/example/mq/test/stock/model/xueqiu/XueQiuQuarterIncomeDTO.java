@@ -1,4 +1,4 @@
-package com.example.mq.test.stock.model;
+package com.example.mq.test.stock.model.xueqiu;
 
 import lombok.Data;
 
@@ -6,7 +6,7 @@ import lombok.Data;
  * 利润数据
  */
 @Data
-public class QuarterIncomeDTO {
+public class XueQiuQuarterIncomeDTO {
 
     private String code;
 

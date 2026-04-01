@@ -72,27 +72,27 @@ public class AnalyseIndicatorElement {
     /**
      * 最近6个季度的单季利润数据
      */
-    private List<QuarterIncomeDTO> quarterIncomeDTOList;
+    private List<XueQiuQuarterIncomeDTO> quarterIncomeDTOList;
 
     /**
      * 当前季度利润数据
      */
-    private QuarterIncomeDTO curQuarterIncomeDTO;
+    private XueQiuQuarterIncomeDTO curQuarterIncomeDTO;
 
     /**
      * 去年同期单季利润数据
      */
-    private QuarterIncomeDTO lastYearQuarterIncomeDTO;
+    private XueQiuQuarterIncomeDTO lastYearQuarterIncomeDTO;
 
     /**
      * 上一季度单季利润数据
      */
-    private QuarterIncomeDTO lastPeriodQuarterIncomeDTO;
+    private XueQiuQuarterIncomeDTO lastPeriodQuarterIncomeDTO;
 
     /**
      * 去年同期往前一季的利润数据
      */
-    private QuarterIncomeDTO lastYearAndLastQuarterIncomeDTO;
+    private XueQiuQuarterIncomeDTO lastYearAndLastQuarterIncomeDTO;
 
     /**
      * 近1000交易日的KLine数据

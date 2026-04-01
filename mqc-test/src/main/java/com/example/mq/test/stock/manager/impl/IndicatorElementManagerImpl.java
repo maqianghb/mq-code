@@ -177,11 +177,11 @@ public class IndicatorElementManagerImpl implements IndicatorElementManager {
                     new ImmutablePair<>(year - 1, FinanceReportTypeEnum.SINGLE_Q_3));
         }
 
-        List<QuarterIncomeDTO> quarterIncomeDTOList = localDataManager.getLocalQuarterIncomeDTO(code, immutablePairList);
+        List<XueQiuQuarterIncomeDTO> quarterIncomeDTOList = localDataManager.getLocalQuarterIncomeDTO(code, immutablePairList);
         if (CollectionUtils.isNotEmpty(quarterIncomeDTOList)) {
             indicatorElement.setQuarterIncomeDTOList(quarterIncomeDTOList);
 
-            for (QuarterIncomeDTO quarterIncomeDTO : quarterIncomeDTOList) {
+            for (XueQiuQuarterIncomeDTO quarterIncomeDTO : quarterIncomeDTOList) {
                 if (Objects.equals(quarterIncomeDTO.getReport_year(), year)
                         && Objects.equals(quarterIncomeDTO.getReport_type(), curQuarterType)) {
                     indicatorElement.setCurQuarterIncomeDTO(quarterIncomeDTO);
