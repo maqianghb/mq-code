@@ -14,7 +14,7 @@ import com.example.mq.test.stock.model.dongchai.DongChaiFinanceNoticeDTO;
 import com.example.mq.test.stock.model.dongchai.DongChaiHolderIncreaseDTO;
 import com.example.mq.test.stock.model.dongchai.DongChaiIndustryHoldShareDTO;
 import com.example.mq.test.stock.model.dongchai.DongChaiNorthHoldShareDTO;
-import com.example.mq.test.stock.model.indicator.DcIndFinanceNoticeDTO;
+import com.example.mq.test.stock.model.DcIndFinanceNoticeDTO;
 import com.example.mq.test.stock.model.xueqiu.*;
 import com.example.mq.test.stock.utils.FileOperateUtils;
 import com.google.common.collect.Maps;

@@ -45,7 +45,7 @@ public class CommonManager {
     }
 
     /**
-     * 查询并记录指标数据
+     * 查询并保存个股指标数据
      */
     @Test
     public void testQueryAnalysisData(){

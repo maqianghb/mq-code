@@ -1,4 +1,4 @@
-package com.example.mq.test.stock.model.indicator;
+package com.example.mq.test.stock.model;
 
 import lombok.Data;
 
